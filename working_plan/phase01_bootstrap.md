@@ -107,16 +107,17 @@ Phase 1은 **프로젝트가 존재하기 전 단계**이므로 vitest 자체가
 | **P1.15** | `npm run typecheck` 성공 (strict 모드 효과 검증) | execSync (#4 대응) |
 | **P1.16** | `npm test` 성공 (vitest run) | execSync |
 | **P1.17** | `npm run build` 성공 + `dist/index.html` 생성 | execSync + 파일 존재 (#5 대응 — 포트 검사 대체) |
-| **P1.18** | `dist/assets/*.css`에 App.tsx의 **모든** Tailwind 유틸리티 포함 (v2에서 동적 추출로 강화) | App.tsx className 파싱 → utility prefix 필터 → 빌드 CSS에 전부 존재하는지 검사 |
+| **P1.18** | `dist/assets/*.css`에 **`src/**/*.{ts,tsx}` 전체의** 모든 Tailwind 유틸리티 포함 (v2.1: 스캔 범위 확장 + variant prefix 지원) | 소스 파일 전수 스캔 → className/clsx 추출 → variant(md:, hover:, dark:…) 스트립 후 prefix 판정 → 빌드 CSS에 전부 존재하는지 검사 (`\:` CSS escape 고려) |
 | **P1.19** | `npm run lint` 성공 | execSync (v2 추가 — ESLint 회귀 가드) |
-| **P1.20** | `src/main.tsx`의 `createRoot(...).render(<App/>)` 와이어링 | 정적 검사 4건: `createRoot` import / `App` import / `.render(` 체인 / `<App` 존재 (v2 추가) |
+| **P1.20** | `src/main.tsx`의 `createRoot(...).render(<App/>)` 와이어링 (**동일 표현식 내부**) | v2.1: 균형 괄호 walker로 `createRoot(...)` 의 닫는 괄호 직후 `.render(<App ...>)` 이 체인되어 있는지 검증. 이전 v2.0의 3조각 독립 검사 방식은 `createRoot(root); foo().render(<App/>)` 로 우회 가능했음 |
 | **P1.21** | `npm run format:check` 성공 | execSync (v2 추가 — Prettier 회귀 가드) |
-| **P1.22** | `index.html`에 `<script type="module" src="/src/main.tsx">` + `dist/index.html`에 번들 스크립트 주입 | 소스 + 빌드 산출물 양쪽 검사 (v2 추가 — 엔트리 포인트 연결성) |
-| **P1.23** | `vite.config.ts`에서 `@vitejs/plugin-react` import + `plugins:` 배열에 `react()` 호출 | 정적 검사 (v2 추가 — JSX 변환 wiring) |
+| **P1.22** | `index.html`의 **(a)** `<script type="module" src="/src/main.tsx">` (속성 순서 무관) + **(b)** `<... id="root">` 마운트 지점 + **(c)** `dist/index.html`의 번들 스크립트 `/assets/*.js` 주입 및 **참조 파일 실재 확인** | v2.1: 속성 순서 agnostic 스크립트 태그 파싱 / DOM root 부재 검출 / dist 번들 경로 실체 검증 |
+| **P1.23** | `vite.config.ts`에서 `@vitejs/plugin-react` import + `plugins:` 배열에 `react()` 호출 (**주석 제외**) | v2.1: `stripJsComments()` 로 라인·블록 주석을 선제거한 뒤 regex 적용 — `// plugins: [react()]` 주석 라인이 `plugins: []` 판정을 우회하지 못하게 차단 |
 
 > **#1~#5는 본 Phase 리뷰에서 제기된 이슈 번호와 매핑된다.**
 > **포트 5173 검사는 제거**되었다 (Vite의 fallback 동작으로 false negative 가능). `npm run build` 성공 + `dist/index.html` 생성이 더 안정적인 E2E 가드.
 > **v2 5개 가드는 모두 돌연변이 테스트로 의도한 회귀 검출이 확인되었다** (verify_phase1.mjs 상단 변경 이력 참조).
+> **v2.1 리뷰 반영**: v2.0에서 드러난 4개 약점(P1.18 variant 누락·범위 협소, P1.20 3조각 독립 검사 우회, P1.22 속성 순서·mount target·dist 실재, P1.23 주석 우회)을 모두 수정하고 해당 우회 시나리오에 대한 돌연변이 테스트로 재검증했다. 상세: [working_history/v1.0/Phase1_Bootstrap_TestGuardV2_20260411.md §15](./working_history/v1.0/Phase1_Bootstrap_TestGuardV2_20260411.md).
 
 ### 1.2.3 RED 상태 확인 (모두 FAIL)
 
