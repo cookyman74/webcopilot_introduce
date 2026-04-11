@@ -15,6 +15,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import App from './App';
+import { NAV_ANCHORS } from './lib/constants';
 
 describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
   it('Section 4종 배경이 모두 고유하게 렌더된다 (canvas/surface/surface-alt/accent-soft)', () => {
@@ -50,6 +51,34 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
     const { container } = render(<App />);
     expect(container.querySelector('#features')).not.toBeNull();
     expect(container.querySelector('section#features')).not.toBeNull();
+  });
+
+  it('NAV_ANCHORS 의 4개 ID 가 App DOM 에 모두 존재한다 (Header 네비 앵커 유효성 가드)', () => {
+    // 리뷰 피드백 반영 (Medium): Header 가 #features/#scenarios/#differentiation/
+    // #roadmap 을 렌더하지만 App.tsx 에는 #features 만 있어 나머지 3개가 dead
+    // anchor 상태였음. NAV_ANCHORS 를 반복하며 "모든 ID 가 DOM 에 존재" 를
+    // 강제하여 Header 와 Section 의 계약 불일치를 차단.
+    //
+    // 본 가드는 Phase 4~8 에서 실제 섹션이 추가될 때도 유지된다. 섹션이
+    // NAV_ANCHORS 와 일치하는 id 를 부여하지 않으면 즉시 FAIL 로 드러남.
+    const { container } = render(<App />);
+    for (const anchor of NAV_ANCHORS) {
+      const target = container.querySelector(`#${anchor.id}`);
+      expect(
+        target,
+        `NAV_ANCHORS 의 "${anchor.id}" 에 대응하는 DOM 요소가 없음 — Header href 가 dead anchor`
+      ).not.toBeNull();
+    }
+  });
+
+  it('4개 anchor ID 가 모두 <section> 태그에 부여되어 있다 (앵커 점프 의미)', () => {
+    // ID 가 section 태그에 있어야 브라우저 앵커 네비가 섹션 시작점으로 점프.
+    // div/span 등에 id 만 붙어있으면 시각적 점프 위치가 어긋날 수 있음.
+    const { container } = render(<App />);
+    for (const anchor of NAV_ANCHORS) {
+      const target = container.querySelector(`section#${anchor.id}`);
+      expect(target, `#${anchor.id} 가 <section> 태그에 부여되지 않음`).not.toBeNull();
+    }
   });
 
   it('Button primary / secondary 버튼이 각각 존재한다', () => {

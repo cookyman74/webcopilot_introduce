@@ -1,68 +1,97 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../common/Button';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { CHROME_WEB_STORE_URL } from '../../lib/constants';
+import { CHROME_WEB_STORE_URL, NAV_ANCHORS } from '../../lib/constants';
 
 /**
- * 상단 Header — sticky 고정 네비게이션 바.
+ * 상단 Header — sticky 고정 네비게이션 바 + 모바일 disclosure.
  *
- * 구조 (좌 → 중 → 우):
- *   [로고/제품명]  [<nav> 4개 앵커 링크]  [LanguageSwitcher + Primary CTA]
+ * 데스크톱 구조 (md+):
+ *   [로고/제품명]  [<nav aria-label="Primary"> 4개 앵커]  [LanguageSwitcher + CTA]
+ *
+ * 모바일 구조 (< md):
+ *   [로고/제품명]  [LanguageSwitcher + CTA + 메뉴 버튼]
+ *   (메뉴 버튼 클릭 시 아래에 <nav aria-label="Mobile menu"> 펼쳐짐)
  *
  * 책임:
- *   1. 루트 `<header>` + sticky 포지셔닝 (스크롤 고정)
- *   2. 제품명 "Web AI Assistant" 텍스트 노출 (브랜드 식별)
- *   3. 4개 앵커 네비: #features / #scenarios / #differentiation / #roadmap
- *      — 라벨은 i18n.t('header.nav.*') 로 렌더
- *   4. LanguageSwitcher 우측 배치 (nav 외부)
- *   5. Primary CTA: Button 공통 컴포넌트 + CHROME_WEB_STORE_URL
- *      — Button §14.2.4 자동 external 감지로 target/rel 자동 부여
+ *   1. 루트 `<header>` + sticky top-0
+ *   2. 제품명 "Web AI Assistant" 텍스트 (브랜드 고정)
+ *   3. NAV_ANCHORS 를 단일 출처로 하여 데스크톱/모바일 nav 양쪽 렌더
+ *      — Header 의 href 와 App.tsx 의 Section id 가 같은 상수를 참조
+ *   4. LanguageSwitcher + Primary CTA 는 nav 외부 우측 영역
+ *   5. 모바일에서 disclosure 패턴으로 nav 접근성 유지
+ *      (이전 버전: hidden md:flex 로 모바일 nav 완전 소실 — 리뷰 Medium 이슈 해결)
  *
- * 테스트: src/components/layout/Header.test.tsx (TEST-P3.4, P3.5 + 레이아웃 계약)
+ * 테스트: src/components/layout/Header.test.tsx (TEST-P3.4, P3.5 + 레이아웃 계약 + 모바일 메뉴)
  */
-
-/**
- * 네비 항목 데이터 — .map() 으로 반복 렌더.
- * 향후 항목 추가 시 이 배열만 수정하면 됨 (REFACTOR-STRUCTURE 대응).
- */
-const NAV_ITEMS = [
-  { href: '#features', key: 'header.nav.features' },
-  { href: '#scenarios', key: 'header.nav.scenarios' },
-  { href: '#differentiation', key: 'header.nav.differentiation' },
-  { href: '#roadmap', key: 'header.nav.roadmap' },
-] as const;
-
 export function Header() {
   const { t } = useTranslation();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const closeMenu = (): void => setMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-50 bg-canvas/90 backdrop-blur border-b border-border">
-      <div className="mx-auto max-w-content px-6 md:px-10 h-16 flex items-center justify-between gap-6">
-        {/* 좌: 로고/제품명 — 브랜드 텍스트는 i18n 대상 아님 (제품명 고정) */}
+      <div className="mx-auto max-w-content px-6 md:px-10 h-16 flex items-center justify-between gap-4">
+        {/* 좌: 로고/제품명 */}
         <div className="text-lg font-bold text-ink-900">Web AI Assistant</div>
 
-        {/* 중: 네비게이션 */}
-        <nav aria-label="Primary">
-          <ul className="hidden md:flex items-center gap-6">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.href}>
+        {/* 중: 데스크톱 네비게이션 (md+ 만 표시) */}
+        <nav aria-label="Primary" className="hidden md:block">
+          <ul className="flex items-center gap-6">
+            {NAV_ANCHORS.map((anchor) => (
+              <li key={anchor.id}>
                 <a
-                  href={item.href}
+                  href={`#${anchor.id}`}
                   className="text-sm font-medium text-ink-700 hover:text-ink-900 transition"
                 >
-                  {t(item.key)}
+                  {t(anchor.labelKey)}
                 </a>
               </li>
             ))}
           </ul>
         </nav>
 
-        {/* 우: LanguageSwitcher + Primary CTA */}
-        <div className="flex items-center gap-3">
+        {/* 우: LanguageSwitcher + Primary CTA + 모바일 메뉴 버튼 */}
+        <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <Button href={CHROME_WEB_STORE_URL}>{t('header.cta')}</Button>
+          <button
+            type="button"
+            className="md:hidden p-2 text-ink-700 hover:text-ink-900 transition"
+            aria-label={t('header.menuToggle')}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? '✕' : '☰'}
+          </button>
         </div>
       </div>
+
+      {/* 모바일 nav 패널 — menuOpen 일 때만 렌더 (md+ 에서는 항상 숨김) */}
+      {menuOpen && (
+        <nav
+          id="mobile-nav"
+          aria-label="Mobile menu"
+          className="md:hidden border-t border-border bg-canvas"
+        >
+          <ul className="flex flex-col p-4 gap-3">
+            {NAV_ANCHORS.map((anchor) => (
+              <li key={anchor.id}>
+                <a
+                  href={`#${anchor.id}`}
+                  className="block text-base font-medium text-ink-700 hover:text-ink-900 transition"
+                  onClick={closeMenu}
+                >
+                  {t(anchor.labelKey)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 }

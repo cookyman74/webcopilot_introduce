@@ -474,3 +474,154 @@ git commit -m "[P3] i18n + Header/Footer/LanguageSwitcher — ko/en 2개 언어 
 ```
 
 **커밋 메시지 배경**: Phase 3 는 RED 2회차 + GREEN + REFACTOR + 시행착오 2건 해결 을 한 세션에서 진행. 결과서가 전체 흐름을 기록하므로 커밋은 단일로 묶는다.
+
+---
+
+## 12. 결과서 리뷰 후속 개선 (Phase 3 v2 — 코드 레벨 리뷰 반영)
+
+§1~§11 이 Phase 3 초기 커밋 `a3408e3` 완료 시점을 기록한 것이라면, §12 는 **커밋 이후 결과서 + 실제 코드를 교차 리뷰한 결과 드러난 5건의 이슈** 와 그 수정 내역이다. 본 섹션의 모든 변경은 Phase 3 후속 커밋에 포함된다.
+
+### 12.1 제기된 이슈 5건
+
+| # | 심각도 | 이슈 | 실측 재현 |
+|---|--------|------|----------|
+| A | **Medium** | Header 가 `#features`/`#scenarios`/`#differentiation`/`#roadmap` 4개 앵커를 렌더하지만 App.tsx 에는 `id="features"` 하나만 있음 → 3개 dead anchor | ✅ `grep 'id="'` = 1 match 확인 |
+| B | **Medium** | Header 의 nav 가 `hidden md:flex` 로 모바일에서 완전 소실. 모바일 사용자에게 4개 네비 링크 접근 경로 없음 | ✅ `grep "hidden md:"` Header.tsx line 46 |
+| C | Low | happy-dom 환경 제약으로 navigator 기반 언어 감지 2건 skip 상태 → 자동화 커버리지 공백 | ✅ 기존 결과서 §4.5 에서 이미 인지 |
+| D | Low | phase03 문서 line 34 는 "브라우저 → localStorage → fallback en" 이라고 기술하지만 구현은 "localStorage → navigator → fallback en" | ✅ grep 으로 line 34 문구 확인 |
+| E | Low | Node 22.11.0 < engines `>=22.12.0` 로 Vite 경고 발생. 환경 리스크 | ✅ `node --version` 확인 |
+
+### 12.2 수정 내역
+
+#### 12.2.1 Issue A — NAV_ANCHORS 단일 출처 도입
+
+**문제 구조**:
+Header.tsx 의 `NAV_ITEMS` 로컬 상수와 App.tsx 의 `<Section id="...">` 가 **분리된 두 데이터** 였음. 한쪽만 바뀌어도 감지할 장치 부재.
+
+**해결**:
+1. `src/lib/constants.ts` 에 **`NAV_ANCHORS`** 신규 export — 4개 앵커 각각 `{ id, labelKey }` 구조의 `as const` 튜플
+2. Header.tsx 가 `NAV_ANCHORS` 를 import 해서 `.map()` 으로 href 생성
+3. App.tsx 의 4개 데모 Section 에 `NAV_ANCHORS` 와 일치하는 id 4개 부여:
+   - 1st Section (canvas): `id="scenarios"`
+   - 2nd Section (surface): `id="differentiation"`
+   - 3rd Section (surface-alt): `id="roadmap"`
+   - 4th Section (accent-soft): `id="features"` (기존 유지)
+
+**가드 테스트 신설** (3건):
+- `constants.test.ts`: NAV_ANCHORS 가 정확히 4개 · id/labelKey 구조 · `labelKey === header.nav.${id}` 규약 · id 고유성 (4 assertion)
+- `App.test.tsx`: NAV_ANCHORS 를 반복하며 `#${id}` 가 DOM 에 존재 확인 + `<section>` 태그 부여 확인 (2 assertion)
+- `Header.test.tsx`: Primary nav 의 href 집합이 `NAV_ANCHORS.map(#${id})` 와 정확히 일치 (2 assertion)
+
+**Phase 4~8 영향**: 실제 섹션 컴포넌트 구현 시 해당 Section 의 id 가 NAV_ANCHORS 와 일치해야 함 — 불일치 시 App.test.tsx 의 가드가 즉시 FAIL 로 드러내어 회귀 차단.
+
+#### 12.2.2 Issue B — 모바일 disclosure 패턴 도입
+
+**설계**:
+- 루트 `<header>` + 데스크톱 `<nav aria-label="Primary" className="hidden md:block">` (기존)
+- 모바일 메뉴 토글 버튼 `<button className="md:hidden" aria-expanded={menuOpen} aria-controls="mobile-nav">` 신규
+- 조건부 모바일 `<nav aria-label="Mobile menu" id="mobile-nav" className="md:hidden">` — `menuOpen === true` 일 때만 DOM 에 렌더
+- 모바일 nav 의 앵커 클릭 시 `closeMenu()` 호출 → UX 정상화
+
+**접근성**:
+- 버튼 `aria-label="메뉴"` (i18n `header.menuToggle`)
+- `aria-expanded` 로 현재 상태 노출
+- `aria-controls="mobile-nav"` 로 제어 대상 연결
+- 모바일 nav 가 `aria-label="Mobile menu"` 로 접근 가능
+
+**기존 테스트 호환성**:
+- 초기 렌더 (`menuOpen=false`) 시 모바일 nav 는 DOM 에 없음 → "Primary nav 1개" 기존 가드 유지
+- 기존 테스트들은 `getByRole('navigation', { name: 'Primary' })` 로 desktop nav 를 명시 타겟팅 — 토글 상태 무관하게 안정
+
+**신설 테스트 6건** (모바일 메뉴 disclosure describe):
+1. 토글 버튼 존재 + 초기 `aria-expanded="false"` + `aria-controls="mobile-nav"`
+2. 초기 상태에서 모바일 nav 가 DOM 에 없음
+3. 클릭 → `aria-expanded="true"` + 모바일 nav 나타남
+4. 모바일 nav 내부 NAV_ANCHORS 4개 앵커 렌더
+5. 앵커 클릭 → 메뉴 자동 닫힘 (disclosure UX)
+6. 버튼 재클릭 → 열림↔닫힘 토글
+
+**locale 추가**: `header.menuToggle = "메뉴"` (ko) / `"Menu"` (en). i18n parity 테스트가 양쪽 키 존재를 강제.
+
+#### 12.2.3 Issue C — 수동 QA 체크리스트 강화
+
+런타임 navigator 감지는 happy-dom 환경 제약으로 자동화 불가 (§4.5 결정 유지). Phase 4+ 에서 Playwright E2E 도입 시 최우선 자동화 항목으로 이관.
+
+**강화된 수동 QA 체크리스트** (phase03 §3.5 및 결과서 §8 에 반영 예정):
+
+| # | 시나리오 | 기대 결과 |
+|---|---------|----------|
+| 1 | Chrome 언어 설정 = 한국어, localStorage 클리어, 첫 방문 | Header 네비 라벨이 "기능/시나리오/차별점/로드맵" |
+| 2 | Chrome 언어 설정 = English, localStorage 클리어, 첫 방문 | Header 네비 라벨이 "Features/Scenarios/Differentiation/Roadmap" |
+| 3 | Chrome 언어 설정 = Français (fr, 미지원), localStorage 클리어, 첫 방문 | Header 네비 라벨이 영문 (fallback 'en') |
+| 4 | 한국어로 접속 → EN 토글 클릭 → 새로고침 | 영문 유지 (localStorage 저장 효과) |
+| 5 | 한국어로 접속 → EN 토글 → KO 토글 → 새로고침 | 한국어 유지 (최근 선택 우선) |
+| 6 | DevTools Application → LocalStorage → i18nextLng 키 확인 | 마지막 선택 언어 정확히 저장 |
+| 7 | 모바일 viewport (< 768px) 에서 메뉴 버튼 (☰) 클릭 | 모바일 nav 펼쳐지며 4개 앵커 표시 |
+| 8 | 모바일 nav 앵커 클릭 | 해당 섹션으로 스크롤 + 메뉴 자동 닫힘 |
+| 9 | 모바일 nav 버튼 재클릭 | 메뉴 닫힘 (✕ 표시 → ☰ 로 변경) |
+
+이 체크리스트는 Phase 4 의 `[VERIFY]` 수동 항목에 그대로 이어져 Phase 9 Playwright 도입 시점까지 유지된다.
+
+#### 12.2.4 Issue D — 문서 일관성 수정
+
+`phase03_i18n_layout.md` line 34:
+```diff
+- 언어 감지: 브라우저 → localStorage → fallback `en`
++ 언어 감지: localStorage → navigator (브라우저) → fallback `en`
++ (직전 선택 언어 우선 유지) · src/i18n/index.ts 의 detection.order 와
++ i18n.test.ts 의 정적 설정 검증이 이 순서를 강제
+```
+
+구현 (`detection.order: ['localStorage', 'navigator']`) + 테스트 (`i18n.test.ts` 언어 감지 우선순위 describe) + 문서가 이제 모두 일치.
+
+#### 12.2.5 Issue E — `.nvmrc` 추가
+
+**결정**: `extapp_landing/.nvmrc` 신규 — 값 `20.19.0`
+
+**이유**:
+- Phase 1 engines 선언 (`^20.19.0 || >=22.12.0`) 의 최소 경계인 20.19.0 은 Node 20 LTS 이면서 Phase 10 Vercel 기본값 (Node 20.x) 과도 맞음
+- Node 22.x 를 원하는 개발자는 `.nvmrc` 를 무시하거나 로컬에서 override 가능
+- CI / 배포 환경이 `.nvmrc` 를 읽어 정확한 버전을 사용하도록 유도
+- Phase 1 §15.6 에서 "`.nvmrc` 는 사용자 선택" 이라고 결정했던 것을 리뷰 피드백 기반으로 명시적 권장값으로 전환
+
+현재 로컬 Node 22.11.0 은 여전히 EBADENGINE 경고를 발생시키지만, `.nvmrc` 의 존재로 "권장 버전이 20.19.0" 임을 명시적으로 전달. 사용자가 `nvm use` 를 실행하면 자동 전환.
+
+### 12.3 v2 수정 후 최종 상태
+
+```
+npm run lint         → 0 errors / 0 warnings
+npm run typecheck    → 0 errors (app + test)
+npm run format:check → All matched files use Prettier code style
+npm test             → Test Files 11 passed (11) · Tests 154 passed | 5 skipped (159)
+npm run build        → ✓ JS 253.01 KB · CSS 9.82 KB
+
+node working_plan/scripts/verify_phase1.mjs
+  → 23 PASS / 0 FAIL / 총 23
+```
+
+테스트 수 변화: **140 → 154** (+14)
+- Header 모바일 disclosure describe: +6 assertion
+- Header NAV_ANCHORS 단일 출처 describe: +2 assertion
+- App NAV_ANCHORS 가드: +2 assertion
+- constants NAV_ANCHORS describe: +4 assertion
+
+번들 크기 변화:
+- JS: 252.24 KB → **253.01 KB** (+0.77 KB — 모바일 메뉴 로직 + useState)
+- CSS: 9.66 KB → **9.82 KB** (+0.16 KB — 모바일 메뉴 스타일)
+- 미미한 증가. Phase 9 목표 (gzip <300 KB) 대비 여전히 충분한 여유.
+
+### 12.4 v2 수정 파일
+
+| 파일 | 변경 종류 |
+|------|----------|
+| `extapp_landing/src/lib/constants.ts` | NAV_ANCHORS + NavAnchorId 타입 export 추가 |
+| `extapp_landing/src/lib/constants.test.ts` | NAV_ANCHORS describe 4 assertion 신규 |
+| `extapp_landing/src/components/layout/Header.tsx` | NAV_ANCHORS 사용 + useState + 모바일 disclosure 패턴 구현 |
+| `extapp_landing/src/components/layout/Header.test.tsx` | 모바일 disclosure describe 6 assertion + NAV_ANCHORS 단일 출처 describe 2 assertion |
+| `extapp_landing/src/App.tsx` | 4개 데모 Section 에 NAV_ANCHORS 대응 id 부여 + 주석 |
+| `extapp_landing/src/App.test.tsx` | NAV_ANCHORS 기반 가드 2 assertion 신규 |
+| `extapp_landing/src/i18n/locales/ko.json` | `header.menuToggle = "메뉴"` 추가 |
+| `extapp_landing/src/i18n/locales/en.json` | `header.menuToggle = "Menu"` 추가 |
+| `extapp_landing/.nvmrc` | 신규 — `20.19.0` |
+| `working_plan/phase03_i18n_layout.md` | line 34 언어 감지 순서 정정 |
+| `working_plan/working_history/v1.0/Phase3_I18nLayout_20260411.md` | 본 §12 추가 |

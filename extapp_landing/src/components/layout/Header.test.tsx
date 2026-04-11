@@ -23,9 +23,10 @@
  */
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Header } from './Header';
 import '../../i18n';
-import { CHROME_WEB_STORE_URL } from '../../lib/constants';
+import { CHROME_WEB_STORE_URL, NAV_ANCHORS } from '../../lib/constants';
 
 describe('Header 공통 레이아웃 (TEST-P3.4 + TEST-P3.5)', () => {
   // ─────────────────────────────────────────────────────────
@@ -124,10 +125,11 @@ describe('Header 공통 레이아웃 (TEST-P3.4 + TEST-P3.5)', () => {
       expect(root?.className).toMatch(/\b(sticky|fixed)\b/);
     });
 
-    it('정확히 하나의 <nav> 랜드마크를 포함한다', () => {
-      // 단일 nav = 단일 primary navigation. 접근성 가이드라인.
-      const { container } = render(<Header />);
-      expect(container.querySelectorAll('nav').length).toBe(1);
+    it('초기 상태에서 Primary 네비게이션 랜드마크 하나가 존재한다', () => {
+      // 초기 렌더 (menuOpen=false) 에서는 데스크톱 Primary nav 1개만 존재.
+      // 모바일 메뉴는 토글 후 추가 nav 로 나타나며 aria-label 로 구분.
+      render(<Header />);
+      expect(screen.getByRole('navigation', { name: 'Primary' })).toBeInTheDocument();
     });
   });
 
@@ -169,11 +171,134 @@ describe('Header 공통 레이아웃 (TEST-P3.4 + TEST-P3.5)', () => {
     it('LanguageSwitcher 가 <nav> 외부에 위치한다 (레이아웃 분리)', () => {
       // Header 구조: [로고] [nav 4링크] [LanguageSwitcher + CTA]
       // LanguageSwitcher 가 실수로 nav 안에 들어가면 네비 링크로 오인됨.
-      const { container } = render(<Header />);
-      const nav = container.querySelector('nav');
-      expect(nav).not.toBeNull();
-      const switcherInsideNav = nav?.querySelector('[data-testid="language-switcher"]');
+      render(<Header />);
+      const nav = screen.getByRole('navigation', { name: 'Primary' });
+      const switcherInsideNav = nav.querySelector('[data-testid="language-switcher"]');
       expect(switcherInsideNav).toBeNull();
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────
+  // NAV_ANCHORS 단일 출처 계약 — Header href 가 constants 에서 생성
+  // ─────────────────────────────────────────────────────────
+  describe('NAV_ANCHORS 단일 출처 (constants.ts 와 Header 연결)', () => {
+    it('Primary nav 의 href 집합이 NAV_ANCHORS 와 정확히 일치한다', () => {
+      // 리뷰 피드백 반영: Header 의 네비 href 가 constants 의 NAV_ANCHORS
+      // 를 읽어서 생성되므로, 두 데이터가 분리되어 dead anchor 를 만드는
+      // 회귀를 원천 차단.
+      render(<Header />);
+      const nav = screen.getByRole('navigation', { name: 'Primary' });
+      const renderedHrefs = Array.from(nav.querySelectorAll('a[href^="#"]')).map((a) =>
+        a.getAttribute('href')
+      );
+      const expectedHrefs = NAV_ANCHORS.map((a) => `#${a.id}`);
+      expect(renderedHrefs).toEqual(expectedHrefs);
+    });
+
+    it('Primary nav 앵커 텍스트가 i18n header.nav.{id} 키를 렌더한다', () => {
+      // NAV_ANCHORS 의 labelKey 규약: `header.nav.${id}`
+      // i18n.test.ts 에서 이 키들이 ko/en 양쪽에 존재함을 이미 강제.
+      // 여기서는 실제 렌더 결과가 빈 문자열이 아님을 확인.
+      render(<Header />);
+      const nav = screen.getByRole('navigation', { name: 'Primary' });
+      const anchors = Array.from(nav.querySelectorAll('a[href^="#"]'));
+      for (const a of anchors) {
+        expect(a.textContent?.trim().length ?? 0).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────
+  // 모바일 메뉴 disclosure (리뷰 Medium 이슈 대응)
+  // ─────────────────────────────────────────────────────────
+  describe('모바일 메뉴 disclosure (hidden md:flex 로 인한 네비 유실 방지)', () => {
+    // 리뷰 피드백 반영 (Medium): 데스크톱 nav 가 `hidden md:flex` 로 렌더되어
+    // 모바일에서 네비 링크 전체가 사라졌다. 모바일 사용자에게 대체 경로가 없어
+    // 4개 섹션 앵커에 접근 불가. 토글 버튼 + 모바일 nav 패널로 해결.
+
+    it('모바일 메뉴 토글 버튼이 존재하고 초기 상태는 aria-expanded="false"', () => {
+      render(<Header />);
+      const menuButton = screen.getByRole('button', {
+        name: /메뉴|menu/i,
+      });
+      expect(menuButton).toBeInTheDocument();
+      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+      expect(menuButton).toHaveAttribute('aria-controls', 'mobile-nav');
+    });
+
+    it('초기 상태에서는 모바일 nav 가 DOM 에 존재하지 않는다', () => {
+      // 모바일 nav 는 menuOpen=true 일 때만 조건부 렌더.
+      // 이를 통해 "Primary nav 1개" 기존 가드가 초기 상태에서 계속 유효.
+      render(<Header />);
+      expect(screen.queryByRole('navigation', { name: 'Mobile menu' })).toBeNull();
+    });
+
+    it('메뉴 버튼 클릭 → aria-expanded="true" + 모바일 nav 가 DOM 에 나타난다', async () => {
+      const user = userEvent.setup();
+      render(<Header />);
+
+      const menuButton = screen.getByRole('button', {
+        name: /메뉴|menu/i,
+      });
+      await user.click(menuButton);
+
+      expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+      const mobileNav = screen.getByRole('navigation', {
+        name: 'Mobile menu',
+      });
+      expect(mobileNav).toBeInTheDocument();
+    });
+
+    it('모바일 nav 내부에도 NAV_ANCHORS 4개 앵커가 렌더된다', async () => {
+      const user = userEvent.setup();
+      render(<Header />);
+      await user.click(screen.getByRole('button', { name: /메뉴|menu/i }));
+
+      const mobileNav = screen.getByRole('navigation', {
+        name: 'Mobile menu',
+      });
+      const mobileHrefs = Array.from(mobileNav.querySelectorAll('a[href^="#"]')).map((a) =>
+        a.getAttribute('href')
+      );
+      const expectedHrefs = NAV_ANCHORS.map((a) => `#${a.id}`);
+      expect(mobileHrefs).toEqual(expectedHrefs);
+    });
+
+    it('모바일 nav 의 앵커를 클릭하면 메뉴가 닫힌다 (disclosure UX)', async () => {
+      const user = userEvent.setup();
+      render(<Header />);
+      await user.click(screen.getByRole('button', { name: /메뉴|menu/i }));
+
+      const mobileNav = screen.getByRole('navigation', {
+        name: 'Mobile menu',
+      });
+      const firstAnchor = mobileNav.querySelector('a[href^="#"]');
+      expect(firstAnchor).not.toBeNull();
+      await user.click(firstAnchor as HTMLElement);
+
+      // 메뉴가 닫힌 뒤 모바일 nav 는 다시 DOM 에서 제거됨
+      expect(screen.queryByRole('navigation', { name: 'Mobile menu' })).toBeNull();
+      const menuButton = screen.getByRole('button', {
+        name: /메뉴|menu/i,
+      });
+      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    it('메뉴 버튼을 다시 클릭하면 열렸다 닫혔다 토글된다', async () => {
+      const user = userEvent.setup();
+      render(<Header />);
+      const menuButton = screen.getByRole('button', {
+        name: /메뉴|menu/i,
+      });
+
+      // closed → open
+      await user.click(menuButton);
+      expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+
+      // open → closed
+      await user.click(menuButton);
+      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+      expect(screen.queryByRole('navigation', { name: 'Mobile menu' })).toBeNull();
     });
   });
 });

@@ -31,7 +31,7 @@
 - [x] **[CONTEXT]** 작업 목적 확인
   - 구현 계획서 6장(i18n 전략) 재확인
   - 1차: ko/en, 2차: ja, 3차: zh
-  - 언어 감지: 브라우저 → localStorage → fallback `en`
+  - 언어 감지: **localStorage → navigator (브라우저) → fallback `en`** (직전 선택 언어 우선 유지). `src/i18n/index.ts` 의 `detection.order: ['localStorage', 'navigator']` 와 `i18n.test.ts` 의 정적 설정 검증이 이 순서를 강제한다
 
 - [x] **[CONTEXT]** Phase 2 환경 가정 인계 *(Phase2_DesignSystem_20260411.md §10 기반)*
   - **clsx 패턴**: 새 컴포넌트(Header/Footer/LanguageSwitcher)도 동일 패턴 사용 — 상단에 `BASE_CLASS`/`VARIANT_CLASS` 상수 + `clsx(상수, props, className)` 결합

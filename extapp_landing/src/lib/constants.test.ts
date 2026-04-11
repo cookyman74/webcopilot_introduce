@@ -23,7 +23,7 @@
  *   로 본 파일 전체가 FAIL.
  */
 import { describe, it, expect } from 'vitest';
-import { CHROME_WEB_STORE_URL, SUPPORTED_LANGUAGES } from './constants';
+import { CHROME_WEB_STORE_URL, SUPPORTED_LANGUAGES, NAV_ANCHORS } from './constants';
 
 describe('constants.ts 외부 주소 단일 출처 (TEST-P3.9)', () => {
   // ─────────────────────────────────────────────────────────
@@ -80,6 +80,45 @@ describe('constants.ts 외부 주소 단일 출처 (TEST-P3.9)', () => {
       // 유니온으로 좁혀지려면 원본이 readonly tuple 이어야 한다. 런타임에선
       // Array.isArray 와 length 로 간접 검증.
       expect(Array.isArray(SUPPORTED_LANGUAGES)).toBe(true);
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────
+  // NAV_ANCHORS — 네비게이션 단일 출처
+  // ─────────────────────────────────────────────────────────
+  describe('NAV_ANCHORS (Header + Section id 단일 출처)', () => {
+    // 리뷰 피드백 반영 (Medium): Header 의 href 와 Section 의 id 가 분리되어
+    // 있어 3/4 앵커가 dead link 상태였음. NAV_ANCHORS 를 단일 출처로 두고
+    // Header 가 이 배열에서 href 를, App.tsx 가 id 를 각각 생성하도록 통합.
+
+    it('정확히 4개 앵커를 포함한다 (features/scenarios/differentiation/roadmap)', () => {
+      expect(NAV_ANCHORS.length).toBe(4);
+      const ids = NAV_ANCHORS.map((a) => a.id);
+      expect(ids).toEqual(['features', 'scenarios', 'differentiation', 'roadmap']);
+    });
+
+    it('각 앵커는 id 와 labelKey 를 필수로 갖는다', () => {
+      for (const anchor of NAV_ANCHORS) {
+        expect(anchor).toHaveProperty('id');
+        expect(anchor).toHaveProperty('labelKey');
+        expect(typeof anchor.id).toBe('string');
+        expect(anchor.id.length).toBeGreaterThan(0);
+        expect(typeof anchor.labelKey).toBe('string');
+      }
+    });
+
+    it('labelKey 는 header.nav.{id} 패턴을 따른다 (i18n 키 규약)', () => {
+      // Header 가 t(anchor.labelKey) 로 렌더하므로 labelKey 가 실제 i18n 키와
+      // 일치해야 한다. 패턴 검증으로 오타/누락을 차단.
+      for (const anchor of NAV_ANCHORS) {
+        expect(anchor.labelKey).toBe(`header.nav.${anchor.id}`);
+      }
+    });
+
+    it('ID 가 중복되지 않는다 (각 앵커는 고유한 DOM target)', () => {
+      const ids = NAV_ANCHORS.map((a) => a.id);
+      const uniqueIds = new Set(ids);
+      expect(uniqueIds.size).toBe(ids.length);
     });
   });
 });

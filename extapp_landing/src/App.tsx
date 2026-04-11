@@ -21,14 +21,21 @@ export default function App() {
     <>
       <Header />
       <main>
-        <Section background="canvas">
+        {/*
+         * Phase 3 주의: 4개 Section 각각에 NAV_ANCHORS 의 ID 를 부여한다.
+         * Phase 2 시점에는 features 하나만 있었지만, Phase 3 Header 가 4개
+         * 네비 앵커를 렌더하므로 모두 유효한 타겟을 갖춰야 한다. App.test.tsx
+         * 의 "NAV_ANCHORS 4개 ID 가 App DOM 에 존재" 가드가 이 매핑을 강제함.
+         * Phase 4~8 에서 실제 섹션 컴포넌트로 교체될 때 id 는 유지되어야 함.
+         */}
+        <Section id="scenarios" background="canvas">
           <h1 className="text-4xl font-bold text-ink-900">Design System Demo</h1>
           <p className="mt-4 text-ink-700">
             Phase 2 공통 컴포넌트 (Section · Button · Badge · FeatureCard) 시각 확인 페이지
           </p>
         </Section>
 
-        <Section background="surface">
+        <Section id="differentiation" background="surface">
           <h2 className="text-2xl font-semibold text-ink-900">Buttons</h2>
           <div className="mt-6 flex flex-wrap gap-4">
             <Button variant="primary">Primary Button</Button>
@@ -45,7 +52,7 @@ export default function App() {
           </div>
         </Section>
 
-        <Section background="surface-alt">
+        <Section id="roadmap" background="surface-alt">
           <h2 className="text-2xl font-semibold text-ink-900">Status Badges</h2>
           <div className="mt-6 flex flex-wrap gap-4">
             <Badge status="done">구현됨</Badge>
