@@ -17,10 +17,39 @@ import { render, screen } from '@testing-library/react';
 import App from './App';
 
 describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
-  it('Section 4종 배경이 모두 렌더된다 (canvas/surface/surface-alt/accent-soft)', () => {
+  it('Section 4종 배경이 모두 고유하게 렌더된다 (canvas/surface/surface-alt/accent-soft)', () => {
+    // v2: 리뷰 피드백 반영 — 이전 버전은 sections.length >= 4 만 검사해서
+    // 모든 섹션이 같은 배경으로 회귀해도 통과했다. 각 배경 클래스의 **실제
+    // 존재** 를 개별 검증하여 배경 회귀를 차단한다.
     const { container } = render(<App />);
     const sections = container.querySelectorAll('section');
     expect(sections.length).toBeGreaterThanOrEqual(4);
+
+    const allClassNames = Array.from(sections).map((s) => s.className);
+    const combined = allClassNames.join(' ');
+
+    // 4종 배경 클래스가 각각 1개 이상 존재해야 함
+    expect(combined).toMatch(/\bbg-canvas\b/);
+    expect(combined).toMatch(/\bbg-surface\b/);
+    expect(combined).toMatch(/\bbg-surface-alt\b/);
+    expect(combined).toMatch(/\bbg-accent-soft\b/);
+
+    // 중복 배경 회귀 방지: 각 섹션에서 bg-* 클래스를 추출해 고유값 4개 이상
+    const uniqueBgs = new Set(
+      allClassNames
+        .map((c) => c.match(/\bbg-[a-z-]+\b/)?.[0])
+        .filter((c): c is string => Boolean(c))
+    );
+    expect(uniqueBgs.size).toBeGreaterThanOrEqual(4);
+  });
+
+  it('Section id="features" 가 Anchor Link 대상으로 존재한다', () => {
+    // "Anchor Link" 버튼이 #features 를 가리키므로 대응 섹션이 DOM 에 있어야 함.
+    // 이 테스트가 없으면 데모 페이지의 앵커 네비가 silently broken 상태로
+    // 회귀할 수 있다.
+    const { container } = render(<App />);
+    expect(container.querySelector('#features')).not.toBeNull();
+    expect(container.querySelector('section#features')).not.toBeNull();
   });
 
   it('Button primary / secondary 버튼이 각각 존재한다', () => {
@@ -29,17 +58,25 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
     expect(screen.getByRole('button', { name: /Secondary Button/ })).toBeInTheDocument();
   });
 
-  it('Button anchor 링크는 href 내부 앵커, external 링크는 target="_blank"', () => {
+  it('Button anchor 링크는 내부 앵커, 명시적/자동 external 링크는 target="_blank"', () => {
     render(<App />);
     const anchor = screen.getByRole('link', { name: /Anchor Link/ });
     expect(anchor).toHaveAttribute('href', '#features');
     expect(anchor.getAttribute('target')).toBeNull();
 
+    // 명시적 external={true}
     const external = screen.getByRole('link', { name: /External Link/ });
     expect(external).toHaveAttribute('target', '_blank');
-    const rel = external.getAttribute('rel') ?? '';
-    expect(rel).toContain('noopener');
-    expect(rel).toContain('noreferrer');
+    const extRel = external.getAttribute('rel') ?? '';
+    expect(extRel).toContain('noopener');
+    expect(extRel).toContain('noreferrer');
+
+    // 자동 external 감지 (external prop 없이 http(s) URL 만 전달)
+    const auto = screen.getByRole('link', { name: /Auto External/ });
+    expect(auto).toHaveAttribute('target', '_blank');
+    const autoRel = auto.getAttribute('rel') ?? '';
+    expect(autoRel).toContain('noopener');
+    expect(autoRel).toContain('noreferrer');
   });
 
   it('Badge 3종(done/wip/planned) 라벨이 standalone 섹션에 모두 렌더된다', () => {

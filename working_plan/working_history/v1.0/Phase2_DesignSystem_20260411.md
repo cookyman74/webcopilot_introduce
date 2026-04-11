@@ -483,3 +483,188 @@ git commit -m "[P2] 디자인 시스템 + 공통 컴포넌트 — 토큰 · Sect
 ```
 
 **커밋 메시지 배경**: Phase 2 는 RED 2회차 + GREEN + REFACTOR 를 모두 한 세션에서 진행했고, 리뷰 피드백 반영분이 RED v1→v2 사이에 있었다. 결과서(§2.1)가 이 흐름을 기록하므로 커밋은 단일로 묶는다 (리뷰 v1 시점의 커밋 없음).
+
+---
+
+## 14. 작업 결과서 리뷰 후속 개선 (Phase 2 v2 — 결과서 기반 코드 리뷰)
+
+§1~§13 이 Phase 2 커밋 `8b4d0c2` 완료 시점을 기록한 것이라면, §14 는 **커밋 이후 결과서와 실제 코드를 교차 리뷰한 결과 드러난 4건의 이슈** 와 그 수정 내역이다. 본 섹션의 모든 변경은 Phase 2 후속 커밋에 포함된다.
+
+### 14.1 제기된 이슈 4건
+
+| # | 심각도 | 이슈 | 실측 재현 |
+|---|--------|------|----------|
+| A | **Medium** | 데모 페이지의 "Anchor Link" 가 `#features` 를 가리키지만 어떤 Section 도 `id="features"` 를 노출하지 않음 → 앵커 네비 broken | ✅ `grep "id=" src/App.tsx` = no match |
+| B | **Medium** | `tsconfig.app.json` 의 types 에 `"node"` 추가로 인해 브라우저 src/ 코드가 node API 를 import 해도 typecheck 통과 → 경계 누출 | ✅ probe 파일로 src/ 에 `import { readFileSync } from 'node:fs'` 삽입 → typecheck 0 errors |
+| C | **Low** | `App.test.tsx` 의 "Section 4종 배경" 테스트가 단순 개수만 검사 → 모든 섹션이 같은 배경으로 회귀해도 통과 | ✅ 시뮬레이션: 4개 섹션 모두 `bg-canvas` 일 때 `sections.length >= 4` true |
+| D | **Medium** (Deep Dive ②) | Button 의 `external` prop 누락 시 http(s) URL 이 noopener/noreferrer 없이 렌더 → tabnabbing 공격 표면 | ✅ 로직 시뮬레이션: `external=undefined` 시 `externalProps = {}` |
+
+### 14.2 수정 내역
+
+#### 14.2.1 Issue A — Anchor 대상 `id="features"` 추가
+
+**`src/App.tsx`**:
+```diff
+- <Section background="accent-soft">
++ <Section id="features" background="accent-soft">
+    <h2 className="text-2xl font-semibold text-ink-900">Feature Cards</h2>
+```
+
+Feature Cards 섹션 자체가 "Anchor Link" 버튼이 의도한 목적지로 가장 자연스럽다. 실제로 이 섹션이 앵커 점프의 타겟이 된다.
+
+**대응 가드** — `App.test.tsx` 신규 assertion:
+```tsx
+it('Section id="features" 가 Anchor Link 대상으로 존재한다', () => {
+  const { container } = render(<App />);
+  expect(container.querySelector('#features')).not.toBeNull();
+  expect(container.querySelector('section#features')).not.toBeNull();
+});
+```
+
+#### 14.2.2 Issue B — 브라우저/테스트 tsconfig 격리 (tsconfig.test.json 신규)
+
+**문제 구조**:
+v2.0 에서 `design-system.config.test.ts` 가 `node:fs/path/url` 을 import 하면서 `tsconfig.app.json` 의 types 에 `"node"` 를 추가했다. 이는 테스트 1개 파일을 위해 **전체 src/ 브라우저 코드** 에 node ambient 타입을 노출한 부작용이 있었다.
+
+**해결**:
+1. `tsconfig.app.json` 의 types 에서 `"node"` 제거
+2. `tsconfig.app.json` 의 `exclude` 에 `["src/**/*.test.ts", "src/**/*.test.tsx"]` 추가
+3. `tsconfig.test.json` 신규 작성 — `tsconfig.app.json` 을 extends 하고 types 에 `"node"` 추가, include 는 test 파일만, exclude 는 `[]` 로 override (extends 로 상속된 exclude 가 include 를 가리는 현상 방지)
+4. `package.json` typecheck 스크립트를 `tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.test.json` 로 변경 — 두 projec 모두 검사
+
+**검증 (돌연변이 테스트)**:
+src/ 에 `import { readFileSync } from 'node:fs'` 를 가진 probe 파일 추가 → `npm run typecheck` 결과:
+```
+src/probe_node_leak.tsx(1,30): error TS2591: Cannot find name 'node:fs'.
+```
+
+즉 **브라우저 src/ 에서 node API 사용이 타입 수준에서 차단됨**. 테스트 파일에서는 여전히 정상 사용 가능.
+
+**주의사항**:
+- `extends` 가 `include`/`exclude` 를 상속하는 TypeScript 동작 때문에, `tsconfig.test.json` 에 `exclude: []` 를 명시해야 한다. 생략하면 부모의 `exclude` 를 상속받아 테스트 파일이 모두 제외되고 "No inputs were found" 오류 발생. 시행착오에서 발견된 제약.
+
+#### 14.2.3 Issue C — App.test.tsx 배경 고유성 검증 강화
+
+**Before** (단순 개수):
+```tsx
+it('Section 4종 배경이 모두 렌더된다 ...', () => {
+  const sections = container.querySelectorAll('section');
+  expect(sections.length).toBeGreaterThanOrEqual(4);
+});
+```
+
+**After** (4종 배경 클래스 각각 실재 + 고유값 4개 이상):
+```tsx
+it('Section 4종 배경이 모두 고유하게 렌더된다 ...', () => {
+  const { container } = render(<App />);
+  const sections = container.querySelectorAll('section');
+  expect(sections.length).toBeGreaterThanOrEqual(4);
+
+  const combined = Array.from(sections).map((s) => s.className).join(' ');
+  expect(combined).toMatch(/\bbg-canvas\b/);
+  expect(combined).toMatch(/\bbg-surface\b/);
+  expect(combined).toMatch(/\bbg-surface-alt\b/);
+  expect(combined).toMatch(/\bbg-accent-soft\b/);
+
+  const uniqueBgs = new Set(
+    Array.from(sections)
+      .map((s) => s.className.match(/\bbg-[a-z-]+\b/)?.[0])
+      .filter((c): c is string => Boolean(c))
+  );
+  expect(uniqueBgs.size).toBeGreaterThanOrEqual(4);
+});
+```
+
+#### 14.2.4 Issue D (Deep Dive ②) — Button external 자동 감지
+
+**구현 변경**: `src/components/common/Button.tsx` 에 `isHttpUrl(href)` 헬퍼 추가 + nullish coalescing 기반 자동 감지:
+
+```tsx
+function isHttpUrl(href: string): boolean {
+  return /^https?:\/\//i.test(href);
+}
+
+// ...
+if (href !== undefined) {
+  // external 이 명시되면 그 값, 생략되면 URL 기반 자동 판정
+  const shouldBeExternal = external ?? isHttpUrl(href);
+  const externalProps = shouldBeExternal
+    ? { target: '_blank', rel: 'noopener noreferrer' }
+    : {};
+  // ...
+}
+```
+
+**동작 규약**:
+- `external={true}`  → 명시적 외부 (target=_blank + noopener noreferrer)
+- `external={false}` → 명시적 내부 (http(s) URL 이어도 동일 탭) — 자사 도메인 네비게이션 등 opt-out 경로 보존
+- `external` 생략    → `href` 가 `http(s)://` 면 자동 true, 아니면 자동 false
+
+**테스트 강화** — `Button.test.tsx` 에 `자동 외부 링크 감지 (http(s)://)` describe 블록 신규 (4 assertion):
+1. http(s) URL 은 external 생략 시에도 자동 target+rel 부여
+2. http:// URL 도 동일 (https 만 아님)
+3. `external={false}` 명시 opt-out 시 동일 탭
+4. 내부 경로 (`/path`, `#anchor`, `mailto:`) 는 자동 external 에서 제외
+
+**데모 페이지 노출** — `App.tsx` 에 "Auto External" 버튼 추가:
+```tsx
+<Button href="https://auto-detected.example.com" variant="secondary">
+  Auto External
+</Button>
+```
+`external` prop 없이 http(s) URL 만 전달 → 자동 감지가 작동해 target=_blank + rel=noopener noreferrer 가 부여되는지 App.test.tsx 가 통합 검증.
+
+### 14.3 돌연변이 테스트 결과 (v2 가드 유효성 증명)
+
+각 수정된 가드가 의도한 회귀 시나리오를 정확히 검출하는지 돌연변이 테스트 4건 수행:
+
+| Mutation | 수정 대상 가드 | 결과 |
+|----------|---------------|------|
+| M1: `id="features"` 제거 | App.test.tsx "Section id='features' 존재" | ✅ FAIL |
+| M2: src/ 에 `import { readFileSync } from 'node:fs'` 삽입 | tsconfig.app.json 격리 | ✅ FAIL (TS2591) |
+| M3: 모든 Section `background` 를 `canvas` 로 회귀 | App.test.tsx "Section 4종 배경 고유" | ✅ FAIL |
+| M4: Button 의 `external ?? isHttpUrl(href)` 를 `external` 로 되돌림 | Button.test.tsx 자동 감지 3건 + App.test.tsx "Auto External" | ✅ FAIL (3건 동시) |
+
+모든 돌연변이가 정확히 의도한 가드에서 탐지됐고, 복구 후 전 회귀 통과 확인.
+
+### 14.4 Deep Dive Low 이슈 — 처리 정책
+
+리뷰에 포함된 Low 이슈 3건은 **의도적으로 코드 변경 없이 인지만** 하는 것으로 결정:
+
+| # | 이슈 | 결정 |
+|---|------|------|
+| ① | Section 유연성 부족 (BG_MAP 4종 제한) | **의도된 제약** — 배경 추가는 기획/디자인 승인을 거친 의식적 변경이어야 하므로 TypeScript union 으로 강제하는 것이 바람직. Phase 10 까지 진행 중 새 배경이 실제로 필요하면 그 시점에 `bgMap` 확장 + 대응 테스트 추가 |
+| ③ | placeholder.svg 비율 제한 (현재 1개) | **Phase 2 범위 외** — Phase 4+ 에서 Hero, Feature, Scenario 섹션이 실제 목업 이미지를 요구할 때 비율별 (16:9 · 1:1 · 4:3) 로 분리. 현재는 placeholder 1개로 충분 (각 섹션이 CSS 로 aspect 를 제어) |
+| ④ | 테스트 실행 속도 누적 | **현 시점 무관** — 현재 `verify_phase1.mjs` + Phase 2 신규 84개 테스트 총 실행 ~3초 수준. Phase 5 이후 섹션 테스트가 본격 추가되면 실측 후 변경 파일 기반 분산 실행 전략 검토 |
+
+### 14.5 수정 후 최종 회귀 상태
+
+```
+npm run lint         → 0 errors, 0 warnings
+npm run typecheck    → 0 errors  (tsconfig.app.json + tsconfig.test.json 양쪽)
+npm run format:check → 전체 규범 준수
+npm test             → Test Files 6 passed (6) · Tests 84 passed | 3 skipped (87)
+npm run build        → JS 194.72 KB / CSS 8.42 KB
+
+node working_plan/scripts/verify_phase1.mjs
+  → 23 PASS / 0 FAIL / 총 23
+```
+
+테스트 수 변화: 80 → **84** (+4)
+- Section id="features" 검증: +1
+- Section 배경 고유성 강화: 기존 1개 재작성
+- Button 자동 external 감지: +4 (4 케이스)
+- App 데모의 "Auto External" 버튼 검증: +1 (기존 External Link 테스트 확장)
+
+### 14.6 v2 산출물 추가 수정 파일
+
+| 파일 | 변경 종류 |
+|------|----------|
+| `extapp_landing/tsconfig.app.json` | types 에서 `"node"` 제거 + test 파일 exclude 추가 |
+| `extapp_landing/tsconfig.test.json` | **신규** — app 상속 + node types + test 파일 include + exclude override |
+| `extapp_landing/package.json` | typecheck 스크립트가 두 tsconfig 모두 실행 |
+| `extapp_landing/src/App.tsx` | Feature Cards 섹션에 `id="features"` + Auto External 버튼 |
+| `extapp_landing/src/App.test.tsx` | 배경 고유성 강화 + Section id 검증 + Auto External 검증 |
+| `extapp_landing/src/components/common/Button.tsx` | `isHttpUrl()` 헬퍼 + `external ?? isHttpUrl(href)` 자동 감지 |
+| `extapp_landing/src/components/common/Button.test.tsx` | "자동 외부 링크 감지" describe 블록 4 케이스 추가 |
+

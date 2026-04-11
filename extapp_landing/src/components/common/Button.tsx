@@ -7,8 +7,10 @@ import clsx from 'clsx';
  * 책임:
  *   1. `href` 유무로 `<a>` / `<button>` semantic 선택
  *   2. `variant` 로 primary / secondary 시각 구분
- *   3. `external=true` 시 `target="_blank" rel="noopener noreferrer"` 자동
- *      — tabnabbing 방지 + Referer 전송 차단 (두 속성 모두 필수)
+ *   3. **외부 링크 자동 감지**: `href` 가 `http(s)://` 로 시작하면 자동으로
+ *      external 로 간주되어 `target="_blank" rel="noopener noreferrer"` 가
+ *      부여된다. 개발자가 `external` prop 을 잊어도 보안 속성이 누락되지 않음.
+ *      `external={false}` 로 명시적 opt-out 가능 (동일 탭 이동을 강제할 때).
  *   4. children 그대로 렌더 (텍스트 + 선택적 아이콘)
  *
  * 테스트: src/components/common/Button.test.tsx (TEST-P2.4)
@@ -17,8 +19,19 @@ type ButtonProps = {
   href?: string;
   variant?: 'primary' | 'secondary';
   children: ReactNode;
+  /**
+   * 외부 링크 여부.
+   * - `true`:  명시적으로 외부 링크 (target=_blank + noopener noreferrer)
+   * - `false`: 명시적으로 내부 링크 (http(s) URL 이어도 동일 탭 이동)
+   * - `undefined` (기본): `href` 가 http(s) 면 자동 true, 아니면 자동 false
+   */
   external?: boolean;
 };
+
+/** http(s) URL 판정 — 자동 external 감지용 */
+function isHttpUrl(href: string): boolean {
+  return /^https?:\/\//i.test(href);
+}
 
 const BASE_CLASS =
   'inline-flex items-center justify-center rounded-2xl px-6 py-3 text-base font-semibold transition';
@@ -32,7 +45,10 @@ export function Button({ href, variant = 'primary', children, external }: Button
   const classes = clsx(BASE_CLASS, VARIANT_CLASS[variant]);
 
   if (href !== undefined) {
-    const externalProps = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+    // external prop 이 명시되면 그 값을 그대로, 생략되면 URL 기반 자동 판정.
+    // 이렇게 해서 개발자가 외부 URL 에 external 을 까먹어도 기본값이 안전.
+    const shouldBeExternal = external ?? isHttpUrl(href);
+    const externalProps = shouldBeExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {};
     return (
       <a href={href} className={classes} {...externalProps}>
         {children}

@@ -86,18 +86,53 @@ describe('TEST-P2.4 — Button 공통 컴포넌트', () => {
       expect(rel).toContain('noreferrer');
     });
 
-    it('external prop 이 없으면 target 속성이 설정되지 않는다', () => {
+    it('내부 앵커(#anchor)는 external 생략 시 target 속성이 없다', () => {
       render(<Button href="#features">기능 살펴보기</Button>);
       const el = screen.getByRole('link', { name: '기능 살펴보기' });
       expect(el.getAttribute('target')).toBeNull();
     });
 
-    it('internal 링크(#anchor)는 external 무관하게 target 이 없어야 한다', () => {
-      // 내부 앵커에 external 이 실수로 켜지면 UX 가 깨지므로, 사용 규약상
-      // external 은 https:// 외부 URL 에만 붙이도록 교육적으로 분리.
-      // (런타임 강제는 하지 않으나 기본 동작에서 안전한지만 확인)
-      render(<Button href="#features">기능 살펴보기</Button>);
-      expect(screen.getByRole('link').getAttribute('target')).toBeNull();
+    // v2: Deep Dive ② 리뷰 피드백 반영 — external prop 누락 시 외부 URL 보호
+    describe('자동 외부 링크 감지 (http(s)://)', () => {
+      it('http(s):// URL 은 external 생략 시에도 자동으로 외부 링크로 처리된다', () => {
+        // 실수로 external 을 까먹어도 tabnabbing 방지 속성이 자동 부여됨.
+        render(<Button href="https://evil.example.com">No external prop</Button>);
+        const el = screen.getByRole('link', { name: 'No external prop' });
+        expect(el).toHaveAttribute('target', '_blank');
+        const rel = el.getAttribute('rel') ?? '';
+        expect(rel).toContain('noopener');
+        expect(rel).toContain('noreferrer');
+      });
+
+      it('http:// URL 도 동일하게 자동 external 처리된다', () => {
+        render(<Button href="http://insecure.example.com">Plain HTTP</Button>);
+        const el = screen.getByRole('link', { name: 'Plain HTTP' });
+        expect(el).toHaveAttribute('target', '_blank');
+      });
+
+      it('external={false} 로 명시 opt-out 시 http(s) URL 도 동일 탭 이동', () => {
+        // 특수 목적(예: 자사 도메인으로의 네비게이션) 에 한해 명시적으로
+        // 자동 external 을 끌 수 있어야 한다. 이 오버라이드가 깨지면 UX 가
+        // 강제로 새 탭 이동이 되어 사용자 경험이 부자연스러워진다.
+        render(
+          <Button href="https://self-domain.example.com" external={false}>
+            Same tab
+          </Button>
+        );
+        const el = screen.getByRole('link', { name: 'Same tab' });
+        expect(el.getAttribute('target')).toBeNull();
+        expect(el.getAttribute('rel')).toBeNull();
+      });
+
+      it('내부 경로 (/path, #anchor) 는 자동 external 감지에서 제외된다', () => {
+        const cases = ['/about', '#features', '/products?id=1', 'mailto:x@y.z'];
+        for (const href of cases) {
+          const { unmount } = render(<Button href={href}>{href}</Button>);
+          const el = screen.getByRole('link', { name: href });
+          expect(el.getAttribute('target')).toBeNull();
+          unmount();
+        }
+      });
     });
   });
 

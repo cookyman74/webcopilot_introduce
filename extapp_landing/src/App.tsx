@@ -31,6 +31,9 @@ export default function App() {
           <Button href="https://example.com" variant="primary" external>
             External Link
           </Button>
+          <Button href="https://auto-detected.example.com" variant="secondary">
+            Auto External
+          </Button>
         </div>
       </Section>
 
@@ -43,7 +46,7 @@ export default function App() {
         </div>
       </Section>
 
-      <Section background="accent-soft">
+      <Section id="features" background="accent-soft">
         <h2 className="text-2xl font-semibold text-ink-900">Feature Cards</h2>
         <p className="mt-2 text-sm text-ink-500">
           좌: 상태 배지 포함 (Features/Roadmap 용) · 우: 상태 배지 없음 (BusinessSection 용 — Phase
