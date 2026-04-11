@@ -1,0 +1,16 @@
+{
+  "header": {
+    "nav": {
+      "features": "기능",
+      "scenarios": "시나리오",
+      "differentiation": "차별점",
+      "roadmap": "로드맵"
+    },
+    "cta": "Chrome에 추가하기"
+  },
+  "footer": {
+    "copyright": "© 2026 Web AI Assistant",
+    "docs": "문서",
+    "contact": "문의"
+  }
+}

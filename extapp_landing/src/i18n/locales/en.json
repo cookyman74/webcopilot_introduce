@@ -1,0 +1,16 @@
+{
+  "header": {
+    "nav": {
+      "features": "Features",
+      "scenarios": "Scenarios",
+      "differentiation": "Differentiation",
+      "roadmap": "Roadmap"
+    },
+    "cta": "Add to Chrome"
+  },
+  "footer": {
+    "copyright": "© 2026 Web AI Assistant",
+    "docs": "Docs",
+    "contact": "Contact"
+  }
+}
