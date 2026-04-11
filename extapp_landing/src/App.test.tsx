@@ -122,12 +122,20 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
 
   it('FeatureCard 2 케이스: 배지 포함 1개 + 배지 없음 1개 (BusinessSection 프리뷰)', () => {
     const { container } = render(<App />);
-    const articles = container.querySelectorAll('article');
+    // Phase 4+ 대비 scope 격리: ProblemSection(4 article) · Features/Roadmap 등이
+    // 추가되면 글로벌 article 카운트가 바뀌므로 features 섹션 내부로 한정.
+    // 이렇게 하면 Phase 4 이후에도 이 가드는 정확히 FeatureCard 2 케이스만 검증.
+    const featureSection = container.querySelector('section#features');
+    expect(featureSection).not.toBeNull();
+    const articles = featureSection?.querySelectorAll('article') ?? [];
     expect(articles.length).toBe(2);
 
-    // 데모 페이지에는 전체 Badge 3개(status section) + FeatureCard 내부 1개
-    // = 총 4개 Badge 가 존재한다. FeatureCard without status 가 Badge 를
-    // 추가로 렌더했다면 이 카운트가 5 이상이 된다.
+    // 데모 페이지 badge 집계:
+    //   - 3 standalone Badge (roadmap 섹션의 데모 Status Badges)
+    //   - 1 FeatureCard with status (features 섹션 내부)
+    //   = total 4
+    // Phase 5 FeaturesSection 이 실제 Feature Card 배지를 추가하면 이 카운트가
+    // 바뀌므로 그 시점에 scope 격리 또는 >= 4 로 재조정 필요.
     const badges = container.querySelectorAll('[data-testid="status-badge"]');
     expect(badges.length).toBe(4);
   });
@@ -136,8 +144,13 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
     // 데모 페이지의 두 번째 FeatureCard 는 status 없이 렌더되어야 하며,
     // 그 article 내부에는 status-badge testid 가 없어야 한다 (Phase 8
     // TEST-P8.9 의 선행 가드).
+    //
+    // Phase 4+ 대비 scope 격리: section#features 내부에서만 찾아 ProblemSection
+    // 등 다른 article 에 영향받지 않도록 함.
     const { container } = render(<App />);
-    const articles = Array.from(container.querySelectorAll('article'));
+    const featureSection = container.querySelector('section#features');
+    expect(featureSection).not.toBeNull();
+    const articles = Array.from(featureSection?.querySelectorAll('article') ?? []);
     const previewArticle = articles.find((a) => a.textContent?.includes('페이지 문맥 기반 AI'));
     expect(previewArticle).toBeTruthy();
     expect(previewArticle?.querySelectorAll('[data-testid="status-badge"]').length).toBe(0);
