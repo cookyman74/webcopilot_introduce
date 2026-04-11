@@ -285,7 +285,7 @@ phase01_bootstrap.md Definition of Done 기준:
 - [x] .gitignore node_modules, dist
 - [x] 디렉토리 뼈대 (다음 Phase 준비)
 - [x] 작업 결과서 작성 *(이 문서)*
-- [ ] 변경사항 커밋 (사용자 승인 후 진행)
+- [x] 변경사항 커밋 완료 — `e9a5e56` (v2.0 + v2.1 통합 커밋, 12 files / 1018 insertions / 40 deletions)
 
 ---
 
