@@ -215,6 +215,7 @@
 
 - [ ] **[REFACTOR-STRUCTURE]** i18n 네임스페이스 분리 검토
   - 1차엔 단일 translation 네임스페이스 유지 (YAGNI)
+  - **섹션별 최상위 키 예약**: hero / problem / solution / features / scenarios / differentiation / aiModes / safety / roadmap / **business** *(v2)* / finalCta — 이후 Phase들에서 추가될 네임스페이스 목록. ko/en 키 동기화 테스트가 모든 추가 네임스페이스를 자동 검증한다.
   - 결과 문서에 결정 근거 기록
 
 - [ ] **[REFACTOR-VERIFY]** 리팩터링 후 테스트 재확인

@@ -57,8 +57,9 @@ It performs 18 checks (TEST-P1.1..P1.18) covering file existence, wiring, and ru
 
 The current code is a Phase-1 bootstrap (`App.tsx` renders a single "Bootstrap OK" heading). The target architecture, which phases 2–9 build out, is:
 
-- **Single-page landing** composed of 10 sections rendered top-to-bottom in `App.tsx`:
-  Hero → Problem → Solution → Features → Scenarios → Differentiation → AIModes → Safety → Roadmap → FinalCTA
+- **Single-page landing** composed of **11 sections** rendered top-to-bottom in `App.tsx`:
+  Hero → Problem → Solution → Features → Scenarios → Differentiation → AIModes → Safety → Roadmap → **Business** → FinalCTA
+  - The `Business` section (added in plan v2) is aimed at companies that want to adopt or license the underlying tech (page-context AI, Action Tools, script infra). It sits between Roadmap and FinalCTA, is deliberately **not** linked from the Header nav (to avoid diluting the install CTA), has **no status badges** (it pitches reusability, not product-feature status), and its primary CTA is `mailto:${PARTNERSHIP_CONTACT}` — kept separate from the Chrome Web Store CTA that FinalCTA owns.
 - **Component layers** under `src/components/`:
   - `layout/` — Header (sticky nav + LanguageSwitcher + CTA), Footer
   - `common/` — `Section` wrapper, `Button`, `Badge`, `FeatureCard` (reused across sections)

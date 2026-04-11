@@ -39,6 +39,8 @@
 | 5 | 모바일 레이아웃 깨짐 | Medium | 각 섹션 Phase의 GREEN-VERIFY에 3개 브레이크포인트 시각 확인 포함 | P4~P9 | ⬜ |
 | 6 | placeholder 이미지 누락으로 깨진 이미지 노출 | Low | `public/images/` 빈 SVG placeholder 생성 + alt 명시 | P2 | ⬜ |
 | 7 | Chrome Web Store CTA URL 오타 | High | `lib/constants.ts`에 단일 출처로 관리 + Phase 8 테스트에서 검증 | P2, P8 | ⬜ |
+| 8 | BusinessSection이 일반 제품 카피와 섞여 B2B 메시지가 묻힘 | Medium | §5.10 대상 태그 명시 · Badge 사용 금지 · 배경/톤 구분 · Phase 8 테스트에서 Badge 부재 강제 | P8 | ⬜ |
+| 9 | Partnership 문의 이메일 주소 오타/누락 | Medium | `lib/constants.ts`의 `PARTNERSHIP_CONTACT` 단일 출처 + Phase 8 상수 테스트에서 검증 | P2, P8 | ⬜ |
 
 ---
 
@@ -55,7 +57,7 @@
 | P5 | Solution + Features 섹션 | SolutionSection, FeaturesSection | 3축 카드 + 9개 기능 카드 + 상태 배지 시각 확인 | [phase05_solution_features.md](./phase05_solution_features.md) |
 | P6 | Scenarios + Differentiation 섹션 | ScenariosSection, DifferentiationSection | 4개 시나리오, 3개 비교 카드 시각 확인 | [phase06_scenarios_differentiation.md](./phase06_scenarios_differentiation.md) |
 | P7 | AI Modes + Safety 섹션 | AIModesSection, SafetySection | 모드 배지 + 4개 안전 원칙 카드 시각 확인 | [phase07_aimodes_safety.md](./phase07_aimodes_safety.md) |
-| P8 | Roadmap + Final CTA 섹션 | RoadmapSection, FinalCTASection | 로드맵 카드 + Chrome Web Store CTA 동작 | [phase08_roadmap_finalcta.md](./phase08_roadmap_finalcta.md) |
+| P8 | Roadmap + **Business** + Final CTA 섹션 | RoadmapSection, **BusinessSection**, FinalCTASection | 로드맵 카드 + B2B 섹션 + Chrome Web Store CTA 동작 | [phase08_roadmap_finalcta.md](./phase08_roadmap_finalcta.md) |
 | P9 | 반응형 / a11y / SEO / 프로덕션 빌드 | meta, OG, lighthouse, build 검증 | `npm run build` 성공 + 모바일/태블릿/데스크톱 깨짐 없음 | [phase09_responsive_seo_build.md](./phase09_responsive_seo_build.md) |
 | P10 | Vercel 자동 배포 | vercel.json (필요 시), GitHub 연동 | git push → Vercel Production URL에서 정상 서빙 | [phase10_vercel_deploy.md](./phase10_vercel_deploy.md) |
 
@@ -102,12 +104,14 @@
 - [ ] Vercel Production 배포 성공
 
 ### 기능 완성도
-- [ ] 10개 섹션이 순서대로 렌더링됨
+- [ ] **11개 섹션**이 순서대로 렌더링됨 *(v2: BusinessSection 추가)*
 - [ ] 한국어/영어 전환이 동작함
 - [ ] 일본어/중국어 locale 파일 뼈대 존재 (값은 비워둠)
 - [ ] 주 CTA가 Chrome Web Store로 이동함
-- [ ] 상태 배지 3종(`구현됨`/`보강 중`/`계획·검토 중`)이 기획서 규칙대로 적용됨
+- [ ] **BusinessSection Primary CTA가 `mailto:${PARTNERSHIP_CONTACT}` 로 열림**
+- [ ] 상태 배지 3종(`구현됨`/`보강 중`/`계획·검토 중`)이 기획서 규칙대로 적용됨 *(BusinessSection 카드 제외)*
 - [ ] Roadmap 섹션이 "미래 방향"으로 명확히 구분됨
+- [ ] BusinessSection이 일반 사용자 섹션과 시각·카피 면에서 명확히 구분됨
 - [ ] 데스크톱/태블릿/모바일 3개 브레이크포인트에서 깨짐 없음
 
 ### 배포
@@ -140,7 +144,7 @@
 | P5 Solution+Features | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | P6 Scenarios+Diff | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | P7 AIModes+Safety | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
-| P8 Roadmap+CTA | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| P8 Roadmap+Business+CTA | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | P9 반응형/SEO/빌드 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | P10 Vercel 배포 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
@@ -205,10 +209,10 @@
 | P5 Solution+Features | 1일 | — | — | 9개 카드 작성 부담 |
 | P6 Scenarios+Diff | 1일 | — | — | |
 | P7 AIModes+Safety | 1일 | — | — | |
-| P8 Roadmap+CTA | 1일 | — | — | |
+| P8 Roadmap+Business+CTA | 1~1.5일 | — | — | 3개 섹션 (v2 BusinessSection 추가로 확장) |
 | P9 반응형/SEO/빌드 | 1일 | — | — | Lighthouse 보정 시 +0.5일 |
 | P10 Vercel 배포 | 0.5~1일 | — | — | Root Directory 이슈 시 +0.5일 |
-| **Total** | **9.5~11일** | — | — | |
+| **Total** | **10~11.5일** | — | — | v2 BusinessSection으로 P8이 +0.5일 |
 
 ---
 

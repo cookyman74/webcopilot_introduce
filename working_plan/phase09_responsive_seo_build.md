@@ -1,6 +1,6 @@
 # Phase 9: 반응형 / a11y / SEO / 프로덕션 빌드 검증
 
-> **목표**: 본문 10개 섹션이 완성된 상태에서 모바일/태블릿/데스크톱 반응형 완성도, 접근성, SEO 메타, 프로덕션 빌드 품질을 확정한다.
+> **목표**: 본문 **11개 섹션** *(v2: BusinessSection 포함)*이 완성된 상태에서 모바일/태블릿/데스크톱 반응형 완성도, 접근성, SEO 메타, 프로덕션 빌드 품질을 확정한다.
 > **상위 계획서**: [main_landing_todolist.md](./main_landing_todolist.md)
 > **예상 소요**: 1일 (Lighthouse 보정 시 +0.5일)
 > **E2E 확인 단위**: `npm run build && npm run preview`로 빌드 산출물이 정상 서빙되며, 3개 브레이크포인트에서 깨짐 없이 노출되고 Lighthouse Performance/Accessibility 모두 90 이상.
@@ -10,8 +10,8 @@
 ## 9.1 사전 작업
 
 - [ ] **[REVIEW]** 이전 Phase 결과서 검토
-  - 파일: `working_history/v1.0/Phase8_RoadmapFinalCta_*.md`
-  - 확인: 10개 섹션 본문 완성 마일스톤, 베이스라인 번들 크기 기록
+  - 파일: `working_history/v1.0/Phase8_RoadmapBusinessFinalCta_*.md` *(v2)*
+  - 확인: **11개 섹션** 본문 완성 마일스톤, 베이스라인 번들 크기 기록
 
 - [ ] **[CONTEXT]** 작업 목적 확인
   - 구현 계획서 8장 Phase 4 (반응형 검증)
@@ -116,6 +116,7 @@
 - [ ] **[TASK-003]** 외부 링크 rel 속성 점검
   - `Button` 컴포넌트의 `external` prop이 적용되는 모든 호출처 확인
   - Header CTA, Hero Primary CTA, Final CTA 모두 `external` 명시
+  - **BusinessSection Primary CTA는 `mailto:` 이므로 `external` 대신 `rel="noopener"` 만 (새 탭 필요 없음)** *(v2)*
 
 - [ ] **[TASK-004]** 반응형 점검 후 깨진 곳 보정
   - 모바일에서 가로 스크롤 발생하는 섹션 식별
@@ -160,8 +161,8 @@
 ### 9.4.2 빌드 최적화 (Make it fast)
 
 - [ ] **[REFACTOR-PERF-MEASURE]** 최종 번들 크기 측정
-  | 파일 | P8 베이스라인 | P9 최종 | 변화 |
-  |------|---------------|---------|------|
+  | 파일 | P8 베이스라인 *(11 섹션 완성)* | P9 최종 | 변화 |
+  |------|-----------|---------|------|
   | dist/assets/index-*.js | [P8 값] | [측정] | [Δ] |
   | dist/assets/index-*.css | [P8 값] | [측정] | [Δ] |
   | dist/index.html | — | [측정] | — |
@@ -211,7 +212,7 @@
   - **모바일**: Chrome DevTools Device Toolbar → iPhone SE (375×667)
   - **태블릿**: iPad (768×1024)
   - **데스크톱**: 1280×800, 1920×1080
-  - 각 폭에서 10개 섹션 모두 스크롤하며 확인
+  - 각 폭에서 **11개 섹션** 모두 스크롤하며 확인 (BusinessSection의 3카드 그리드 반응형 특별 확인)
 
 - [ ] **[VERIFY]** 키보드 접근성 (수동)
   - Tab 키만으로 Header → 모든 CTA → Footer 순회 가능

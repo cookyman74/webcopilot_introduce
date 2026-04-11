@@ -112,8 +112,8 @@
 
 - [ ] **[TASK-007]** Production URL 확인
   - Vercel이 발급한 기본 도메인(예: `extapp-landing.vercel.app`) 접속
-  - 10개 섹션 모두 정상 노출 확인
-  - 한↔영 토글, CTA 4곳, 앵커 네비 모두 동작 확인
+  - **11개 섹션** 모두 정상 노출 확인 *(v2)*
+  - 한↔영 토글, **CTA 경로 5곳**(Header / Hero Primary / Final / **Business mailto** / Hero Secondary 앵커), 앵커 네비 모두 동작 확인
 
 - [ ] **[TASK-008]** 자동 재배포 검증
   - 작은 수정(예: footer 저작권 연도) 1건 커밋 → push
@@ -175,13 +175,15 @@
 
 - [ ] **[VERIFY]** 전체 검증 체크리스트 (Production 기준)
   - [ ] Production URL HTTP 200
-  - [ ] 10개 섹션 정상 노출
+  - [ ] **11개 섹션** 정상 노출 *(v2)*
   - [ ] 한↔영 토글 동작 + 새로고침 후 유지
   - [ ] Header CTA → Chrome Web Store 새 탭
   - [ ] Hero Primary CTA → Chrome Web Store 새 탭
   - [ ] Hero Secondary CTA → `#features` 스크롤
+  - [ ] **Business Primary CTA → `mailto:${PARTNERSHIP_CONTACT}` 로 메일 클라이언트 열림** *(v2)*
+  - [ ] **Business Section 카드에 상태 배지 부재 확인** *(v2)*
   - [ ] Final Primary CTA → Chrome Web Store 새 탭
-  - [ ] Header 네비 4개 앵커(features/scenarios/differentiation/roadmap) 정확
+  - [ ] Header 네비 4개 앵커(features/scenarios/differentiation/roadmap) 정확 — **`#business`는 네비에 없음 확인**
   - [ ] 모바일/태블릿/데스크톱 3개 폭에서 깨짐 없음
   - [ ] Lighthouse Performance/Accessibility ≥ 목표치
   - [ ] 자동 재배포 1회 검증 완료
