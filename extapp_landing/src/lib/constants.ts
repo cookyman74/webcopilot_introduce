@@ -58,5 +58,6 @@ export const PARTNERSHIP_CONTACT = 'cookyman@gmail.com';
  * 문서/가이드 링크 — BusinessSection Secondary CTA · FinalCTA Secondary CTA 대상.
  *
  * FIXME: 실제 문서 URL (GitHub Pages / Notion 등) 확정 시 교체.
+ * 현재는 Chrome 확장앱 Web Store 페이지를 임시 문서 링크로 사용.
  */
-export const DOCS_URL = 'https://github.com/anthropics';
+export const DOCS_URL = 'https://chromewebstore.google.com/detail/cpemgmhplednniaifpolbchjmegidcao';

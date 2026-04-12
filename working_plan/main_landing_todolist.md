@@ -145,7 +145,7 @@
 | P6 Scenarios+Diff | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (RED 리뷰 반영 · 데모 2개 교체 · 272 passed) |
 | P7 AIModes+Safety | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (AI 모드 5종 + 안전 원칙 4종 · 과장 금지 가드 · 320 passed) |
 | P8 Roadmap+Business+CTA | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (**11개 섹션 완성** · 데모 전부 소멸 · accent-soft 복구 · 367 passed) |
-| P9 반응형/SEO/빌드 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| P9 반응형/SEO/빌드 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (SEO 메타 · a11y 4종 테스트 · heading 구조 검증 · 382 passed · Lighthouse 수동 대기) |
 | P10 Vercel 배포 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
 ---
@@ -209,8 +209,8 @@
 | P5 Solution+Features | 1일 | 2026-04-12 | 2026-04-12 | ✅ lucide-react 12아이콘. SolutionSection 3축 + FeaturesSection 9카드(done×7+wip×1+planned×1). 데모 #features 대체. 240 passed. JS 266.11KB gzip 84.82KB |
 | P6 Scenarios+Diff | 1일 | 2026-04-12 | 2026-04-12 | ✅ ScenariosSection 4카드 + DifferentiationSection 3 비교카드. 데모 scenarios/differentiation 교체. 272 passed. JS 271.54KB gzip 86.38KB |
 | P7 AIModes+Safety | 1일 | 2026-04-12 | 2026-04-12 | ✅ AIModesSection 6종(클라우드3+로컬3 · Didim→Claude/GpuStack) + SafetySection 4원칙. 과장 금지 가드. 326 passed. JS 279.86KB gzip 88.71KB |
-| P8 Roadmap+Business+CTA | 1일 | 2026-04-12 | 2026-04-12 | ✅ **11개 섹션 본문 완성**. Roadmap 3카드(done 금지) + BusinessSection 3카드(Badge 금지) + FinalCTA(accent-soft). 데모 전소멸. 367 passed. JS 284.20KB gzip 89.79KB |
-| P9 반응형/SEO/빌드 | 1일 | — | — | Lighthouse 보정 시 +0.5일 |
+| P8 Roadmap+Business+CTA | 1일 | 2026-04-12 | 2026-04-12 | ✅ **11개 섹션 본문 완성**. Roadmap 3카드 + BusinessSection(Badge 금지) + FinalCTA(accent-soft). 데모 전소멸. PARTNERSHIP_CONTACT/DOCS_URL 도입. 369 passed. JS 284.28KB gzip 89.82KB |
+| P9 반응형/SEO/빌드 | 0.5일 | 2026-04-12 | 2026-04-12 | ✅ SEO 메타(title/desc/OG/twitter) + a11y 테스트 4파일 13건 + `index.html lang="ko"`. 382 passed. 번들 변동 없음(gzip 89.82KB) |
 | P10 Vercel 배포 | 0.5~1일 | — | — | Root Directory 이슈 시 +0.5일 |
 | **Total** | **10~11.5일** | — | — | v2 BusinessSection으로 P8이 +0.5일 |
 
@@ -220,4 +220,4 @@
 **작성자**: junghojang
 **최종 수정일**: 2026-04-11
 **최종 수정일**: 2026-04-12
-**상태**: 🔄 **Phase 1~8 완료 (11개 섹션 본문 완성)** · Phase 9 (반응형 / a11y / SEO / 빌드) 착수 대기
+**상태**: 🔄 **Phase 1~9 완료 (프로덕션 빌드 품질 확정)** · Phase 10 (Vercel 배포) 착수 대기
