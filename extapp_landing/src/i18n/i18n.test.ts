@@ -109,6 +109,62 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
     expect(collectKeys(ko)).toContain('footer.copyright');
     expect(collectKeys(en)).toContain('footer.copyright');
   });
+
+  // ───────────────────────────────────────────────────────────
+  // Phase 4 필수 키 — hero.* / problem.* (TEST-P4.5 보강)
+  // ───────────────────────────────────────────────────────────
+  it('Phase 4 필수 hero.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P4.5)', () => {
+    // 리뷰 피드백 반영 (Medium): 이전 버전은 TEST-P3.2 의 parity check
+    // (`collectKeys(ko).sort() === collectKeys(en).sort()`) 에만 의존해서
+    // **ko/en 양쪽 모두에서 키가 누락되어도** 통과하는 결함이 있었다.
+    // parity 는 "한쪽만 누락" 을 막을 뿐, "양쪽 동시 누락" 은 막지 못함.
+    //
+    // phase04 §4.3 TASK-001 스펙을 명시적 required 리스트로 강제.
+    // HeroSection.test.tsx 가 `t('hero.subtitle')` 로 실제 값을 조회하므로
+    // 이 리스트의 누락은 i18n.test.ts 와 HeroSection.test.tsx 양쪽에서 FAIL.
+    const required = [
+      'hero.eyebrow',
+      'hero.title',
+      'hero.subtitle',
+      'hero.cta_primary',
+      'hero.cta_secondary',
+      'hero.trust',
+      // 리뷰 피드백 반영 (Medium): hero.imageAlt 는 HeroSection 이 <img alt>
+      // 로 실제 런타임 사용하는 접근성 키이지만 이전 버전의 required 리스트에
+      // 빠져있어 ko/en 양쪽에서 동시 누락되어도 i18n.test.ts 가 통과했다.
+      // 접근성 회귀(스크린리더 사용자에게 hero 이미지가 키 문자열로 읽힘)를
+      // 원천 차단하기 위해 명시적으로 포함.
+      'hero.imageAlt',
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
+
+  it('Phase 4 필수 problem.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P4.5)', () => {
+    // 위와 동일한 취지로 ProblemSection 의 8개 키 (title + 4×2) 를 명시적으로 요구.
+    // phase04 §4.3 TASK-001 스펙: problem.title + problem.items.{p1..p4}.{title,desc}
+    const required = [
+      'problem.title',
+      'problem.items.p1.title',
+      'problem.items.p1.desc',
+      'problem.items.p2.title',
+      'problem.items.p2.desc',
+      'problem.items.p3.title',
+      'problem.items.p3.desc',
+      'problem.items.p4.title',
+      'problem.items.p4.desc',
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -170,6 +226,80 @@ describe('TEST-P3.3 — i18next 초기화 및 t() 동작', () => {
     expect(i18n.language).toBe('ko');
     await i18n.changeLanguage('en');
     expect(i18n.language).toBe('en');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Phase 3 hotfix (2026-04-12) — `<html lang>` sync
+//
+// 배경: Phase 4 E2E Playwright 검증 중 발견한 회귀.
+//   `index.html` 은 `<html lang="en">` 로 하드코딩되어 있고, i18n 은
+//   ko 로 감지되었음에도 `document.documentElement.lang` 이 업데이트되지
+//   않아 스크린리더 / SEO / spellcheck 가 잘못된 언어로 동작하는 접근성
+//   회귀가 있었다.
+//
+// 수정: `src/i18n/index.ts` 에 init 완료 직후 초기 sync + `languageChanged`
+//   이벤트 handler 로 `document.documentElement.lang` 을 i18n.language 와
+//   항상 일치시킴.
+//
+// 본 describe 블록은 그 계약을 세 방향으로 검증한다:
+//   1. 정적 — 초기 import 시점에 `<html lang>` 이 i18n.language 와 일치
+//   2. 동적 — `changeLanguage('en' → 'ko' → 'en')` 후 즉시 `<html lang>` 이 반영
+//   3. region 정규화 — `changeLanguage('ko-KR')` → `<html lang>="ko"` (base only)
+// ─────────────────────────────────────────────────────────────
+describe('`<html lang>` 동기화 (Phase 3 hotfix — 2026-04-12)', () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage('ko');
+  });
+
+  it('import 직후 `<html lang>` 이 i18n.language 와 일치한다 (초기 sync)', () => {
+    // i18n/index.ts 의 side-effect 로 이미 sync 되어 있어야 함.
+    // 본 파일 상단의 `import i18n from '.'` 이 init 을 트리거하고,
+    // init 후 즉시 `syncHtmlLang(i18n.language)` 가 실행된다.
+    expect(document.documentElement.lang).toBe(i18n.language);
+  });
+
+  it('changeLanguage("en") 호출 시 `<html lang>` 이 "en" 으로 즉시 갱신된다', async () => {
+    await i18n.changeLanguage('en');
+    expect(document.documentElement.lang).toBe('en');
+  });
+
+  it('changeLanguage("ko") 호출 시 `<html lang>` 이 "ko" 로 즉시 갱신된다', async () => {
+    await i18n.changeLanguage('en');
+    expect(document.documentElement.lang).toBe('en');
+    await i18n.changeLanguage('ko');
+    expect(document.documentElement.lang).toBe('ko');
+  });
+
+  it('region 코드가 붙은 언어("ko-KR") 는 base("ko") 로 정규화되어 DOM 에 쓰인다', async () => {
+    // navigator 가 "ko-KR" 을 반환하는 시나리오 대응. i18n 내부는
+    // `load: 'languageOnly'` 설정으로 base 만 사용하지만, `i18n.language`
+    // 자체는 감지 당시의 full tag 를 유지할 수 있다.
+    // syncHtmlLang 이 split('-')[0] 으로 base 만 DOM 에 쓰도록 보장.
+    await i18n.changeLanguage('ko-KR');
+    expect(document.documentElement.lang).toBe('ko');
+  });
+
+  it('languageChanged 이벤트 handler 가 등록되어 있다 (회귀 가드)', () => {
+    // Phase 3 hotfix 에서 syncHtmlLang 을 `i18n.on('languageChanged', ...)`
+    // 로 등록했으므로 i18n 내부 store 에 handler 가 1개 이상 존재해야 한다.
+    // i18next 의 store 구조는 버전마다 조금씩 다르지만, `store.listeners`
+    // 또는 public API `i18n.off('languageChanged', fn)` 로는 직접 카운트할
+    // 수 없다. 대신 실제 동작(changeLanguage 후 DOM 갱신)을 위 3 케이스가
+    // 이미 검증하므로, 본 케이스는 "handler 호출 이전/이후 DOM 값 변화"
+    // 로 간접 확인.
+    //
+    // 이중 가드: 누군가 `syncHtmlLang` 등록을 삭제하면 다른 케이스가
+    // FAIL 하기 전에 본 케이스가 가장 명시적으로 실패하도록 한다.
+    const before = document.documentElement.lang;
+    // 강제로 document.lang 를 오염시킨 뒤 changeLanguage 가 복구하는지 확인
+    document.documentElement.lang = 'xx-invalid';
+    return i18n.changeLanguage('en').then(() => {
+      expect(document.documentElement.lang).toBe('en');
+      expect(document.documentElement.lang).not.toBe('xx-invalid');
+      // before 값 자체는 beforeEach 가 'ko' 로 리셋한 상태이므로 'ko'
+      expect(before).toBe('ko');
+    });
   });
 });
 

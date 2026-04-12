@@ -9,6 +9,36 @@
     "cta": "Add to Chrome",
     "menuToggle": "Menu"
   },
+  "hero": {
+    "eyebrow": "Chrome Extension · AI Copilot",
+    "title": "An AI copilot that reads, answers and automates any web page",
+    "subtitle": "More than a chatbot — it understands the page you're on and drives the browser for you when you need it.",
+    "cta_primary": "Add to Chrome",
+    "cta_secondary": "Explore features",
+    "trust": "Works with OpenAI · Gemini · LM Studio · Didim",
+    "imageAlt": "Web AI Assistant preview"
+  },
+  "problem": {
+    "title": "Sound familiar?",
+    "items": {
+      "p1": {
+        "title": "Rewriting what the page already says",
+        "desc": "You read a long article and still have to summarize it yourself."
+      },
+      "p2": {
+        "title": "The same clicks, every day",
+        "desc": "Repetitive forms and workflows eat up your focus time."
+      },
+      "p3": {
+        "title": "AI answers, you still execute",
+        "desc": "The chatbot replies — then you carry out the actual task."
+      },
+      "p4": {
+        "title": "Per-site automation is a coding project",
+        "desc": "Writing scripts for each site is too heavy for daily work."
+      }
+    }
+  },
   "footer": {
     "copyright": "© 2026 Web AI Assistant",
     "docs": "Docs",

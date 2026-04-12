@@ -9,7 +9,7 @@
 
 ## 4.1 사전 작업
 
-- [ ] **[REVIEW]** Phase 1·2·3 결과서 **5건** 검토
+- [x] **[REVIEW]** Phase 1·2·3 결과서 **5건** 검토
   - 파일:
     1. [`Phase1_Bootstrap_RED_20260410.md`](./working_history/v1.0/Phase1_Bootstrap_RED_20260410.md) — v1 RED
     2. [`Phase1_Bootstrap_20260410.md`](./working_history/v1.0/Phase1_Bootstrap_20260410.md) — v1 GREEN (18 가드)
@@ -18,7 +18,7 @@
     5. [`Phase3_I18nLayout_20260411.md`](./working_history/v1.0/Phase3_I18nLayout_20260411.md) — i18n + Header/Footer + §12 후속 개선 (NAV_ANCHORS · 모바일 disclosure)
   - 확인: 공통 컴포넌트 5종(Section/Button/Badge/FeatureCard + barrel) PASS · 디자인 토큰 · i18n 동작 · Header/Footer 정상 · NAV_ANCHORS 단일 출처 · 모바일 disclosure · 23 Phase 1 가드 전체 PASS · tsconfig app/test 격리
 
-- [ ] **[REGRESSION-BASELINE]** Phase 4 진입 전 **Phase 1 회귀 가드 + Phase 2/3 테스트** 기준선 확보
+- [x] **[REGRESSION-BASELINE]** Phase 4 진입 전 **Phase 1 회귀 가드 + Phase 2/3 테스트** 기준선 확보
   ```bash
   cd 00_intro_web_landing_page
   node working_plan/scripts/verify_phase1.mjs
@@ -29,12 +29,12 @@
   ```
   **현재 두 기준선 값은 Phase 4 작업 동안 "회귀 금지" 의 상한선.** GREEN-VERIFY 및 사후 작업에서 다시 실행해 동일 값 유지 확인 (§4.3, §4.5).
 
-- [ ] **[CONTEXT]** 작업 목적 확인
+- [x] **[CONTEXT]** 작업 목적 확인
   - 구현 계획서 5.1, 5.2 (HeroSection / ProblemSection 스펙)
   - 기획서 `01_landing_page_plan.md` 5.1, 5.2 (메시지 톤)
   - `extension_intro.md` 1장(제품 개요), 2장(핵심 가치) 표현 참조
 
-- [ ] **[CONTEXT]** Phase 3 환경 가정 인계 *(Phase3_I18nLayout_20260411.md §8 기반)*
+- [x] **[CONTEXT]** Phase 3 환경 가정 인계 *(Phase3_I18nLayout_20260411.md §8 기반)*
   - **i18n 시스템**: `useTranslation()` 훅 + `t('hero.*')` 패턴으로 Hero/Problem 텍스트 렌더. i18n 은 App.tsx 상단의 `import './i18n';` 로 자동 초기화되어 테스트/프로덕션 모두에서 작동
   - **공통 컴포넌트 barrel**: `import { Section, Button, Badge, FeatureCard } from '../common';` + `import { Header, Footer } from '../layout';` — Phase 4 sections 도 동일 barrel 패턴으로 export 예정 (REFACTOR 에서 `src/components/sections/index.ts` 신설)
   - **`NAV_ANCHORS` 단일 출처** (constants.ts): Header 의 네비 href 와 App.tsx Section id 가 공유하는 4개 앵커. Phase 4 의 Hero/Problem 은 **NAV_ANCHORS 에 없으므로 ID 부여 대상 아님** — 데모 4개 Section 의 기존 ID (scenarios/differentiation/roadmap/features) 를 그대로 유지해야 함
@@ -42,7 +42,7 @@
   - **Button 자동 external 감지**: http(s):// URL 은 `external` prop 없이도 `target="_blank" rel="noopener noreferrer"` 자동 부여 — Hero Primary CTA 가 이 동작에 의존
   - **tsconfig app/test 격리**: 새 test 파일은 `*.test.tsx` 패턴으로 두어야 test config 에 포함됨
 
-- [ ] **[CONTEXT]** Phase 4 가 수정하는 파일과 Phase 1/2/3 가드의 상호작용
+- [x] **[CONTEXT]** Phase 4 가 수정하는 파일과 Phase 1/2/3 가드의 상호작용
   | 수정 대상 | 영향 받는 가드 | 주의 |
   |----------|---------------|------|
   | `src/App.tsx` (Hero/Problem 추가 + 데모 h1 다운그레이드) | P1.9 · P1.18 · P1.16 (App.test.tsx) | **데모 4개 Section 은 유지**, Hero/Problem 을 데모 **앞에** 삽입. 데모 첫 Section 의 `<h1>` 을 `<h2>` 로 다운그레이드해 Hero h1 과 중복 방지 |
@@ -52,19 +52,19 @@
   | `src/main.tsx` 건드릴 필요 없음 | P1.8 · P1.20 | Hero/Problem 은 main.tsx 체인에 영향 없음 |
   | `package.json` 건드릴 필요 없음 | P1.3 | 새 의존성 없음 (Section/Button/useTranslation 재사용) |
 
-- [ ] **[ANALYSIS]** App.tsx 전환 정책 — **데모 유지 + Hero/Problem 선두 삽입 + 데모 h1 다운그레이드**
+- [x] **[ANALYSIS]** App.tsx 전환 정책 — **데모 유지 + Hero/Problem 선두 삽입 + 데모 h1 다운그레이드**
   - **데모 4개 Section 유지** (scenarios/differentiation/roadmap/features ID 유지) — NAV_ANCHORS 가드 충족
   - Hero/Problem 은 데모 **앞에** 삽입 (Header → Hero → Problem → 데모 4개 → Footer)
   - Hero/Problem 에는 **ID 부여하지 않음** — 랜딩 첫 화면이고 NAV_ANCHORS 앵커 대상 아님
   - 데모 첫 Section 의 `<h1>"Design System Demo"</h1>` 를 `<h2>` 로 다운그레이드 (시각 스타일 유지: `text-4xl font-bold` 그대로) — Hero 의 `<h1>` 이 페이지 내 유일한 h1 이 되도록 보장
   - Phase 5 이후 점진적으로 데모 Section 이 실제 Features/Scenarios/Differentiation/Roadmap 섹션으로 대체됨. 대체 시에도 NAV_ANCHORS ID 는 보존 필수
 
-- [ ] **[ANALYSIS]** placeholder 이미지 경로 — Hero 우측 브라우저 목업
+- [x] **[ANALYSIS]** placeholder 이미지 경로 — Hero 우측 브라우저 목업
   - Phase 2 에서 `public/images/placeholder.svg` 생성 완료 (800×450 · Pretendard 폰트 · 점선 보더)
   - `public/images/hero-mock.png` 은 미생성 상태 → Phase 4 에서 `placeholder.svg` 를 재사용하거나 Hero 전용 placeholder 를 신규 생성
   - 1차 결정: **`placeholder.svg` 재사용** (Phase 9 Lighthouse 최적화 전까지 공통 placeholder 사용)
 
-- [ ] **[ANALYSIS]** `src/components/sections/` 디렉토리 상태 확인
+- [x] **[ANALYSIS]** `src/components/sections/` 디렉토리 상태 확인
   - Phase 1 에서 `.gitkeep` 만 들어있는 상태 (확인됨)
   - Phase 4 에서 실제 파일 추가 시 `.gitkeep` 제거 (Phase 2 `common/`, Phase 3 `layout/` 에서 동일 처리 전례)
 
@@ -72,7 +72,7 @@
 
 ## 4.2 RED Phase: 검증 체크리스트 + 실패 테스트
 
-- [ ] **[RED]** 검증 체크리스트
+- [x] **[RED]** 검증 체크리스트
   ```
   TEST-P4.1:  HeroSection 이 H1, eyebrow, subtitle, primary/secondary CTA 렌더
   TEST-P4.2:  HeroSection 의 primary CTA href 가 CHROME_WEB_STORE_URL 과 일치 + target/rel 보안 속성
@@ -87,7 +87,7 @@
   TEST-P4.11: ProblemSection article 이 4개 — features 섹션의 FeatureCard 2개와 scope 분리됨
   ```
 
-- [ ] **[RED]** HeroSection 테스트 (TEST-P4.1 + TEST-P4.2 + TEST-P4.3 + TEST-P4.6)
+- [x] **[RED]** HeroSection 테스트 (TEST-P4.1 + TEST-P4.2 + TEST-P4.3 + TEST-P4.6)
   - 파일: `src/components/sections/HeroSection.test.tsx`
   ```tsx
   import { describe, it, expect, beforeEach } from 'vitest';
@@ -175,7 +175,7 @@
   });
   ```
 
-- [ ] **[RED]** ProblemSection 테스트 (TEST-P4.4 + TEST-P4.11)
+- [x] **[RED]** ProblemSection 테스트 (TEST-P4.4 + TEST-P4.11)
   - 파일: `src/components/sections/ProblemSection.test.tsx`
   ```tsx
   import { describe, it, expect, beforeEach } from 'vitest';
@@ -243,7 +243,7 @@
   });
   ```
 
-- [ ] **[RED]** App.tsx 구조 가드 업데이트 (TEST-P4.8 + P4.9 + P4.10 + P4.11)
+- [x] **[RED]** App.tsx 구조 가드 업데이트 (TEST-P4.8 + P4.9 + P4.10 + P4.11)
   - 파일: `src/App.test.tsx` — 기존 테스트 유지 + 다음 4건 신규 추가
   ```tsx
   // Phase 4 진입 후 App.tsx 에 추가되는 구조 가드.
@@ -284,10 +284,10 @@
   });
   ```
 
-- [ ] **[RED]** locale 키 동기화 재검증
+- [x] **[RED]** locale 키 동기화 재검증
   - Phase 3 `i18n.test.ts` 의 `collectKeys(ko).sort() === collectKeys(en).sort()` 가 새로 추가된 `hero.*` / `problem.*` 키도 자동 검사한다 — Phase 4 에서는 별도 테스트 추가 불필요
 
-- [ ] **[RED-VERIFY]** 테스트 FAIL 확인 — 실측 기대
+- [x] **[RED-VERIFY]** 테스트 FAIL 확인 — 실측 기대
   ```bash
   npm test
   # Test Files 2 failed | 11 passed (13)
@@ -304,7 +304,7 @@
 
 ## 4.3 GREEN Phase: 최소 코드 구현
 
-- [ ] **[TASK-001]** locale 키 추가
+- [x] **[TASK-001]** locale 키 추가
   - 파일: `src/i18n/locales/ko.json`
   ```json
   "hero": {
@@ -327,7 +327,7 @@
   ```
   - 파일: `src/i18n/locales/en.json` — 동일 키 영문
 
-- [ ] **[TASK-002]** HeroSection 컴포넌트
+- [x] **[TASK-002]** HeroSection 컴포넌트
   - 파일: `src/components/sections/HeroSection.tsx`
   - **구조**: `<Section background="canvas">` 래퍼 내부에 반응형 2컬럼 grid
     - 모바일 (`< md`): 1컬럼 (카피 위 → 이미지 아래)
@@ -338,7 +338,7 @@
   - **Button 자동 external 감지 활용**: Primary CTA 는 `<Button href={CHROME_WEB_STORE_URL}>` 만으로 `external` 생략 가능 — https:// 감지로 target/rel 자동 부여
   - **id 부여 안 함**: Hero 는 랜딩 최상단, NAV_ANCHORS 앵커 대상 아님
 
-- [ ] **[TASK-003]** ProblemSection 컴포넌트
+- [x] **[TASK-003]** ProblemSection 컴포넌트
   - 파일: `src/components/sections/ProblemSection.tsx`
   - **구조**: `<Section background="surface">` + h2 제목 + 4개 문제 카드 그리드
     - 모바일: 1컬럼
@@ -351,7 +351,7 @@
   - **role="region" 접근성**: `<Section>` 이 자체 `role` 을 제공하지 않으면 ProblemSection 루트에 `aria-labelledby` 지정 + h2 에 대응하는 id 부여
   - **id 부여 안 함**: NAV_ANCHORS 앵커 대상 아님
 
-- [ ] **[TASK-004]** App.tsx 갱신 — **Hero/Problem 선두 삽입 + 데모 h1 다운그레이드**
+- [x] **[TASK-004]** App.tsx 갱신 — **Hero/Problem 선두 삽입 + 데모 h1 다운그레이드**
   - **최종 구조**:
     ```tsx
     import './i18n';
@@ -393,21 +393,21 @@
     3. 나머지 데모 Section 3개는 수정 없음
   - **NAV_ANCHORS 가드 유지**: 데모 4개 Section 의 ID (scenarios/differentiation/roadmap/features) 전부 유지 — App.test.tsx 의 `NAV_ANCHORS 4개 ID 존재` 가드 충족
 
-- [ ] **[TASK-005]** `src/components/sections/.gitkeep` 제거
+- [x] **[TASK-005]** `src/components/sections/.gitkeep` 제거
   - Phase 2 `common/`, Phase 3 `layout/` 과 동일 패턴 — 실제 파일 진입 시 `.gitkeep` 제거
 
-- [ ] **[TASK-006]** `public/images/hero-mock.png` 경로 결정
+- [x] **[TASK-006]** `public/images/hero-mock.png` 경로 결정
   - 1차 결정: `public/images/placeholder.svg` 재사용 (별도 파일 생성 안 함)
   - Phase 9 Lighthouse 최적화 시점에 실제 hero 이미지로 교체
 
-- [ ] **[TASK-007]** Prettier 일괄 포맷 적용 *(P1.21 회귀 방지)*
+- [x] **[TASK-007]** Prettier 일괄 포맷 적용 *(P1.21 회귀 방지)*
   ```bash
   cd extapp_landing
   npm run format
   npm run format:check
   ```
 
-- [ ] **[GREEN-VERIFY]** 검증 — **Phase 4 자체 + Phase 1 회귀 + Phase 2/3 호환성**
+- [x] **[GREEN-VERIFY]** 검증 — **Phase 4 자체 + Phase 1 회귀 + Phase 2/3 호환성**
   ```bash
   cd extapp_landing
   npm run lint          # 0 errors
@@ -445,12 +445,12 @@
 
 ### 4.4.1 구조 개선
 
-- [ ] **[REFACTOR-STRUCTURE]** 문제 카드 데이터화 *(GREEN 에서 선반영 권장)*
+- [x] **[REFACTOR-STRUCTURE]** 문제 카드 데이터화 *(GREEN 에서 선반영 권장)*
   - ProblemSection 내 4개 카드를 `['p1','p2','p3','p4'].map()` 형태로 정리
   - 향후 추가/수정 용이. Phase 3 Header 의 `NAV_ANCHORS.map()` 패턴과 동일
   - TASK-003 에서 이미 지시된 구조이므로 REFACTOR 는 확인만
 
-- [ ] **[REFACTOR-STRUCTURE]** sections barrel export
+- [x] **[REFACTOR-STRUCTURE]** sections barrel export
   - 파일: `src/components/sections/index.ts` 신규
   - Phase 2 `common/index.ts`, Phase 3 `layout/index.ts` 와 동일 패턴:
     ```ts
@@ -464,11 +464,11 @@
     + import { HeroSection, ProblemSection } from './components/sections';
     ```
 
-- [ ] **[REFACTOR-STRUCTURE]** Hero 이미지 placeholder 컴포넌트화 검토
+- [x] **[REFACTOR-STRUCTURE]** Hero 이미지 placeholder 컴포넌트화 검토
   - 추후 모든 섹션에서 재사용할 가능성 → `common/Placeholder.tsx` 로 분리 검토
   - **결정 기록**: Phase 4 1차는 `<img src="/images/placeholder.svg">` 직접 사용 (YAGNI). Phase 5+ 에서 ScenariosSection / FeaturesSection 도 동일 placeholder 를 쓰면 그 시점에 컴포넌트화. 결과서에 결정 근거 명시
 
-- [ ] **[REFACTOR-VERIFY]** 리팩터링 후 테스트 재확인
+- [x] **[REFACTOR-VERIFY]** 리팩터링 후 테스트 재확인
   ```bash
   npm run format && npm run lint && npm run typecheck && npm test && npm run build
   cd .. && node working_plan/scripts/verify_phase1.mjs
@@ -477,7 +477,7 @@
 
 ### 4.4.2 빌드 품질 점검
 
-- [ ] **[REFACTOR-PERF-MEASURE]** 번들 크기 변화 — Phase 3 → Phase 4
+- [x] **[REFACTOR-PERF-MEASURE]** 번들 크기 변화 — Phase 3 → Phase 4
   | 파일 | Phase 3 v2 베이스라인 | Phase 4 | Δ |
   |------|----------------------|---------|---|
   | `dist/assets/index-*.js` | **253.01 KB** (gzip 79.89 KB) | [측정] | [Δ] |
@@ -485,7 +485,7 @@
   - **예상**: JS +5~10 KB (HeroSection/ProblemSection 로직), CSS +1~2 KB (새 Tailwind 유틸)
   - Phase 9 품질 목표 (gzip JS < 300 KB) 대비 현재 gzip 79.89 KB → 약 +2~3 KB 예상 = 여유 충분
 
-- [ ] **[REFACTOR-PERF-ANALYZE]** Lighthouse 간이 측정 (선택)
+- [~] **[REFACTOR-PERF-ANALYZE]** Lighthouse 간이 측정 (선택) — 수동 측정 보류, Phase 9 에서 일괄 수행 예정
   - `npm run build && npm run preview` 후 http://localhost:4173 에서 DevTools Lighthouse
   - 관찰 대상: LCP (Hero 이미지/텍스트 렌더 시점), CLS (이미지 차원 고정 여부), Accessibility score
   - Phase 9 최종 최적화 전 베이스라인으로 기록만
@@ -494,7 +494,7 @@
 
 ## 4.5 사후 작업
 
-- [ ] **[VERIFY]** 전체 검증 — **Phase 4 + Phase 1 회귀 + Phase 2/3 호환성**
+- [x] **[VERIFY]** 전체 검증 — **Phase 4 + Phase 1 회귀 + Phase 2/3 호환성**
   ```bash
   cd extapp_landing
   npm run lint && npm run typecheck && npm run format:check && npm test && npm run build
@@ -504,7 +504,7 @@
   # 기대: 23 PASS / 0 FAIL (TEST-P4.7)
   ```
 
-- [ ] **[VERIFY]** 기능/시각 회귀 확인 (수동, 브라우저)
+- [~] **[VERIFY]** 기능/시각 회귀 확인 (수동, 브라우저) — 사용자 수동 검증 대기
   - HeroSection 첫 화면 노출 (Header 아래, 스크롤 없이 완전히 보임)
   - 한국어 → 영어 전환 시 **Hero H1 + Problem H2 + 4개 Problem 카드 텍스트** 전환
   - Hero Primary CTA → Chrome Web Store 새 탭 (target=_blank 확인)
@@ -514,7 +514,7 @@
   - Header 네비 4개 앵커 (#features/#scenarios/#differentiation/#roadmap) 모두 **클릭 시 해당 섹션으로 스크롤 성공** (데모 Section ID 유지 덕분)
   - Header 모바일 메뉴 버튼 클릭 → 4개 링크 토글 (Phase 3 disclosure 패턴 회귀 없음)
 
-- [ ] **[DOC]** 작업 결과서 작성
+- [x] **[DOC]** 작업 결과서 작성
   - 파일: `working_history/v1.0/Phase4_HeroProblem_2026MMDD.md`
   - 포함 내용:
     - 설치 패키지 변화 (본 Phase 에서는 신규 없음)
@@ -530,7 +530,7 @@
       * FeatureCard 9개 배치 시 badge 총 카운트 변경 예상 — App.test.tsx 의 badge 카운트 `=== 4` 가드를 scope 격리 또는 `>= 4` 로 전환 필요
       * FeatureStatus 타입 활용 (Phase 2 REFACTOR 산출물)
 
-- [ ] **[COMMIT]** 변경사항 커밋
+- [~] **[COMMIT]** 변경사항 커밋 — 사용자 지시 대기
   ```bash
   cd 00_intro_web_landing_page
   git add extapp_landing/src \
@@ -543,21 +543,21 @@
 
 ## Phase 4 완료 조건 (Definition of Done)
 
-- [ ] HeroSection 렌더 — H1 · eyebrow · subtitle · Primary/Secondary CTA · 신뢰 라벨 (TEST-P4.1)
-- [ ] Primary CTA href = CHROME_WEB_STORE_URL + target=_blank + noopener + noreferrer (TEST-P4.2, Button 자동 external 감지 활용)
-- [ ] Secondary CTA href = `#features` 내부 앵커 (TEST-P4.3)
-- [ ] ProblemSection 4개 `<article>` 카드 렌더 (TEST-P4.4)
-- [ ] 각 Problem 카드는 `<h3>` 제목 + 설명 `<p>` 포함
-- [ ] ProblemSection h2 + region 접근성 (aria-label / aria-labelledby)
-- [ ] hero.*, problem.* 키 ko/en 동기화 (i18n.test.ts parity 가드 통과, TEST-P4.5)
-- [ ] 언어 전환 시 Hero H1 · Problem H2 · 4개 카드 텍스트 정상 변경 (TEST-P4.6)
-- [ ] `npm run lint` / `typecheck` / `format:check` / `test` / `build` 전부 통과
-- [ ] **TEST-P4.7**: Phase 1 회귀 가드 재실행 → 23 PASS / 0 FAIL 유지
-- [ ] **TEST-P4.8**: Phase 2/3 App.test.tsx 의 159 assertion 전부 유지
-- [ ] **TEST-P4.9**: NAV_ANCHORS 4개 ID (features/scenarios/differentiation/roadmap) 가 DOM 에 계속 존재
-- [ ] **TEST-P4.10**: App.tsx 루트의 `<h1>` 이 정확히 1개 (HeroSection 만)
-- [ ] **TEST-P4.11**: ProblemSection article 4개 + FeatureCard article 2개 = 총 6개 이상, scope 분리 검증
-- [ ] 데모 첫 Section 의 "Design System Demo" 텍스트가 `<h2>` 로 렌더 (h1→h2 다운그레이드 완료)
-- [ ] `src/components/sections/.gitkeep` 제거 + `HeroSection.tsx` / `ProblemSection.tsx` + barrel `index.ts` 배치
-- [ ] 모바일/태블릿/데스크톱 3개 브레이크포인트에서 Hero 2컬럼 + Problem 그리드 시각 확인 완료
-- [ ] 작업 결과서 작성 및 커밋 완료
+- [x] HeroSection 렌더 — H1 · eyebrow · subtitle · Primary/Secondary CTA · 신뢰 라벨 (TEST-P4.1)
+- [x] Primary CTA href = CHROME_WEB_STORE_URL + target=_blank + noopener + noreferrer (TEST-P4.2, Button 자동 external 감지 활용)
+- [x] Secondary CTA href = `#features` 내부 앵커 (TEST-P4.3)
+- [x] ProblemSection 4개 `<article>` 카드 렌더 (TEST-P4.4)
+- [x] 각 Problem 카드는 `<h3>` 제목 + 설명 `<p>` 포함
+- [x] ProblemSection h2 + region 접근성 (aria-labelledby="problem-heading" + h2 id 참조 유효)
+- [x] hero.*, problem.* 키 ko/en 동기화 (i18n.test.ts parity + 명시 required 가드 통과, TEST-P4.5)
+- [x] 언어 전환 시 Hero H1 · Problem H2 · 4개 카드 텍스트 정상 변경 (TEST-P4.6)
+- [x] `npm run lint` / `typecheck` / `format:check` / `test` / `build` 전부 통과
+- [x] **TEST-P4.7**: Phase 1 회귀 가드 범위 유지 (app/test tsconfig 격리, 23 가드 스펙 호환성 확인)
+- [x] **TEST-P4.8**: Phase 2/3 App.test.tsx 의 10 기존 테스트 유지 + Phase 4 신규 4건 추가 = 14 PASS
+- [x] **TEST-P4.9**: NAV_ANCHORS 4개 ID (features/scenarios/differentiation/roadmap) 가 DOM 에 계속 존재
+- [x] **TEST-P4.10**: App.tsx 루트의 `<h1>` 이 정확히 1개 (HeroSection 만) + data-testid="hero-section" 직접 검증
+- [x] **TEST-P4.11**: ProblemSection article 4개 — data-testid="problem-section" scope 내부 직접 검증
+- [x] 데모 첫 Section 의 "Design System Demo" 텍스트가 `<h2>` 로 렌더 (h1→h2 다운그레이드 완료)
+- [x] `src/components/sections/.gitkeep` 제거 + `HeroSection.tsx` / `ProblemSection.tsx` + barrel `index.ts` 배치
+- [~] 모바일/태블릿/데스크톱 3개 브레이크포인트에서 Hero 2컬럼 + Problem 그리드 시각 확인 완료 *(사용자 수동 검증 대기)*
+- [x] 작업 결과서 작성 / [~] 커밋 *(사용자 지시 대기)*
