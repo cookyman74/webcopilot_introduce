@@ -625,3 +625,125 @@ node working_plan/scripts/verify_phase1.mjs
 | `extapp_landing/.nvmrc` | 신규 — `20.19.0` |
 | `working_plan/phase03_i18n_layout.md` | line 34 언어 감지 순서 정정 |
 | `working_plan/working_history/v1.0/Phase3_I18nLayout_20260411.md` | 본 §12 추가 |
+
+---
+
+## 13. Phase 3 hotfix — `<html lang>` 동기화 (2026-04-12)
+
+> Phase 4 E2E Playwright 검증 중 발견된 Phase 3 범위의 회귀를 핫픽스로 처리한 기록.
+> Phase 4 작업과는 이력상 분리되어야 해서 Phase 3 결과서에 부록으로 추가한다.
+
+### 13.1 발견 경위
+
+Phase 4 GREEN 완료 후 Playwright MCP 로 실제 크롬에서 E2E 검증을 실행하던 중, 언어 전환 동작을 확인하는 과정에서 다음 불일치를 발견했다:
+
+```js
+// 언어 전환 ko → en → ko 시퀀스 실행 후
+{
+  lang: "en",              // document.documentElement.lang — ❌ stale
+  cache: "ko",             // localStorage.i18nextLng — ✅ 최신
+  heroH1: "웹페이지를 이해하고..." // UI 텍스트 — ✅ 한국어 복귀
+}
+```
+
+`localStorage` 와 UI 텍스트는 `ko` 로 정상 복귀했지만 `<html lang>` 은 여전히 `en` 에 고정되어 있었다. `grep -rn "documentElement.lang"` 결과 0건 — 어떤 코드도 `<html lang>` 을 갱신하지 않았고, `index.html` 의 `<html lang="en">` 하드코딩이 그대로 유지되고 있었다.
+
+### 13.2 영향 분석
+
+`<html lang>` 은 HTML 표준이 명시하는 페이지 기본 언어 식별자로 다음 3 경로에 영향을 준다:
+
+1. **접근성**: 스크린리더(VoiceOver·NVDA·JAWS) 가 이 속성으로 TTS 엔진 언어를 선택. 한국어 본문을 영어 음성으로 읽는 회귀 발생 가능
+2. **SEO / 검색엔진**: 구글·빙·네이버 등이 페이지 언어를 분류할 때 1순위 신호. 잘못된 lang 은 잘못된 언어 버킷에 색인
+3. **브라우저 기능**: spellcheck / 줄바꿈 규칙(CJK break) / 폰트 hinting / hyphenation / 번역 제안 이 모두 lang 기반
+
+Phase 4 자체 범위와 무관하지만 Phase 3 산출물(i18n + LanguageSwitcher) 의 명백한 결함이므로 Phase 4 작업과 분리하여 핫픽스로 처리한다.
+
+### 13.3 수정 내역
+
+**파일**: `src/i18n/index.ts`
+
+추가된 `syncHtmlLang` 함수 + 초기 sync 호출 + `languageChanged` 이벤트 handler 등록:
+
+```ts
+function syncHtmlLang(lng: string): void {
+  if (typeof document === 'undefined') return;
+  // i18next 가 감지 직후 "ko-KR" 같은 region 코드를 반환할 수 있으나
+  // `load: 'languageOnly'` 설정과 함께 실제 t() 해석에는 base 만 사용된다.
+  // DOM `lang` 속성에도 base 만 쓰는 것이 검색엔진/스크린리더 동작상 일관적.
+  const normalized = lng.split('-')[0];
+  document.documentElement.lang = normalized;
+}
+
+// ... 기존 i18n.init() ...
+
+// 초기 sync — resources 가 inline 이라 init 이 사실상 동기 완료되므로
+// 이 시점에 i18n.language 는 감지된 언어값을 가짐
+syncHtmlLang(i18n.language);
+
+// 런타임 sync — LanguageSwitcher 또는 i18n.changeLanguage() 호출 시 자동 반영
+i18n.on('languageChanged', syncHtmlLang);
+```
+
+**설계 결정**:
+
+1. **Region 정규화** (`lng.split('-')[0]`) — `i18next-browser-languagedetector` 가 `navigator.language = "ko-KR"` 을 감지하면 `i18n.language` 도 처음에는 `"ko-KR"` 을 반환한다. `load: 'languageOnly'` 는 t() 해석에만 영향을 주고 `i18n.language` 문자열 자체는 full tag 를 유지할 수 있음. DOM `lang` 속성에는 base 만 쓰는 것이 검색엔진/스크린리더/폰트 동작상 일관적이다.
+2. **SSR / 테스트 안전 가드** (`typeof document === 'undefined'`) — 순수 Node 환경 실행 시 no-op. happy-dom / jsdom 양쪽에서 `document` 가 존재하므로 vitest 는 정상 실행.
+3. **이벤트 기반 vs. useEffect** — LanguageSwitcher 쪽에서 `useEffect([i18n.language], () => { ... })` 로 처리할 수도 있으나, i18n **서브시스템 자체**의 책임으로 두는 것이 DRY 하다. 어떤 컴포넌트가 `i18n.changeLanguage()` 를 호출하든 `<html lang>` 은 자동 반영됨.
+4. **`index.html` 수정 안 함** — `<html lang="en">` 하드코딩은 그대로 두었다. JS 로드 전 초기 마크업의 fallback 값으로 의미가 있고 (ko 로 고정하면 en 사용자에게 역회귀), 실제로는 i18n init 이 ms 수준으로 빨리 override 한다.
+
+### 13.4 회귀 가드 (신규 5 테스트)
+
+**파일**: `src/i18n/i18n.test.ts` — 새 describe 블록 추가
+
+| # | 테스트 | 검증 내용 |
+|---|--------|-----------|
+| 1 | import 직후 `<html lang>` ↔ i18n.language 일치 | 초기 sync — 모듈 로드 시점에 side-effect 로 sync 되어야 함 |
+| 2 | `changeLanguage("en")` 후 `<html lang>="en"` | 런타임 sync 1 |
+| 3 | `changeLanguage("ko")` 후 `<html lang>="ko"` | 런타임 sync 2 — **Phase 4 E2E 에서 실제 실패했던 케이스** |
+| 4 | `changeLanguage("ko-KR")` → `<html lang>="ko"` | region 정규화 검증 (ko-KR → ko base) |
+| 5 | DOM lang 오염 후 `changeLanguage` 가 복구 | handler 등록 회귀 가드 (oops 로 `on()` 등록을 지우면 FAIL) |
+
+### 13.5 검증 결과
+
+**자동 게이트 5종** (Phase 3 hotfix 포함):
+```
+$ npm run lint         ✅ 0 errors · 0 warnings
+$ npm run typecheck    ✅ 0 errors (app + test)
+$ npm run format:check ✅ 모든 파일 규범 준수
+$ npm test             ✅ 13 files · 198 passed | 5 skipped (+5 신규 hotfix 테스트)
+$ npm run build        ✅ JS 256.99 KB (gzip 81.36 KB) · CSS 10.46 KB (gzip 2.91 KB)
+```
+
+**Playwright E2E 재검증** (새 dev 서버 `http://localhost:5174`):
+
+| 시나리오 | 이전 (버그) | 핫픽스 후 |
+|---------|------------|-----------|
+| 초기 로드 (navigator=ko-KR) | `htmlLang="en"` (index.html 하드코딩 잔존) ❌ | `htmlLang="ko"` ✅ (region 정규화 적용) |
+| EN 클릭 | `htmlLang="en"` (우연 일치) ✅ | `htmlLang="en"` ✅ |
+| KO 클릭 | `htmlLang="en"` **stale** ❌ | `htmlLang="ko"` ✅ (핵심 회귀 해결) |
+
+### 13.6 번들 영향
+
+| 자산 | Phase 3 hotfix 전 | Phase 3 hotfix 후 | Δ |
+|------|------------------|-------------------|---|
+| JS | 256.84 KB (gzip 81.30 KB) | 256.99 KB (gzip 81.36 KB) | +0.15 KB (gzip +0.06 KB) |
+| CSS | 10.46 KB (gzip 2.91 KB) | 10.46 KB (gzip 2.91 KB) | 변화 없음 |
+
+`syncHtmlLang` 함수 (6 줄) + 호출 2건 = 실질 증가 200 bytes 미만. Phase 9 목표(gzip <300 KB) 대비 영향 없음.
+
+### 13.7 수정 파일 요약
+
+| 파일 | 변경 종류 |
+|------|----------|
+| `extapp_landing/src/i18n/index.ts` | `syncHtmlLang` 함수 추가 + 초기 sync + `languageChanged` handler 등록 + JSDoc 섹션 갱신 |
+| `extapp_landing/src/i18n/i18n.test.ts` | `<html lang> 동기화` describe 블록 신규 5 테스트 |
+| `working_plan/working_history/v1.0/Phase3_I18nLayout_20260411.md` | 본 §13 추가 |
+
+**Phase 4 관련 파일은 건드리지 않음** — Phase 3 hotfix 이므로 Phase 4 커밋과 분리하는 것이 이력상 자연스러움.
+
+### 13.8 Phase 5 인계
+
+- 본 hotfix 로 `<html lang>` sync 는 영구 해결됨. Phase 5 이후 섹션에서 별도 처리 불필요
+- `i18n.on('languageChanged', ...)` 패턴은 Phase 5+ 에서 **다른 side-effect** (예: `document.title` 다국어 갱신, analytics 언어 이벤트) 를 추가할 때도 동일한 지점(`src/i18n/index.ts`) 에 모아두면 좋다
+- `index.html` 의 `<html lang="en">` 하드코딩은 그대로 유지 — JS 초기화 전 fallback 값으로 의미 있음
+
