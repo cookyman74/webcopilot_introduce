@@ -205,14 +205,50 @@
       }
     }
   },
-  "demo": {
-    "designSystem": "디자인 시스템 데모",
-    "designSystemDesc": "Phase 2 공통 컴포넌트 (Section · Button · Badge) 시각 확인 페이지",
-    "buttons": "Buttons",
-    "statusBadges": "Status Badges",
-    "badgeDone": "구현됨",
-    "badgeWip": "보강 중",
-    "badgePlanned": "계획·검토 중"
+  "roadmap": {
+    "title": "앞으로의 방향",
+    "subtitle": "현재 구현된 기능을 넘어서 준비 중인 방향들입니다.",
+    "items": {
+      "floating": {
+        "title": "Floating Helper",
+        "desc": "선택한 문장 옆에서 번역·질문·요약으로 즉시 이어지는 빠른 진입 UX"
+      },
+      "continuity": {
+        "title": "Session Script Continuity",
+        "desc": "EXECUTE_SCRIPT 이력을 세션 단위로 조회·되돌리기·승격"
+      },
+      "studio": {
+        "title": "Extension App Studio",
+        "desc": "사이트별 스크립트를 조회·편집·버전 관리하는 라이브러리 형태로 확장"
+      }
+    }
+  },
+  "business": {
+    "eyebrow": "기술 파트너십",
+    "title": "이 확장앱의 기술을 자사 서비스에 적용할 수 있습니다",
+    "subtitle": "페이지 문맥 이해, Action Tools 에이전트, 스크립트 실행 인프라는 단일 제품에 묶여 있지 않습니다. 파트너십·기술 내재화·공동 개발 등 다양한 방식으로 논의가 가능합니다.",
+    "cards": {
+      "context": {
+        "title": "페이지 문맥 기반 AI",
+        "desc": "사용자 컨텍스트를 잃지 않는 AI 파이프라인"
+      },
+      "actionTools": {
+        "title": "Action Tools 에이전트",
+        "desc": "브라우저를 직접 조작하는 안전 경계 기반 자동화"
+      },
+      "scripts": {
+        "title": "스크립트 실행/등록 인프라",
+        "desc": "사이트별 확장 자산을 안전하게 운영"
+      }
+    },
+    "cta_primary": "기술 문의",
+    "cta_secondary": "기술 문서 보기"
+  },
+  "finalCta": {
+    "title": "지금 Chrome에서 바로 시작하세요",
+    "subtitle": "설치 후 바로 페이지 문맥 기반 AI를 사용할 수 있습니다.",
+    "primary": "Chrome에 추가하기",
+    "secondary": "문서 보기"
   },
   "footer": {
     "copyright": "© 2026 Web AI Assistant",

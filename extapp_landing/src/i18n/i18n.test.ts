@@ -300,6 +300,57 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
       expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
     }
   });
+
+  // ───────────────────────────────────────────────────────────
+  // Phase 8 필수 키 — roadmap.* / business.* / finalCta.* (TEST-P8.6)
+  // ───────────────────────────────────────────────────────────
+  it('Phase 8 필수 roadmap.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P8.6)', () => {
+    const itemKeys = ['floating', 'continuity', 'studio'];
+    const required = [
+      'roadmap.title',
+      'roadmap.subtitle',
+      ...itemKeys.flatMap((k) => [`roadmap.items.${k}.title`, `roadmap.items.${k}.desc`]),
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
+
+  it('Phase 8 필수 business.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P8.6)', () => {
+    const cardKeys = ['context', 'actionTools', 'scripts'];
+    const required = [
+      'business.eyebrow',
+      'business.title',
+      'business.subtitle',
+      'business.cta_primary',
+      'business.cta_secondary',
+      ...cardKeys.flatMap((k) => [`business.cards.${k}.title`, `business.cards.${k}.desc`]),
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
+
+  it('Phase 8 필수 finalCta.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P8.6)', () => {
+    const required = [
+      'finalCta.title',
+      'finalCta.subtitle',
+      'finalCta.primary',
+      'finalCta.secondary',
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
 });
 
 // ─────────────────────────────────────────────────────────────

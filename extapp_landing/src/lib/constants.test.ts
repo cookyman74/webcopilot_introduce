@@ -23,7 +23,13 @@
  *   로 본 파일 전체가 FAIL.
  */
 import { describe, it, expect } from 'vitest';
-import { CHROME_WEB_STORE_URL, SUPPORTED_LANGUAGES, NAV_ANCHORS } from './constants';
+import {
+  CHROME_WEB_STORE_URL,
+  SUPPORTED_LANGUAGES,
+  NAV_ANCHORS,
+  PARTNERSHIP_CONTACT,
+  DOCS_URL,
+} from './constants';
 
 describe('constants.ts 외부 주소 단일 출처 (TEST-P3.9)', () => {
   // ─────────────────────────────────────────────────────────
@@ -119,6 +125,21 @@ describe('constants.ts 외부 주소 단일 출처 (TEST-P3.9)', () => {
       const ids = NAV_ANCHORS.map((a) => a.id);
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(ids.length);
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────
+  // Phase 8: PARTNERSHIP_CONTACT (TEST-P8.11)
+  // ───────────────────────────────────────────────────────────
+  describe('PARTNERSHIP_CONTACT (TEST-P8.11)', () => {
+    it('유효한 이메일 형식이다', () => {
+      expect(PARTNERSHIP_CONTACT).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+    });
+  });
+
+  describe('DOCS_URL', () => {
+    it('https:// 로 시작하는 유효한 URL 이다', () => {
+      expect(DOCS_URL).toMatch(/^https:\/\/.+/);
     });
   });
 });

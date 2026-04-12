@@ -45,3 +45,18 @@ export const NAV_ANCHORS = [
 ] as const;
 
 export type NavAnchorId = (typeof NAV_ANCHORS)[number]['id'];
+
+/**
+ * B2B 파트너십 문의 이메일 — BusinessSection Primary CTA 대상.
+ *
+ * Phase 8 에서 도입. `constants.test.ts` 의 TEST-P8.11 이 이메일 형식을 강제.
+ * FIXME: 전용 파트너십 이메일 확정 시 교체 (현재 개인 이메일 임시 사용).
+ */
+export const PARTNERSHIP_CONTACT = 'cookyman@gmail.com';
+
+/**
+ * 문서/가이드 링크 — BusinessSection Secondary CTA · FinalCTA Secondary CTA 대상.
+ *
+ * FIXME: 실제 문서 URL (GitHub Pages / Notion 등) 확정 시 교체.
+ */
+export const DOCS_URL = 'https://github.com/anthropics';

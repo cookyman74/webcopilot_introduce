@@ -25,35 +25,26 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('ko');
   });
-  it('Section 배경이 canvas/surface/surface-alt 3종 이상 고유하게 렌더된다', () => {
-    // v2: 리뷰 피드백 반영 — 각 배경 클래스의 실제 존재를 개별 검증.
-    //
-    // Phase 5 전환 (리뷰 피드백 반영 Medium): 데모 `<Section id="features"
-    // background="accent-soft">` 가 Phase 5 GREEN 에서 삭제되고 FeaturesSection
-    // (background="surface") 으로 대체된다. 이 시점에 accent-soft 를 사용하는
-    // 섹션이 전체 App 에서 사라지므로, 4종 가드를 3종으로 축소한다.
-    // accent-soft 는 Phase 8 FinalCTA(§5.11) 에서 다시 등장하므로 그 시점에
-    // 4종 가드로 복구한다.
+  it('Section 4종 배경이 모두 고유하게 렌더된다 (canvas/surface/surface-alt/accent-soft) (TEST-P8.16)', () => {
+    // Phase 8: FinalCTASection(accent-soft) 추가로 4종 복구.
     const { container } = render(<App />);
     const sections = container.querySelectorAll('section');
-    expect(sections.length).toBeGreaterThanOrEqual(4);
+    expect(sections.length).toBeGreaterThanOrEqual(11);
 
     const allClassNames = Array.from(sections).map((s) => s.className);
     const combined = allClassNames.join(' ');
 
-    // Phase 5 시점 실제 존재하는 3종 배경
     expect(combined).toMatch(/\bbg-canvas\b/);
     expect(combined).toMatch(/\bbg-surface\b/);
     expect(combined).toMatch(/\bbg-surface-alt\b/);
-    // accent-soft 는 Phase 5 에서 소멸. Phase 8 FinalCTA 에서 부활 예정.
-    // expect(combined).toMatch(/\bbg-accent-soft\b/);
+    expect(combined).toMatch(/\bbg-accent-soft\b/);
 
     const uniqueBgs = new Set(
       allClassNames
         .map((c) => c.match(/\bbg-[a-z-]+\b/)?.[0])
         .filter((c): c is string => Boolean(c))
     );
-    expect(uniqueBgs.size).toBeGreaterThanOrEqual(3);
+    expect(uniqueBgs.size).toBeGreaterThanOrEqual(4);
   });
 
   it('Section id="features" 가 존재한다', () => {
@@ -100,27 +91,9 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
     expect(screen.getAllByText('계획·검토 중').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('roadmap 데모 섹션의 standalone Badge 가 3개 존재한다', () => {
-    // Phase 5 전환 (리뷰 피드백 반영 Medium): 이전 "FeatureCard 2 케이스" 와
-    // "BusinessSection 프리뷰" 테스트는 데모 `<Section id="features">` 내부의
-    // 2개 FeatureCard 를 검증하고 있었으나, Phase 5 GREEN 에서 이 데모 섹션이
-    // 삭제되고 실제 FeaturesSection 으로 대체된다. 기존 테스트의 scope
-    // (section#features 내부 article 2개, badge 1개, BusinessSection 프리뷰) 가
-    // 모두 무효화된다.
-    //
-    // 수정:
-    //   - "FeatureCard 2 케이스" / "BusinessSection 프리뷰" 테스트 삭제
-    //   - FeaturesSection 내부 가드(9 article + 9 badge) 는 Phase 5 구조 가드
-    //     describe 블록에서 별도 검증 (위 Phase 5 가드 참조)
-    //   - roadmap 데모 섹션의 3 standalone Badge 만 독립적으로 유지
-    //
-    // BusinessSection Badge 부재 가드는 Phase 8 에서 실제 구현 시 재도입.
-    const { container } = render(<App />);
-    const roadmapSection = container.querySelector('section#roadmap');
-    expect(roadmapSection).not.toBeNull();
-    const roadmapBadges = roadmapSection?.querySelectorAll('[data-testid="status-badge"]') ?? [];
-    expect(roadmapBadges.length).toBe(3);
-  });
+  // Phase 8: roadmap 데모 섹션 삭제 → RoadmapSection 으로 대체.
+  // 데모 Badge 3개 가드는 소멸. RoadmapSection 의 badge 검증은
+  // RoadmapSection.test.tsx 에서 별도 수행.
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -273,7 +246,50 @@ describe('Phase 7 구조 가드 — AIModesSection + SafetySection 추가', () =
       'differentiation-section',
       'aimodes-section',
       'safety-section',
-      '#roadmap', // 데모 잔존 — Phase 8 에서 data-testid 로 전환
+      // Phase 8: #roadmap 데모 → roadmap-section + business-section + finalcta-section
+      'roadmap-section',
+      'business-section',
+      'finalcta-section',
+    ]);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Phase 8 구조 가드 (TEST-P8.14 + P8.15 + P8.16)
+// ─────────────────────────────────────────────────────────────
+describe('Phase 8 구조 가드 — Roadmap + Business + FinalCTA · 11개 섹션 완성', () => {
+  it('RoadmapSection data-testid="roadmap-section" (TEST-P8.14)', () => {
+    const { container } = render(<App />);
+    expect(container.querySelector('[data-testid="roadmap-section"]')).not.toBeNull();
+  });
+
+  it('BusinessSection data-testid="business-section" (TEST-P8.14)', () => {
+    const { container } = render(<App />);
+    expect(container.querySelector('[data-testid="business-section"]')).not.toBeNull();
+  });
+
+  it('FinalCTASection data-testid="finalcta-section" (TEST-P8.14)', () => {
+    const { container } = render(<App />);
+    expect(container.querySelector('[data-testid="finalcta-section"]')).not.toBeNull();
+  });
+
+  it('11개 섹션 렌더 순서가 완전히 고정된다 (TEST-P8.15)', () => {
+    const { container } = render(<App />);
+    const allSections = Array.from(container.querySelectorAll('section'))
+      .map((s) => s.getAttribute('data-testid') ?? (s.id ? `#${s.id}` : null))
+      .filter(Boolean);
+    expect(allSections).toEqual([
+      'hero-section',
+      'problem-section',
+      'solution-section',
+      'features-section',
+      'scenarios-section',
+      'differentiation-section',
+      'aimodes-section',
+      'safety-section',
+      'roadmap-section',
+      'business-section',
+      'finalcta-section',
     ]);
   });
 });

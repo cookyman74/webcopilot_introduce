@@ -205,14 +205,50 @@
       }
     }
   },
-  "demo": {
-    "designSystem": "Design System Demo",
-    "designSystemDesc": "Phase 2 shared components (Section · Button · Badge) visual check",
-    "buttons": "Buttons",
-    "statusBadges": "Status Badges",
-    "badgeDone": "Implemented",
-    "badgeWip": "In Progress",
-    "badgePlanned": "Planned"
+  "roadmap": {
+    "title": "What's Next",
+    "subtitle": "Directions we're working on beyond the current feature set.",
+    "items": {
+      "floating": {
+        "title": "Floating Helper",
+        "desc": "Quick-access UX that pops up right next to your selection for instant translate, ask, summarize"
+      },
+      "continuity": {
+        "title": "Session Script Continuity",
+        "desc": "Review, rollback, and promote EXECUTE_SCRIPT history per session"
+      },
+      "studio": {
+        "title": "Extension App Studio",
+        "desc": "Browse, edit, and version-manage per-site scripts in a library-style interface"
+      }
+    }
+  },
+  "business": {
+    "eyebrow": "For Businesses",
+    "title": "Apply this extension's technology to your own services",
+    "subtitle": "Page-context understanding, Action Tools agent, and script execution infra are not locked to a single product. Partnership, technology internalization, and co-development are all on the table.",
+    "cards": {
+      "context": {
+        "title": "Page-context AI",
+        "desc": "An AI pipeline that never loses user context"
+      },
+      "actionTools": {
+        "title": "Action Tools Agent",
+        "desc": "Safe-boundary automation that operates the browser directly"
+      },
+      "scripts": {
+        "title": "Script Run & Register Infra",
+        "desc": "Safely manage per-site extension assets"
+      }
+    },
+    "cta_primary": "Technical Inquiry",
+    "cta_secondary": "View Docs"
+  },
+  "finalCta": {
+    "title": "Get started on Chrome now",
+    "subtitle": "Use page-context AI immediately after installation.",
+    "primary": "Add to Chrome",
+    "secondary": "View Docs"
   },
   "footer": {
     "copyright": "© 2026 Web AI Assistant",

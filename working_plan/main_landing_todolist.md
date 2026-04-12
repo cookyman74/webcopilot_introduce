@@ -144,7 +144,7 @@
 | P5 Solution+Features | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (RED v2 리뷰 5건 반영 · lucide-react 추가 · 데모 #features 대체 · 240 passed) |
 | P6 Scenarios+Diff | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (RED 리뷰 반영 · 데모 2개 교체 · 272 passed) |
 | P7 AIModes+Safety | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (AI 모드 5종 + 안전 원칙 4종 · 과장 금지 가드 · 320 passed) |
-| P8 Roadmap+Business+CTA | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| P8 Roadmap+Business+CTA | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (**11개 섹션 완성** · 데모 전부 소멸 · accent-soft 복구 · 367 passed) |
 | P9 반응형/SEO/빌드 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | P10 Vercel 배포 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
@@ -208,8 +208,8 @@
 | P4 Hero+Problem | 1일 | 2026-04-12 | 2026-04-12 | ✅ RED v2 리뷰 6건 + 사후 리뷰 4건. TDD 사이클 + E2E Playwright 3 브레이크포인트 시각·동작 검증. P3 hotfix(html-lang sync) 동반. 테스트 198 passed \| 5 skipped. 번들 JS 256.99KB gzip 81.36KB |
 | P5 Solution+Features | 1일 | 2026-04-12 | 2026-04-12 | ✅ lucide-react 12아이콘. SolutionSection 3축 + FeaturesSection 9카드(done×7+wip×1+planned×1). 데모 #features 대체. 240 passed. JS 266.11KB gzip 84.82KB |
 | P6 Scenarios+Diff | 1일 | 2026-04-12 | 2026-04-12 | ✅ ScenariosSection 4카드 + DifferentiationSection 3 비교카드. 데모 scenarios/differentiation 교체. 272 passed. JS 271.54KB gzip 86.38KB |
-| P7 AIModes+Safety | 1일 | 2026-04-12 | 2026-04-12 | ✅ AIModesSection 5종(done×4+planned×1) + SafetySection 4원칙. 과장 금지 가드. 320 passed. JS 279.09KB gzip 88.60KB |
-| P8 Roadmap+Business+CTA | 1~1.5일 | — | — | 3개 섹션 (v2 BusinessSection 추가로 확장) |
+| P7 AIModes+Safety | 1일 | 2026-04-12 | 2026-04-12 | ✅ AIModesSection 6종(클라우드3+로컬3 · Didim→Claude/GpuStack) + SafetySection 4원칙. 과장 금지 가드. 326 passed. JS 279.86KB gzip 88.71KB |
+| P8 Roadmap+Business+CTA | 1일 | 2026-04-12 | 2026-04-12 | ✅ **11개 섹션 본문 완성**. Roadmap 3카드(done 금지) + BusinessSection 3카드(Badge 금지) + FinalCTA(accent-soft). 데모 전소멸. 367 passed. JS 284.20KB gzip 89.79KB |
 | P9 반응형/SEO/빌드 | 1일 | — | — | Lighthouse 보정 시 +0.5일 |
 | P10 Vercel 배포 | 0.5~1일 | — | — | Root Directory 이슈 시 +0.5일 |
 | **Total** | **10~11.5일** | — | — | v2 BusinessSection으로 P8이 +0.5일 |
@@ -220,4 +220,4 @@
 **작성자**: junghojang
 **최종 수정일**: 2026-04-11
 **최종 수정일**: 2026-04-12
-**상태**: 🔄 **Phase 1~7 완료** · Phase 8 (Roadmap + Business + FinalCTA) 착수 대기
+**상태**: 🔄 **Phase 1~8 완료 (11개 섹션 본문 완성)** · Phase 9 (반응형 / a11y / SEO / 빌드) 착수 대기
