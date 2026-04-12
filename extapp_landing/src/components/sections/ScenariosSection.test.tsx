@@ -211,10 +211,15 @@ describe('ScenariosSection (TEST-P6.1/P6.2/P6.3 + P6.8/P6.9 + P6.11)', () => {
       expect(screen.queryByRole('dialog')).toBeNull();
     });
 
-    it('4개 카드 각각에 영상 placeholder 버튼이 존재한다', () => {
-      render(<ScenariosSection />);
-      const buttons = screen.getAllByText('영상 준비 중');
-      expect(buttons.length).toBe(4);
+    it('4개 카드 각각에 영상 버튼이 존재한다 (썸네일 또는 placeholder)', () => {
+      const { container } = render(<ScenariosSection />);
+      // videoId 가 있는 카드는 썸네일 이미지, 없는 카드는 "영상 준비 중" 텍스트
+      const articles = container.querySelectorAll('article');
+      expect(articles.length).toBe(4);
+      for (const article of articles) {
+        const btn = article.querySelector('button');
+        expect(btn, '카드에 영상 버튼이 없음').not.toBeNull();
+      }
     });
   });
 });

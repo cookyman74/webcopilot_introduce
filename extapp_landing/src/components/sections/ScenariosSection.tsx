@@ -26,7 +26,7 @@ import { VideoModal } from '../common/VideoModal';
  * 테스트: src/components/sections/ScenariosSection.test.tsx (TEST-P6.1~P6.3 + P6.8/P6.9/P6.11)
  */
 const SCENARIO_ITEMS: readonly { key: string; icon: ReactNode; videoId?: string }[] = [
-  { key: 's1', icon: <Blocks size={24} /> },
+  { key: 's1', icon: <Blocks size={24} />, videoId: 'S7q0y9hN2lk' },
   { key: 's2', icon: <Languages size={24} /> },
   { key: 's3', icon: <FileEdit size={24} /> },
   { key: 's4', icon: <LayoutGrid size={24} /> },
@@ -77,12 +77,25 @@ export function ScenariosSection() {
                   title: t(`scenarios.items.${key}.title`),
                 })
               }
-              className="group mt-2 flex aspect-video w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-border bg-surface-alt transition hover:border-accent hover:bg-accent-soft"
+              className="group relative mt-2 flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-border bg-surface-alt transition hover:border-accent"
             >
-              <div className="flex flex-col items-center gap-2 text-ink-400 transition group-hover:text-accent">
-                <Play size={32} />
-                <span className="text-xs">{t('scenarios.videoPlaceholder')}</span>
-              </div>
+              {videoId ? (
+                <>
+                  <img
+                    src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                    alt={t(`scenarios.items.${key}.title`)}
+                    className="absolute inset-0 h-full w-full object-cover transition group-hover:scale-105"
+                  />
+                  <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-ink-900/60 text-white transition group-hover:bg-accent/90">
+                    <Play size={28} fill="currentColor" />
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-ink-400 transition group-hover:text-accent">
+                  <Play size={32} />
+                  <span className="text-xs">{t('scenarios.videoPlaceholder')}</span>
+                </div>
+              )}
             </button>
           </article>
         ))}
