@@ -1,6 +1,8 @@
 {
   "common": {
-    "examplePrefix": "e.g."
+    "examplePrefix": "e.g.",
+    "close": "Close",
+    "videoDialog": "{{title}} — Video"
   },
   "header": {
     "nav": {
@@ -114,6 +116,52 @@
         "title": "Floating Helper",
         "desc": "Quick access right next to your selection",
         "example": "Translate · Summarize"
+      }
+    }
+  },
+  "scenarios": {
+    "title": "How people use it",
+    "videoPlaceholder": "Video coming soon",
+    "items": {
+      "s1": {
+        "step": "Step 1",
+        "title": "Extend with per-site custom scripts",
+        "desc": "Dark mode, ad hiding, UI tweaks — register one-time scripts as permanent assets that auto-apply on every visit."
+      },
+      "s2": {
+        "step": "Step 2",
+        "title": "Select a sentence → translate & ask",
+        "desc": "One drag to instantly translate and follow up with questions."
+      },
+      "s3": {
+        "step": "Step 3",
+        "title": "Assisted document drafting",
+        "desc": "Analyzes forms, auto-fills fields, and lets you review."
+      },
+      "s4": {
+        "step": "Step 4",
+        "title": "Tab cleanup & page navigation",
+        "desc": "Groups open tabs by topic and searches your browsing history."
+      }
+    }
+  },
+  "differentiation": {
+    "title": "What makes it different?",
+    "items": {
+      "d1": {
+        "before": "Answer-only AI",
+        "after": "Action-driven AI",
+        "desc": "Goes beyond answering — it operates the browser directly."
+      },
+      "d2": {
+        "before": "One-off automation",
+        "after": "Reusable assets",
+        "desc": "Turn a one-time task into a permanent script."
+      },
+      "d3": {
+        "before": "Text-only AI",
+        "after": "Page · fields · scripts",
+        "desc": "Works with page structure, input fields, tabs and scripts together."
       }
     }
   },

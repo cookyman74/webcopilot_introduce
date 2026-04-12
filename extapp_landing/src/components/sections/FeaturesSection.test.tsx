@@ -120,11 +120,11 @@ describe('FeaturesSection (TEST-P5.3~P5.7 + P5.9 + P5.11 + P5.13)', () => {
       expect(badges.length).toBe(9);
     });
 
-    it('done 상태 배지가 정확히 7개 존재한다 (카드 #1~#7)', () => {
+    it('done 상태 배지가 정확히 8개 존재한다 (카드 #1~#7 + #9 Floating Helper)', () => {
       render(<FeaturesSection />);
       const doneText = i18n.t('features.status.done');
       const doneBadges = screen.getAllByText(doneText);
-      expect(doneBadges.length).toBe(7);
+      expect(doneBadges.length).toBe(8);
     });
 
     it('wip 상태 배지가 정확히 1개 존재한다 (TEST-P5.4)', () => {
@@ -134,11 +134,12 @@ describe('FeaturesSection (TEST-P5.3~P5.7 + P5.9 + P5.11 + P5.13)', () => {
       expect(wipBadges.length).toBe(1);
     });
 
-    it('planned 상태 배지가 정확히 1개 존재한다 (TEST-P5.5)', () => {
+    it('planned 상태 배지가 존재하지 않는다 (Floating Helper 구현 완료)', () => {
+      // Floating Helper 가 planned → done 으로 변경되어 planned 배지 0개.
       render(<FeaturesSection />);
       const plannedText = i18n.t('features.status.planned');
-      const plannedBadges = screen.getAllByText(plannedText);
-      expect(plannedBadges.length).toBe(1);
+      const plannedBadges = screen.queryAllByText(plannedText);
+      expect(plannedBadges.length).toBe(0);
     });
 
     it('"스크립트 실행·등록" 카드가 구체적으로 wip 배지를 가진다 (카드별 매핑 검증)', () => {
@@ -158,7 +159,7 @@ describe('FeaturesSection (TEST-P5.3~P5.7 + P5.9 + P5.11 + P5.13)', () => {
       expect(badge?.textContent?.trim()).toBe(i18n.t('features.status.wip'));
     });
 
-    it('"Floating Helper" 카드가 구체적으로 planned 배지를 가진다 (카드별 매핑 검증)', () => {
+    it('"Floating Helper" 카드가 구체적으로 done 배지를 가진다 (구현 완료)', () => {
       const { container } = render(<FeaturesSection />);
       const floatingTitle = i18n.t('features.items.floating.title');
       const articles = Array.from(container.querySelectorAll('article'));
@@ -168,7 +169,7 @@ describe('FeaturesSection (TEST-P5.3~P5.7 + P5.9 + P5.11 + P5.13)', () => {
       expect(floatingCard, `"${floatingTitle}" 카드를 찾지 못함`).not.toBeUndefined();
       const badge = floatingCard?.querySelector('[data-testid="status-badge"]');
       expect(badge).not.toBeNull();
-      expect(badge?.textContent?.trim()).toBe(i18n.t('features.status.planned'));
+      expect(badge?.textContent?.trim()).toBe(i18n.t('features.status.done'));
     });
 
     it('badge 라벨이 i18n 적용되어 언어 전환 시 DOM 에서도 변경된다', async () => {
@@ -181,25 +182,20 @@ describe('FeaturesSection (TEST-P5.3~P5.7 + P5.9 + P5.11 + P5.13)', () => {
       const { rerender } = render(<FeaturesSection />);
       const koDone = i18n.t('features.status.done');
       const koWip = i18n.t('features.status.wip');
-      const koPlanned = i18n.t('features.status.planned');
-      // ko DOM 확인
-      expect(screen.getAllByText(koDone).length).toBe(7);
+      // ko DOM 확인 — done 8개 (Floating Helper 구현 완료), wip 1개, planned 0개
+      expect(screen.getAllByText(koDone).length).toBe(8);
       expect(screen.getAllByText(koWip).length).toBe(1);
-      expect(screen.getAllByText(koPlanned).length).toBe(1);
 
       await i18n.changeLanguage('en');
       rerender(<FeaturesSection />);
       const enDone = i18n.t('features.status.done');
       const enWip = i18n.t('features.status.wip');
-      const enPlanned = i18n.t('features.status.planned');
       // en 텍스트가 ko 텍스트와 다른지
       expect(enDone).not.toBe(koDone);
       expect(enWip).not.toBe(koWip);
-      expect(enPlanned).not.toBe(koPlanned);
       // en DOM 에서 실제로 영문 badge 가 렌더되는지
-      expect(screen.getAllByText(enDone).length).toBe(7);
+      expect(screen.getAllByText(enDone).length).toBe(8);
       expect(screen.getAllByText(enWip).length).toBe(1);
-      expect(screen.getAllByText(enPlanned).length).toBe(1);
     });
   });
 

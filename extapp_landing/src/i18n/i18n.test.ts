@@ -107,11 +107,14 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
     expect(collectKeys(en)).toContain('footer.copyright');
   });
 
-  it('common.examplePrefix 키가 ko/en 양쪽에 존재한다', () => {
+  it('common.examplePrefix 와 common.close 키가 ko/en 양쪽에 존재한다', () => {
     // Phase 5 리뷰 반영: SolutionSection 과 FeatureCard 가 예시 접두사를
     // i18n 으로 렌더 (ko: "예:", en: "e.g."). 하드코딩 "예:" 제거.
+    // Phase 6 리뷰 반영: VideoModal 이 닫기 버튼 aria-label 로 common.close 사용.
     expect(collectKeys(ko)).toContain('common.examplePrefix');
     expect(collectKeys(en)).toContain('common.examplePrefix');
+    expect(collectKeys(ko)).toContain('common.close');
+    expect(collectKeys(en)).toContain('common.close');
   });
 
   // ───────────────────────────────────────────────────────────
@@ -234,6 +237,7 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
     const fields = ['step', 'title', 'desc'];
     const required = [
       'scenarios.title',
+      'scenarios.videoPlaceholder',
       ...itemKeys.flatMap((k) => fields.map((f) => `scenarios.items.${k}.${f}`)),
     ];
     const koKeys = collectKeys(ko);

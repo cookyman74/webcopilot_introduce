@@ -45,7 +45,7 @@ const FEATURE_ITEMS: readonly { key: string; status: FeatureStatus; icon: ReactN
   { key: 'image', status: 'done', icon: <Image size={24} /> },
   { key: 'improve', status: 'done', icon: <Wand2 size={24} /> },
   { key: 'script', status: 'wip', icon: <Terminal size={24} /> },
-  { key: 'floating', status: 'planned', icon: <Sparkles size={24} /> },
+  { key: 'floating', status: 'done', icon: <Sparkles size={24} /> },
 ];
 
 const HEADING_ID = 'features-heading';

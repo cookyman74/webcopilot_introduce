@@ -17,6 +17,7 @@
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ScenariosSection } from './ScenariosSection';
 import i18n from '../../i18n';
 
@@ -181,6 +182,39 @@ describe('ScenariosSection (TEST-P6.1/P6.2/P6.3 + P6.8/P6.9 + P6.11)', () => {
       for (let i = 0; i < 4; i++) {
         expect(enTitles[i]).not.toBe(koTitles[i]);
       }
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────
+  // 영상 모달 상호작용
+  // ─────────────────────────────────────────────────────────
+  describe('영상 모달 상호작용', () => {
+    it('영상 placeholder 버튼 클릭 시 모달(dialog) 이 DOM 에 나타난다', async () => {
+      const user = userEvent.setup();
+      render(<ScenariosSection />);
+      // 모달은 처음에 없어야 함
+      expect(screen.queryByRole('dialog')).toBeNull();
+      // 첫 번째 카드의 영상 placeholder 버튼 클릭
+      const buttons = screen.getAllByText('영상 준비 중');
+      await user.click(buttons[0]);
+      // 모달이 나타나야 함
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    it('모달 열린 후 ESC 키로 닫을 수 있다', async () => {
+      const user = userEvent.setup();
+      render(<ScenariosSection />);
+      const buttons = screen.getAllByText('영상 준비 중');
+      await user.click(buttons[0]);
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      await user.keyboard('{Escape}');
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
+
+    it('4개 카드 각각에 영상 placeholder 버튼이 존재한다', () => {
+      render(<ScenariosSection />);
+      const buttons = screen.getAllByText('영상 준비 중');
+      expect(buttons.length).toBe(4);
     });
   });
 });

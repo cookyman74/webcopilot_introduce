@@ -142,7 +142,7 @@
 | P3 i18n+레이아웃 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (RED v2 리뷰 반영 · happy-dom 환경 제약 2건 skip) |
 | P4 Hero+Problem | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (RED v2 리뷰 6건 반영 · 사후 리뷰 4건 반영 · P3 hotfix html-lang sync · E2E Playwright 검증) |
 | P5 Solution+Features | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (RED v2 리뷰 5건 반영 · lucide-react 추가 · 데모 #features 대체 · 240 passed) |
-| P6 Scenarios+Diff | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| P6 Scenarios+Diff | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 완료 (RED 리뷰 반영 · 데모 2개 교체 · 272 passed) |
 | P7 AIModes+Safety | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | P8 Roadmap+Business+CTA | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | P9 반응형/SEO/빌드 | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
@@ -207,7 +207,7 @@
 | P3 i18n+레이아웃 | 1일 | 2026-04-11 | 2026-04-11 | ✅ RED v1 → v2(리뷰 피드백 5건 반영) → GREEN(TASK-001~009) → REFACTOR(barrel + 네비 데이터화) → 사후. 결과서 1건 `Phase3_I18nLayout_20260411.md`. 140 passed \| 5 skipped (happy-dom 환경 제약 2건 포함) |
 | P4 Hero+Problem | 1일 | 2026-04-12 | 2026-04-12 | ✅ RED v2 리뷰 6건 + 사후 리뷰 4건. TDD 사이클 + E2E Playwright 3 브레이크포인트 시각·동작 검증. P3 hotfix(html-lang sync) 동반. 테스트 198 passed \| 5 skipped. 번들 JS 256.99KB gzip 81.36KB |
 | P5 Solution+Features | 1일 | 2026-04-12 | 2026-04-12 | ✅ lucide-react 12아이콘. SolutionSection 3축 + FeaturesSection 9카드(done×7+wip×1+planned×1). 데모 #features 대체. 240 passed. JS 266.11KB gzip 84.82KB |
-| P6 Scenarios+Diff | 1일 | — | — | |
+| P6 Scenarios+Diff | 1일 | 2026-04-12 | 2026-04-12 | ✅ ScenariosSection 4카드 + DifferentiationSection 3 비교카드. 데모 scenarios/differentiation 교체. 272 passed. JS 271.54KB gzip 86.38KB |
 | P7 AIModes+Safety | 1일 | — | — | |
 | P8 Roadmap+Business+CTA | 1~1.5일 | — | — | 3개 섹션 (v2 BusinessSection 추가로 확장) |
 | P9 반응형/SEO/빌드 | 1일 | — | — | Lighthouse 보정 시 +0.5일 |
@@ -219,4 +219,4 @@
 **작성일**: 2026-04-10
 **작성자**: junghojang
 **최종 수정일**: 2026-04-11
-**상태**: 🔄 **Phase 1~5 완료** · Phase 6 (Scenarios + Differentiation) 착수 대기
+**상태**: 🔄 **Phase 1~6 완료** · Phase 7 (AI Modes + Safety) 착수 대기

@@ -9,3 +9,5 @@ export { HeroSection } from './HeroSection';
 export { ProblemSection } from './ProblemSection';
 export { SolutionSection } from './SolutionSection';
 export { FeaturesSection } from './FeaturesSection';
+export { ScenariosSection } from './ScenariosSection';
+export { DifferentiationSection } from './DifferentiationSection';

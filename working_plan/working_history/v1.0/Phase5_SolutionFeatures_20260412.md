@@ -224,5 +224,22 @@ build        ✅ JS 266.79 KB (gzip 85.00 KB) · CSS 10.62 KB (gzip 2.93 KB)
 | `src/App.test.tsx` | `beforeEach(i18n.changeLanguage('ko'))` + Demo heading i18n 대응 + Badge i18n 대응 |
 | `src/i18n/i18n.test.ts` | `common.examplePrefix` required-key 가드 추가 |
 
+---
+
+## 10. 사후 콘텐츠 수정 — Floating Helper 상태 변경 (2026-04-12)
+
+### 10.1 변경 사유
+Floating Helper 기능이 구현 완료되어, FeaturesSection 의 카드 #9 상태를 `planned` → `done` 으로 변경.
+
+### 10.2 수정 내역
+
+| 파일 | 변경 |
+|------|------|
+| `src/components/sections/FeaturesSection.tsx:49` | `status: 'planned'` → `status: 'done'` |
+| `src/components/sections/FeaturesSection.test.tsx` | done 카운트 7→**8** · planned 카운트 1→**0** (`queryAllByText` 변경) · Floating Helper 카드별 매핑 `planned`→**`done`** · badge i18n DOM 검증 done 8 / wip 1 (planned 삭제) |
+
+### 10.3 현재 badge 분포
+**done ×8 + wip ×1** = 9개 전부 badge 보유. FeaturesSection 에 `planned` 상태 카드가 없으므로, "계획·검토 중" badge 는 roadmap 데모 섹션의 standalone Badge 에서만 렌더됨. App.test.tsx 의 "Badge 3종" 가드는 roadmap 섹션 덕분에 여전히 PASS.
+
 **작성**: 2026-04-12
-**Phase 5 상태**: ✅ GREEN + REFACTOR + 리뷰 반영 + 자동 검증 완료 · 커밋 대기
+**Phase 5 상태**: ✅ GREEN + REFACTOR + 리뷰 반영 + 콘텐츠 수정 완료 · 커밋 대기
