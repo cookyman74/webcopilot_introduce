@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from './Badge';
 import type { FeatureStatus } from '../../lib/types';
 
@@ -46,6 +47,7 @@ export type FeatureCardProps = WithStatus | WithoutStatus;
 
 export function FeatureCard(props: FeatureCardProps) {
   const { icon, title, description, example } = props;
+  const { t } = useTranslation();
   const hasStatus = props.status !== undefined && props.statusLabel !== undefined;
 
   return (
@@ -58,7 +60,11 @@ export function FeatureCard(props: FeatureCardProps) {
       )}
       <h3 className="mt-4 text-xl font-semibold text-ink-900">{title}</h3>
       <p className="mt-2 text-base text-ink-700">{description}</p>
-      {example && <p className="mt-3 text-sm text-ink-500">예: {example}</p>}
+      {example && (
+        <p className="mt-3 text-sm text-ink-500">
+          {t('common.examplePrefix')} {example}
+        </p>
+      )}
     </article>
   );
 }

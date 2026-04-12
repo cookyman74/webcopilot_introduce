@@ -12,16 +12,28 @@
  *   Badge 3종, FeatureCard 2 케이스) 이 App.test 에서 종합적으로 다뤄져야 한다.
  *   아래 테스트는 그 요구를 반영한다.
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 import { NAV_ANCHORS } from './lib/constants';
+import i18n from './i18n';
 
 describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
-  it('Section 4종 배경이 모두 고유하게 렌더된다 (canvas/surface/surface-alt/accent-soft)', () => {
-    // v2: 리뷰 피드백 반영 — 이전 버전은 sections.length >= 4 만 검사해서
-    // 모든 섹션이 같은 배경으로 회귀해도 통과했다. 각 배경 클래스의 **실제
-    // 존재** 를 개별 검증하여 배경 회귀를 차단한다.
+  // Phase 5 리뷰 반영: 데모 섹션이 i18n 전환되었으므로 각 케이스 전
+  // ko 로 리셋해 테스트 간 독립 보장 (happy-dom 의 navigator.language 가
+  // en-US 이므로 별도 리셋 없이는 en 으로 init 될 수 있음).
+  beforeEach(async () => {
+    await i18n.changeLanguage('ko');
+  });
+  it('Section 배경이 canvas/surface/surface-alt 3종 이상 고유하게 렌더된다', () => {
+    // v2: 리뷰 피드백 반영 — 각 배경 클래스의 실제 존재를 개별 검증.
+    //
+    // Phase 5 전환 (리뷰 피드백 반영 Medium): 데모 `<Section id="features"
+    // background="accent-soft">` 가 Phase 5 GREEN 에서 삭제되고 FeaturesSection
+    // (background="surface") 으로 대체된다. 이 시점에 accent-soft 를 사용하는
+    // 섹션이 전체 App 에서 사라지므로, 4종 가드를 3종으로 축소한다.
+    // accent-soft 는 Phase 8 FinalCTA(§5.11) 에서 다시 등장하므로 그 시점에
+    // 4종 가드로 복구한다.
     const { container } = render(<App />);
     const sections = container.querySelectorAll('section');
     expect(sections.length).toBeGreaterThanOrEqual(4);
@@ -29,19 +41,19 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
     const allClassNames = Array.from(sections).map((s) => s.className);
     const combined = allClassNames.join(' ');
 
-    // 4종 배경 클래스가 각각 1개 이상 존재해야 함
+    // Phase 5 시점 실제 존재하는 3종 배경
     expect(combined).toMatch(/\bbg-canvas\b/);
     expect(combined).toMatch(/\bbg-surface\b/);
     expect(combined).toMatch(/\bbg-surface-alt\b/);
-    expect(combined).toMatch(/\bbg-accent-soft\b/);
+    // accent-soft 는 Phase 5 에서 소멸. Phase 8 FinalCTA 에서 부활 예정.
+    // expect(combined).toMatch(/\bbg-accent-soft\b/);
 
-    // 중복 배경 회귀 방지: 각 섹션에서 bg-* 클래스를 추출해 고유값 4개 이상
     const uniqueBgs = new Set(
       allClassNames
         .map((c) => c.match(/\bbg-[a-z-]+\b/)?.[0])
         .filter((c): c is string => Boolean(c))
     );
-    expect(uniqueBgs.size).toBeGreaterThanOrEqual(4);
+    expect(uniqueBgs.size).toBeGreaterThanOrEqual(3);
   });
 
   it('Section id="features" 가 Anchor Link 대상으로 존재한다', () => {
@@ -128,63 +140,36 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
     expect(autoRel).toContain('noreferrer');
   });
 
-  it('Badge 3종(done/wip/planned) 라벨이 standalone 섹션에 모두 렌더된다', () => {
-    // 데모 페이지에는 standalone Badge 3개 + FeatureCard(with status) 내부
-    // Badge 1개 = 총 4개가 존재한다. 총 개수 검증은 아래 "FeatureCard 2 케이스"
-    // 테스트에서 수행하고, 여기서는 3종 라벨이 모두 렌더됨을 확인한다.
+  it('Badge 3종(done/wip/planned) 라벨이 App 전체에 모두 렌더된다', () => {
+    // Phase 5: FeaturesSection 이 done/wip/planned 카드를 렌더하고,
+    // roadmap 데모 섹션도 standalone Badge 3종을 유지.
+    // 데모 Badge 가 i18n 전환되었으므로 기본 ko 상태의 t() 값으로 검증.
     render(<App />);
-    // "구현됨" 은 Badge 섹션과 FeatureCard 양쪽에 등장하므로 getAllByText 로
-    // 최소 1개 이상 존재를 확인.
     expect(screen.getAllByText('구현됨').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('보강 중')).toBeInTheDocument();
-    expect(screen.getByText('계획·검토 중')).toBeInTheDocument();
+    expect(screen.getAllByText('보강 중').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('계획·검토 중').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('FeatureCard 2 케이스: 배지 포함 1개 + 배지 없음 1개 (BusinessSection 프리뷰)', () => {
+  it('roadmap 데모 섹션의 standalone Badge 가 3개 존재한다', () => {
+    // Phase 5 전환 (리뷰 피드백 반영 Medium): 이전 "FeatureCard 2 케이스" 와
+    // "BusinessSection 프리뷰" 테스트는 데모 `<Section id="features">` 내부의
+    // 2개 FeatureCard 를 검증하고 있었으나, Phase 5 GREEN 에서 이 데모 섹션이
+    // 삭제되고 실제 FeaturesSection 으로 대체된다. 기존 테스트의 scope
+    // (section#features 내부 article 2개, badge 1개, BusinessSection 프리뷰) 가
+    // 모두 무효화된다.
+    //
+    // 수정:
+    //   - "FeatureCard 2 케이스" / "BusinessSection 프리뷰" 테스트 삭제
+    //   - FeaturesSection 내부 가드(9 article + 9 badge) 는 Phase 5 구조 가드
+    //     describe 블록에서 별도 검증 (위 Phase 5 가드 참조)
+    //   - roadmap 데모 섹션의 3 standalone Badge 만 독립적으로 유지
+    //
+    // BusinessSection Badge 부재 가드는 Phase 8 에서 실제 구현 시 재도입.
     const { container } = render(<App />);
-    // Phase 4+ 대비 scope 격리: ProblemSection(4 article) · Features/Roadmap 등이
-    // 추가되면 글로벌 article 카운트가 바뀌므로 features 섹션 내부로 한정.
-    // 이렇게 하면 Phase 4 이후에도 이 가드는 정확히 FeatureCard 2 케이스만 검증.
-    const featureSection = container.querySelector('section#features');
-    expect(featureSection).not.toBeNull();
-    const articles = featureSection?.querySelectorAll('article') ?? [];
-    expect(articles.length).toBe(2);
-
-    // 리뷰 피드백 반영 (Low): 이전 버전은 `container.querySelectorAll(...) === 4`
-    // 로 전체 문서 범위의 배지 총 카운트를 검사해, Phase 5 FeaturesSection 이
-    // 실제 Feature Card 배지 여러 개를 추가하면 unrelated failure 가 나는
-    // 구조였다. 수정: 배지를 **섹션 scope 로 분리** 해 각 섹션이 독립적으로
-    // 검증되도록 한다.
-    //
-    //   (a) features 섹션 내부 → 정확히 1개 (첫 번째 FeatureCard with status)
-    //   (b) roadmap 섹션 내부 → 정확히 3개 (standalone Badge 데모)
-    //
-    // Phase 5 FeaturesSection 이 features 섹션을 실제 콘텐츠로 교체하면 (a) 만
-    // 조정하면 되고, roadmap 섹션의 (b) 는 Phase 6+ 까지 안정적으로 유지된다.
-    const featureSectionBadges =
-      featureSection?.querySelectorAll('[data-testid="status-badge"]') ?? [];
-    expect(featureSectionBadges.length).toBe(1);
-
     const roadmapSection = container.querySelector('section#roadmap');
     expect(roadmapSection).not.toBeNull();
     const roadmapBadges = roadmapSection?.querySelectorAll('[data-testid="status-badge"]') ?? [];
     expect(roadmapBadges.length).toBe(3);
-  });
-
-  it('BusinessSection 프리뷰 카드가 상태 배지 관련 텍스트를 포함하지 않는다', () => {
-    // 데모 페이지의 두 번째 FeatureCard 는 status 없이 렌더되어야 하며,
-    // 그 article 내부에는 status-badge testid 가 없어야 한다 (Phase 8
-    // TEST-P8.9 의 선행 가드).
-    //
-    // Phase 4+ 대비 scope 격리: section#features 내부에서만 찾아 ProblemSection
-    // 등 다른 article 에 영향받지 않도록 함.
-    const { container } = render(<App />);
-    const featureSection = container.querySelector('section#features');
-    expect(featureSection).not.toBeNull();
-    const articles = Array.from(featureSection?.querySelectorAll('article') ?? []);
-    const previewArticle = articles.find((a) => a.textContent?.includes('페이지 문맥 기반 AI'));
-    expect(previewArticle).toBeTruthy();
-    expect(previewArticle?.querySelectorAll('[data-testid="status-badge"]').length).toBe(0);
   });
 });
 
@@ -259,19 +244,76 @@ describe('Phase 4 구조 가드 — HeroSection + ProblemSection 추가', () => 
     expect(problemArticles.length).toBe(4);
   });
 
-  it('데모 첫 Section 의 "Design System Demo" 텍스트가 <h2> 로 렌더된다', () => {
-    // Phase 4 TASK-004 의 h1 → h2 다운그레이드 정책을 런타임으로 검증.
-    //
-    // RED 시점 (Phase 4 GREEN 전):
-    //   데모 첫 Section 이 아직 <h1> 을 사용 중 → getByText 로 찾은 요소의 tagName
-    //   이 "H1" → expect(...).toBe('H2') 가 **FAIL**.
-    //
-    // Phase 4 GREEN 이후 기대 상태:
-    //   데모 첫 Section 이 <h2> 로 다운그레이드 → PASS.
-    //
-    // 이 테스트가 GREEN 후 PASS 하려면 반드시 데모 h1→h2 변경이 App.tsx 에 반영되어야 함.
+  it('데모 Design System 섹션의 h2 가 렌더된다 (h1 아닌 h2 — Phase 4 다운그레이드)', () => {
+    // Phase 5 리뷰 반영: 데모 헤딩이 i18n 전환되었으므로 ko t() 값으로 검색.
     render(<App />);
-    const demoHeading = screen.getByText(/Design System Demo/);
+    const demoHeading = screen.getByText(/디자인 시스템 데모/);
     expect(demoHeading.tagName).toBe('H2');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Phase 5 구조 가드 (TEST-P5.10 + P5.11 + P5.12)
+// ─────────────────────────────────────────────────────────────
+//
+// Phase 5 의 핵심 전환: 데모 `<Section id="features" background="accent-soft">`
+// 를 삭제하고 실제 `<FeaturesSection />` (id="features", background="surface") 으로
+// 대체한다. SolutionSection 도 Problem 뒤에 추가.
+//
+// 본 describe 의 가드는 Phase 5 GREEN 완료 후 전부 PASS 여야 한다. RED 시점엔
+// Solution/Features 컴포넌트 자체가 없으므로 App 에 삽입도 안 된 상태 → FAIL.
+describe('Phase 5 구조 가드 — SolutionSection + FeaturesSection 추가', () => {
+  it('SolutionSection 이 data-testid="solution-section" 으로 App 에 렌더된다 (TEST-P5.10)', () => {
+    // Phase 5 GREEN 이후 기대 상태:
+    //   App.tsx 가 <SolutionSection /> 을 ProblemSection 직후 삽입 +
+    //   구현 컴포넌트가 data-testid="solution-section" 부여 → PASS.
+    const { container } = render(<App />);
+    const solution = container.querySelector('[data-testid="solution-section"]');
+    expect(solution, 'SolutionSection data-testid 가 App 에 없음 — 섹션 미삽입').not.toBeNull();
+    expect(solution?.tagName).toBe('SECTION');
+  });
+
+  it('FeaturesSection 이 data-testid="features-section" 으로 App 에 렌더된다 (TEST-P5.11)', () => {
+    // Phase 5 GREEN 이후: 데모 `<Section id="features">` 삭제 → `<FeaturesSection />` 대체.
+    const { container } = render(<App />);
+    const features = container.querySelector('[data-testid="features-section"]');
+    expect(features, 'FeaturesSection data-testid 가 App 에 없음 — 섹션 미삽입').not.toBeNull();
+    expect(features?.tagName).toBe('SECTION');
+  });
+
+  it('FeaturesSection scope 내부에 정확히 9개 article + 9개 status badge 가 존재한다', () => {
+    // 데모 features 섹션은 FeatureCard 2개 + badge 1개였다.
+    // Phase 5 실제 FeaturesSection 은 9 카드 × badge = 9 badge.
+    const { container } = render(<App />);
+    const features = container.querySelector('[data-testid="features-section"]');
+    expect(features).not.toBeNull();
+    const articles = features?.querySelectorAll('article') ?? [];
+    expect(articles.length).toBe(9);
+    const badges = features?.querySelectorAll('[data-testid="status-badge"]') ?? [];
+    expect(badges.length).toBe(9);
+  });
+
+  it('SolutionSection scope 내부에 정확히 3개 article 이 존재한다', () => {
+    const { container } = render(<App />);
+    const solution = container.querySelector('[data-testid="solution-section"]');
+    expect(solution).not.toBeNull();
+    const articles = solution?.querySelectorAll('article') ?? [];
+    expect(articles.length).toBe(3);
+  });
+
+  it('섹션 렌더 순서가 Hero → Problem → Solution → Features 이다 (TEST-P5.12)', () => {
+    // 리뷰 피드백 반영 (High): 이전 버전은 data-testid 존재와 내부 카드 수만
+    // 확인해서, 순서가 바뀌어도 통과할 수 있었다. data-testid 를 가진 모든
+    // section 을 DOM 등장 순서대로 수집해 Phase 5 시점의 정확한 순서를 강제.
+    const { container } = render(<App />);
+    const allTestIds = Array.from(container.querySelectorAll('section[data-testid]'))
+      .map((s) => s.getAttribute('data-testid'))
+      .filter(Boolean);
+    expect(allTestIds).toEqual([
+      'hero-section',
+      'problem-section',
+      'solution-section',
+      'features-section',
+    ]);
   });
 });

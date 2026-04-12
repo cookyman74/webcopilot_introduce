@@ -1,4 +1,7 @@
 {
+  "common": {
+    "examplePrefix": "예:"
+  },
   "header": {
     "nav": {
       "features": "기능",
@@ -38,6 +41,90 @@
         "desc": "스크립트를 직접 짜는 건 부담이 큽니다."
       }
     }
+  },
+  "solution": {
+    "title": "이렇게 해결합니다",
+    "axes": {
+      "context": {
+        "title": "페이지 문맥 기반 AI",
+        "desc": "현재 페이지, 선택 텍스트, 입력 필드, 스크린샷, 페이지 구조까지 함께 다룹니다.",
+        "example": "기사 요약, 입력 필드 분석 후 자동입력"
+      },
+      "action": {
+        "title": "브라우저 액션 자동화",
+        "desc": "자연어 요청을 실제 브라우저 동작으로 옮깁니다.",
+        "example": "탭 그룹 정리, 폼 입력, 댓글 추출"
+      },
+      "script": {
+        "title": "스크립트 기반 확장성",
+        "desc": "실행한 작업을 추적하고, 영구 스크립트로 발전시킵니다.",
+        "example": "사이트 다크모드, 광고 영역 숨김"
+      }
+    }
+  },
+  "features": {
+    "title": "주요 기능",
+    "status": {
+      "done": "구현됨",
+      "wip": "보강 중",
+      "planned": "계획·검토 중"
+    },
+    "items": {
+      "chat": {
+        "title": "AI 채팅",
+        "desc": "사이드 패널 기반 페이지 문맥 채팅",
+        "example": "스트리밍 응답"
+      },
+      "helper": {
+        "title": "페이지 도우미",
+        "desc": "현재 페이지 요약, 입력 필드 분석",
+        "example": "보조 작성"
+      },
+      "select": {
+        "title": "텍스트 선택 기반",
+        "desc": "우클릭으로 선택 문장 처리",
+        "example": "번역, 설명, 가공"
+      },
+      "autofill": {
+        "title": "문서·폼 자동입력",
+        "desc": "그룹웨어 문서/요청서 작성 보조",
+        "example": "Inwork 작성"
+      },
+      "action": {
+        "title": "Action Tools",
+        "desc": "GOTO·CLICK·FILL·EXTRACT 등",
+        "example": "탭 정리·기록 검색"
+      },
+      "image": {
+        "title": "이미지·스크린샷",
+        "desc": "드래그앤드롭 + 캡처 후 질문",
+        "example": "Vision 분석"
+      },
+      "improve": {
+        "title": "텍스트 개선",
+        "desc": "입력 필드에서 직접 다듬기",
+        "example": "초안 보정"
+      },
+      "script": {
+        "title": "스크립트 실행·등록",
+        "desc": "EXECUTE/REGISTER + 세션 추적",
+        "example": "다크모드 적용"
+      },
+      "floating": {
+        "title": "Floating Helper",
+        "desc": "선택 직후 옆에 뜨는 빠른 진입",
+        "example": "번역·요약"
+      }
+    }
+  },
+  "demo": {
+    "designSystem": "디자인 시스템 데모",
+    "designSystemDesc": "Phase 2 공통 컴포넌트 (Section · Button · Badge) 시각 확인 페이지",
+    "buttons": "Buttons",
+    "statusBadges": "Status Badges",
+    "badgeDone": "구현됨",
+    "badgeWip": "보강 중",
+    "badgePlanned": "계획·검토 중"
   },
   "footer": {
     "copyright": "© 2026 Web AI Assistant",

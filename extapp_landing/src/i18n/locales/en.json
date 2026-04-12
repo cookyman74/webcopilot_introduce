@@ -1,4 +1,7 @@
 {
+  "common": {
+    "examplePrefix": "e.g."
+  },
   "header": {
     "nav": {
       "features": "Features",
@@ -38,6 +41,90 @@
         "desc": "Writing scripts for each site is too heavy for daily work."
       }
     }
+  },
+  "solution": {
+    "title": "Here's how it works",
+    "axes": {
+      "context": {
+        "title": "Page-context AI",
+        "desc": "Reads the current page, selected text, input fields, screenshots and page structure together.",
+        "example": "Article summary, auto-fill after field analysis"
+      },
+      "action": {
+        "title": "Browser action automation",
+        "desc": "Turns natural-language requests into real browser actions.",
+        "example": "Tab grouping, form filling, comment extraction"
+      },
+      "script": {
+        "title": "Script-based extensibility",
+        "desc": "Tracks what you ran and evolves it into permanent scripts.",
+        "example": "Site dark mode, ad area hiding"
+      }
+    }
+  },
+  "features": {
+    "title": "Key Features",
+    "status": {
+      "done": "Implemented",
+      "wip": "In Progress",
+      "planned": "Planned"
+    },
+    "items": {
+      "chat": {
+        "title": "AI Chat",
+        "desc": "Side-panel page-context chat",
+        "example": "Streaming responses"
+      },
+      "helper": {
+        "title": "Page Helper",
+        "desc": "Summarize pages, analyze input fields",
+        "example": "Assisted writing"
+      },
+      "select": {
+        "title": "Text Selection",
+        "desc": "Right-click to process selected text",
+        "example": "Translate, explain, transform"
+      },
+      "autofill": {
+        "title": "Doc & Form Auto-fill",
+        "desc": "Assist with groupware docs and request forms",
+        "example": "Inwork drafting"
+      },
+      "action": {
+        "title": "Action Tools",
+        "desc": "GOTO · CLICK · FILL · EXTRACT and more",
+        "example": "Tab cleanup · history search"
+      },
+      "image": {
+        "title": "Image & Screenshot",
+        "desc": "Drag-and-drop + capture then ask",
+        "example": "Vision analysis"
+      },
+      "improve": {
+        "title": "Text Improvement",
+        "desc": "Polish text directly in input fields",
+        "example": "Draft refinement"
+      },
+      "script": {
+        "title": "Script Run & Register",
+        "desc": "EXECUTE / REGISTER + session tracking",
+        "example": "Dark mode toggle"
+      },
+      "floating": {
+        "title": "Floating Helper",
+        "desc": "Quick access right next to your selection",
+        "example": "Translate · Summarize"
+      }
+    }
+  },
+  "demo": {
+    "designSystem": "Design System Demo",
+    "designSystemDesc": "Phase 2 shared components (Section · Button · Badge) visual check",
+    "buttons": "Buttons",
+    "statusBadges": "Status Badges",
+    "badgeDone": "Implemented",
+    "badgeWip": "In Progress",
+    "badgePlanned": "Planned"
   },
   "footer": {
     "copyright": "© 2026 Web AI Assistant",

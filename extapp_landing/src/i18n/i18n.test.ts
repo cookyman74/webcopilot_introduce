@@ -101,13 +101,17 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
   });
 
   it('header.cta 와 footer.copyright 키가 존재한다', () => {
-    // Header Primary CTA 라벨 (TEST-P3.5) 과 Footer 저작권 (TEST-P3.8) 의
-    // 라벨 소스. 두 컴포넌트가 i18n 키로 렌더하기 때문에 누락되면 컴포넌트
-    // 레벨에서도 FAIL 이 전파된다.
     expect(collectKeys(ko)).toContain('header.cta');
     expect(collectKeys(en)).toContain('header.cta');
     expect(collectKeys(ko)).toContain('footer.copyright');
     expect(collectKeys(en)).toContain('footer.copyright');
+  });
+
+  it('common.examplePrefix 키가 ko/en 양쪽에 존재한다', () => {
+    // Phase 5 리뷰 반영: SolutionSection 과 FeatureCard 가 예시 접두사를
+    // i18n 으로 렌더 (ko: "예:", en: "e.g."). 하드코딩 "예:" 제거.
+    expect(collectKeys(ko)).toContain('common.examplePrefix');
+    expect(collectKeys(en)).toContain('common.examplePrefix');
   });
 
   // ───────────────────────────────────────────────────────────
@@ -157,6 +161,61 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
       'problem.items.p3.desc',
       'problem.items.p4.title',
       'problem.items.p4.desc',
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
+
+  // ───────────────────────────────────────────────────────────
+  // Phase 5 필수 키 — solution.* / features.* (TEST-P5.8)
+  // ───────────────────────────────────────────────────────────
+  it('Phase 5 필수 solution.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P5.8)', () => {
+    // phase05 §5.3 TASK-002 스펙: solution.title + 3 축 × 3 필드 = 10키
+    const required = [
+      'solution.title',
+      'solution.axes.context.title',
+      'solution.axes.context.desc',
+      'solution.axes.context.example',
+      'solution.axes.action.title',
+      'solution.axes.action.desc',
+      'solution.axes.action.example',
+      'solution.axes.script.title',
+      'solution.axes.script.desc',
+      'solution.axes.script.example',
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
+
+  it('Phase 5 필수 features.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P5.8)', () => {
+    // phase05 §5.3 TASK-002 스펙:
+    //   features.title + features.status.{done,wip,planned}
+    //   + 9 카드 × {title,desc,example} = 31키
+    const statusKeys = ['features.status.done', 'features.status.wip', 'features.status.planned'];
+    const itemKeys = [
+      'chat',
+      'helper',
+      'select',
+      'autofill',
+      'action',
+      'image',
+      'improve',
+      'script',
+      'floating',
+    ];
+    const fields = ['title', 'desc', 'example'];
+    const required = [
+      'features.title',
+      ...statusKeys,
+      ...itemKeys.flatMap((k) => fields.map((f) => `features.items.${k}.${f}`)),
     ];
     const koKeys = collectKeys(ko);
     const enKeys = collectKeys(en);
