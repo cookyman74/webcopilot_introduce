@@ -56,12 +56,9 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
     expect(uniqueBgs.size).toBeGreaterThanOrEqual(3);
   });
 
-  it('Section id="features" 가 Anchor Link 대상으로 존재한다', () => {
-    // "Anchor Link" 버튼이 #features 를 가리키므로 대응 섹션이 DOM 에 있어야 함.
-    // 이 테스트가 없으면 데모 페이지의 앵커 네비가 silently broken 상태로
-    // 회귀할 수 있다.
+  it('Section id="features" 가 존재한다', () => {
+    // FeaturesSection 이 id="features" 를 인수받았으므로 DOM 에 있어야 함.
     const { container } = render(<App />);
-    expect(container.querySelector('#features')).not.toBeNull();
     expect(container.querySelector('section#features')).not.toBeNull();
   });
 
@@ -91,53 +88,6 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
       const target = container.querySelector(`section#${anchor.id}`);
       expect(target, `#${anchor.id} 가 <section> 태그에 부여되지 않음`).not.toBeNull();
     }
-  });
-
-  it('섹션 렌더 순서가 NAV_ANCHORS 배열 순서와 일치한다 (스크롤 흐름 일관성)', () => {
-    // 리뷰 피드백 반영 (Low): NAV_ANCHORS 와 Header 는
-    //   features → scenarios → differentiation → roadmap
-    // 순서를 전제로 하지만, 이전 App.tsx 는 데모 Section 을
-    //   scenarios → differentiation → roadmap → features
-    // 순서로 렌더해 Header 네비 1번 클릭 시 사용자가 맨 아래로 점프하는
-    // 기묘한 UX 가 있었다. 이 가드는 **DOM 에 등장하는 id 순서** 가
-    // NAV_ANCHORS 배열 순서와 정확히 일치함을 강제한다.
-    //
-    // 구현: querySelectorAll('section[id]') 로 id 를 가진 모든 section 을
-    // **DOM 순서** 로 수집 (HeroSection/ProblemSection 은 id 없으므로 제외) →
-    // id 배열을 만든 뒤 NAV_ANCHORS 의 id 배열과 비교.
-    const { container } = render(<App />);
-    const renderedIds = Array.from(container.querySelectorAll('section[id]'))
-      .map((s) => s.id)
-      .filter((id) => NAV_ANCHORS.some((a) => a.id === id));
-    const expectedIds = NAV_ANCHORS.map((a) => a.id);
-    expect(renderedIds).toEqual(expectedIds);
-  });
-
-  it('Button primary / secondary 버튼이 각각 존재한다', () => {
-    render(<App />);
-    expect(screen.getByRole('button', { name: /Primary Button/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Secondary Button/ })).toBeInTheDocument();
-  });
-
-  it('Button anchor 링크는 내부 앵커, 명시적/자동 external 링크는 target="_blank"', () => {
-    render(<App />);
-    const anchor = screen.getByRole('link', { name: /Anchor Link/ });
-    expect(anchor).toHaveAttribute('href', '#features');
-    expect(anchor.getAttribute('target')).toBeNull();
-
-    // 명시적 external={true}
-    const external = screen.getByRole('link', { name: /External Link/ });
-    expect(external).toHaveAttribute('target', '_blank');
-    const extRel = external.getAttribute('rel') ?? '';
-    expect(extRel).toContain('noopener');
-    expect(extRel).toContain('noreferrer');
-
-    // 자동 external 감지 (external prop 없이 http(s) URL 만 전달)
-    const auto = screen.getByRole('link', { name: /Auto External/ });
-    expect(auto).toHaveAttribute('target', '_blank');
-    const autoRel = auto.getAttribute('rel') ?? '';
-    expect(autoRel).toContain('noopener');
-    expect(autoRel).toContain('noreferrer');
   });
 
   it('Badge 3종(done/wip/planned) 라벨이 App 전체에 모두 렌더된다', () => {
@@ -174,7 +124,7 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// Phase 4 구조 가드 (TEST-P4.10 + P4.11 + 데모 h2 다운그레이드)
+// Phase 4 구조 가드 (TEST-P4.10 + P4.11)
 // ─────────────────────────────────────────────────────────────
 //
 // NAV_ANCHORS 4개 ID 유지 (TEST-P4.9) 는 이미 위 describe 블록의 기존 가드가 커버하므로
@@ -184,18 +134,6 @@ describe('App demo page (Phase 2 공통 컴포넌트 종합 검증)', () => {
 // 기대 상태 (현재 vs Phase 4 이후) 는 각 테스트 주석에 명시.
 describe('Phase 4 구조 가드 — HeroSection + ProblemSection 추가', () => {
   it('HeroSection 이 data-testid="hero-section" 으로 App 에 직접 렌더된다 (TEST-P4.10)', () => {
-    // 리뷰 피드백 반영 (High): 이전 버전은 `h1.length === 1` 만 검사해서
-    // 데모 첫 Section 의 기존 h1 덕분에 HeroSection 이 없어도 **우연히 PASS**
-    // 상태였다. HeroSection 이 실제로 App 트리에 삽입되었는지 직접 확인할 수
-    // 없는 간접 가드였던 셈.
-    //
-    // 수정: HeroSection.test.tsx 에서 정의한 공개 계약
-    //   `<section data-testid="hero-section">` 을 App 루트에서 직접 찾아
-    //   확실히 렌더되는지 검증한다. RED 시점엔 HeroSection 자체가 없으므로 FAIL.
-    //
-    // Phase 4 GREEN 이후 기대 상태:
-    //   App.tsx 가 <HeroSection /> 을 Header 직후 삽입 + HeroSection 구현이
-    //   data-testid="hero-section" 을 Section 루트에 부여 → PASS.
     const { container } = render(<App />);
     const hero = container.querySelector('[data-testid="hero-section"]');
     expect(hero, 'HeroSection data-testid 가 App 루트에 없음 — 섹션 미삽입').not.toBeNull();
@@ -204,26 +142,12 @@ describe('Phase 4 구조 가드 — HeroSection + ProblemSection 추가', () => 
 
   it('App 루트의 <h1> 이 정확히 1개 존재한다 (h1 유일성 가드)', () => {
     // 보조 가드: HeroSection 의 h1 이 페이지 내 유일한 h1 인지 확인.
-    //
-    // 이 가드는 TEST-P4.10 의 data-testid 확인과 함께 작동한다:
-    //   (1) hero-section 존재 ← 섹션 삽입 검증
-    //   (2) h1 = 1 ← h1 유일성 검증
-    // 두 가드가 따로 작동하므로 RED 시점 우연한 PASS 문제는 해결됨.
-    //
-    // Phase 4 GREEN 이후: HeroSection h1 유일 + 데모 첫 Section 은 h2 다운그레이드 → PASS.
     const { container } = render(<App />);
     const h1s = container.querySelectorAll('h1');
     expect(h1s.length).toBe(1);
   });
 
   it('ProblemSection 이 data-testid="problem-section" 으로 App 에 직접 렌더된다 (TEST-P4.11)', () => {
-    // 리뷰 피드백 반영 (Medium): 이전 버전은 전역 `article.length >= 6` 만 검사해
-    // ProblemSection 이 아닌 다른 섹션이 article 을 추가해도 통과하는 간접 가드였다.
-    // data-testid 공개 계약으로 ProblemSection 자체의 존재를 직접 검증.
-    //
-    // Phase 4 GREEN 이후 기대 상태:
-    //   App.tsx 가 <ProblemSection /> 을 HeroSection 직후 삽입 + ProblemSection
-    //   구현이 data-testid="problem-section" 을 Section 루트에 부여 → PASS.
     const { container } = render(<App />);
     const problem = container.querySelector('[data-testid="problem-section"]');
     expect(problem, 'ProblemSection data-testid 가 App 루트에 없음 — 섹션 미삽입').not.toBeNull();
@@ -231,42 +155,19 @@ describe('Phase 4 구조 가드 — HeroSection + ProblemSection 추가', () => 
   });
 
   it('ProblemSection 내부에 정확히 4개의 article 이 존재한다 (4 카드 가드)', () => {
-    // 리뷰 피드백 반영 (Medium): 전역 `allArticles.length >= 6` 간접 가드 대체.
-    // ProblemSection scope 내부에서만 article 을 세어 "문제 카드 4개" 계약을 직접 검증.
-    //
-    // Phase 4 GREEN 이후 기대 상태:
-    //   FeatureCard 데모 2 (section#features scope) + ProblemSection 4 (problem-section
-    //   scope) = 두 scope 가 독립적으로 검증됨 → PASS.
     const { container } = render(<App />);
     const problem = container.querySelector('[data-testid="problem-section"]');
     expect(problem).not.toBeNull();
     const problemArticles = problem?.querySelectorAll('article') ?? [];
     expect(problemArticles.length).toBe(4);
   });
-
-  it('데모 Design System 섹션의 h2 가 렌더된다 (h1 아닌 h2 — Phase 4 다운그레이드)', () => {
-    // Phase 5 리뷰 반영: 데모 헤딩이 i18n 전환되었으므로 ko t() 값으로 검색.
-    render(<App />);
-    const demoHeading = screen.getByText(/디자인 시스템 데모/);
-    expect(demoHeading.tagName).toBe('H2');
-  });
 });
 
 // ─────────────────────────────────────────────────────────────
 // Phase 5 구조 가드 (TEST-P5.10 + P5.11 + P5.12)
 // ─────────────────────────────────────────────────────────────
-//
-// Phase 5 의 핵심 전환: 데모 `<Section id="features" background="accent-soft">`
-// 를 삭제하고 실제 `<FeaturesSection />` (id="features", background="surface") 으로
-// 대체한다. SolutionSection 도 Problem 뒤에 추가.
-//
-// 본 describe 의 가드는 Phase 5 GREEN 완료 후 전부 PASS 여야 한다. RED 시점엔
-// Solution/Features 컴포넌트 자체가 없으므로 App 에 삽입도 안 된 상태 → FAIL.
 describe('Phase 5 구조 가드 — SolutionSection + FeaturesSection 추가', () => {
   it('SolutionSection 이 data-testid="solution-section" 으로 App 에 렌더된다 (TEST-P5.10)', () => {
-    // Phase 5 GREEN 이후 기대 상태:
-    //   App.tsx 가 <SolutionSection /> 을 ProblemSection 직후 삽입 +
-    //   구현 컴포넌트가 data-testid="solution-section" 부여 → PASS.
     const { container } = render(<App />);
     const solution = container.querySelector('[data-testid="solution-section"]');
     expect(solution, 'SolutionSection data-testid 가 App 에 없음 — 섹션 미삽입').not.toBeNull();
@@ -274,7 +175,6 @@ describe('Phase 5 구조 가드 — SolutionSection + FeaturesSection 추가', (
   });
 
   it('FeaturesSection 이 data-testid="features-section" 으로 App 에 렌더된다 (TEST-P5.11)', () => {
-    // Phase 5 GREEN 이후: 데모 `<Section id="features">` 삭제 → `<FeaturesSection />` 대체.
     const { container } = render(<App />);
     const features = container.querySelector('[data-testid="features-section"]');
     expect(features, 'FeaturesSection data-testid 가 App 에 없음 — 섹션 미삽입').not.toBeNull();
@@ -282,8 +182,6 @@ describe('Phase 5 구조 가드 — SolutionSection + FeaturesSection 추가', (
   });
 
   it('FeaturesSection scope 내부에 정확히 9개 article + 9개 status badge 가 존재한다', () => {
-    // 데모 features 섹션은 FeatureCard 2개 + badge 1개였다.
-    // Phase 5 실제 FeaturesSection 은 9 카드 × badge = 9 badge.
     const { container } = render(<App />);
     const features = container.querySelector('[data-testid="features-section"]');
     expect(features).not.toBeNull();
@@ -300,11 +198,41 @@ describe('Phase 5 구조 가드 — SolutionSection + FeaturesSection 추가', (
     const articles = solution?.querySelectorAll('article') ?? [];
     expect(articles.length).toBe(3);
   });
+});
 
-  it('섹션 렌더 순서가 Hero → Problem → Solution → Features 이다 (TEST-P5.12)', () => {
-    // 리뷰 피드백 반영 (High): 이전 버전은 data-testid 존재와 내부 카드 수만
-    // 확인해서, 순서가 바뀌어도 통과할 수 있었다. data-testid 를 가진 모든
-    // section 을 DOM 등장 순서대로 수집해 Phase 5 시점의 정확한 순서를 강제.
+// ─────────────────────────────────────────────────────────────
+// Phase 6 구조 가드 (TEST-P6.9 + P6.10)
+// ─────────────────────────────────────────────────────────────
+describe('Phase 6 구조 가드 — ScenariosSection + DifferentiationSection 추가', () => {
+  it('ScenariosSection 이 data-testid="scenarios-section" 으로 App 에 렌더된다 (TEST-P6.9)', () => {
+    const { container } = render(<App />);
+    const scenarios = container.querySelector('[data-testid="scenarios-section"]');
+    expect(scenarios, 'ScenariosSection data-testid 가 App 에 없음').not.toBeNull();
+  });
+
+  it('DifferentiationSection 이 data-testid="differentiation-section" 으로 App 에 렌더된다 (TEST-P6.9)', () => {
+    const { container } = render(<App />);
+    const diff = container.querySelector('[data-testid="differentiation-section"]');
+    expect(diff, 'DifferentiationSection data-testid 가 App 에 없음').not.toBeNull();
+  });
+
+  it('ScenariosSection scope 내부에 정확히 4개 article 이 존재한다', () => {
+    const { container } = render(<App />);
+    const scenarios = container.querySelector('[data-testid="scenarios-section"]');
+    expect(scenarios).not.toBeNull();
+    const articles = scenarios?.querySelectorAll('article') ?? [];
+    expect(articles.length).toBe(4);
+  });
+
+  it('DifferentiationSection scope 내부에 정확히 3개 article 이 존재한다', () => {
+    const { container } = render(<App />);
+    const diff = container.querySelector('[data-testid="differentiation-section"]');
+    expect(diff).not.toBeNull();
+    const articles = diff?.querySelectorAll('article') ?? [];
+    expect(articles.length).toBe(3);
+  });
+
+  it('섹션 렌더 순서가 설계된 흐름과 일치한다 (TEST-P6.10)', () => {
     const { container } = render(<App />);
     const allTestIds = Array.from(container.querySelectorAll('section[data-testid]'))
       .map((s) => s.getAttribute('data-testid'))
@@ -314,6 +242,8 @@ describe('Phase 5 구조 가드 — SolutionSection + FeaturesSection 추가', (
       'problem-section',
       'solution-section',
       'features-section',
+      'scenarios-section',
+      'differentiation-section',
     ]);
   });
 });

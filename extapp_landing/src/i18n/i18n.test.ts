@@ -224,6 +224,41 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
       expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
     }
   });
+
+  // ───────────────────────────────────────────────────────────
+  // Phase 6 필수 키 — scenarios.* / differentiation.* (TEST-P6.7)
+  // ───────────────────────────────────────────────────────────
+  it('Phase 6 필수 scenarios.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P6.7)', () => {
+    // phase06 §6.3 TASK-001 스펙: scenarios.title + 4 시나리오 × 3 필드 = 13키
+    const itemKeys = ['s1', 's2', 's3', 's4'];
+    const fields = ['step', 'title', 'desc'];
+    const required = [
+      'scenarios.title',
+      ...itemKeys.flatMap((k) => fields.map((f) => `scenarios.items.${k}.${f}`)),
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
+
+  it('Phase 6 필수 differentiation.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P6.7)', () => {
+    // phase06 §6.3 TASK-001 스펙: differentiation.title + 3 비교 × 3 필드 = 10키
+    const itemKeys = ['d1', 'd2', 'd3'];
+    const fields = ['before', 'after', 'desc'];
+    const required = [
+      'differentiation.title',
+      ...itemKeys.flatMap((k) => fields.map((f) => `differentiation.items.${k}.${f}`)),
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
 });
 
 // ─────────────────────────────────────────────────────────────
