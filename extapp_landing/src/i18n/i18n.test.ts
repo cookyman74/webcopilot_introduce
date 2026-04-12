@@ -263,6 +263,43 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
       expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
     }
   });
+
+  // ───────────────────────────────────────────────────────────
+  // Phase 7 필수 키 — aiModes.* / safety.* (TEST-P7.8)
+  // ───────────────────────────────────────────────────────────
+  it('Phase 7 필수 aiModes.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P7.8)', () => {
+    const modeKeys = ['openai', 'gemini', 'claude', 'lmstudio', 'ollama', 'gpustack'];
+    const required = [
+      'aiModes.title',
+      'aiModes.subtitle',
+      'aiModes.status.supported',
+      'aiModes.status.reviewing',
+      'aiModes.cloudLabel',
+      'aiModes.localLabel',
+      ...modeKeys.flatMap((k) => [`aiModes.items.${k}.name`, `aiModes.items.${k}.type`]),
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
+
+  it('Phase 7 필수 safety.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P7.8)', () => {
+    const itemKeys = ['approval', 'register', 'session', 'sensitive'];
+    const required = [
+      'safety.title',
+      'safety.subtitle',
+      ...itemKeys.flatMap((k) => [`safety.items.${k}.title`, `safety.items.${k}.desc`]),
+    ];
+    const koKeys = collectKeys(ko);
+    const enKeys = collectKeys(en);
+    for (const key of required) {
+      expect(koKeys, `ko.json 에 "${key}" 누락`).toContain(key);
+      expect(enKeys, `en.json 에 "${key}" 누락`).toContain(key);
+    }
+  });
 });
 
 // ─────────────────────────────────────────────────────────────

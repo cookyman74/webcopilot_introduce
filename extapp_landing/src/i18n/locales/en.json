@@ -20,7 +20,7 @@
     "subtitle": "More than a chatbot — it understands the page you're on and drives the browser for you when you need it.",
     "cta_primary": "Add to Chrome",
     "cta_secondary": "Explore features",
-    "trust": "Works with OpenAI · Gemini · LM Studio · Didim",
+    "trust": "Works with OpenAI · Gemini · Claude · LM Studio",
     "imageAlt": "Web AI Assistant preview"
   },
   "problem": {
@@ -162,6 +162,46 @@
         "before": "Text-only AI",
         "after": "Page · fields · scripts",
         "desc": "Works with page structure, input fields, tabs and scripts together."
+      }
+    }
+  },
+  "aiModes": {
+    "title": "Supported AI Modes",
+    "subtitle": "Choose between cloud services and local SLMs depending on the situation.",
+    "status": {
+      "supported": "Supported",
+      "reviewing": "Under Review"
+    },
+    "cloudLabel": "Cloud Services",
+    "localLabel": "Local SLM",
+    "items": {
+      "openai": { "name": "OpenAI", "type": "Cloud" },
+      "gemini": { "name": "Gemini", "type": "Cloud" },
+      "claude": { "name": "Claude", "type": "Cloud" },
+      "lmstudio": { "name": "LM Studio", "type": "Local" },
+      "ollama": { "name": "Ollama", "type": "Local" },
+      "gpustack": { "name": "GpuStack", "type": "Local" }
+    }
+  },
+  "safety": {
+    "title": "Safety & Operating Principles",
+    "subtitle": "Clear boundaries for browser automation.",
+    "items": {
+      "approval": {
+        "title": "Approval-based risk control",
+        "desc": "Risky actions require explicit user approval."
+      },
+      "register": {
+        "title": "Explicit permanent script registration",
+        "desc": "Permanent scripts go through an explicit registration flow."
+      },
+      "session": {
+        "title": "Trackable session scripts",
+        "desc": "Session scripts can be reviewed and rolled back."
+      },
+      "sensitive": {
+        "title": "Conservative handling of sensitive sites",
+        "desc": "Government, finance, and submission steps use assisted input with user confirmation."
       }
     }
   },

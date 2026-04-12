@@ -11,3 +11,5 @@ export { SolutionSection } from './SolutionSection';
 export { FeaturesSection } from './FeaturesSection';
 export { ScenariosSection } from './ScenariosSection';
 export { DifferentiationSection } from './DifferentiationSection';
+export { AIModesSection } from './AIModesSection';
+export { SafetySection } from './SafetySection';

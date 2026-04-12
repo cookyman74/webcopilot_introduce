@@ -9,6 +9,8 @@ import {
   FeaturesSection,
   ScenariosSection,
   DifferentiationSection,
+  AIModesSection,
+  SafetySection,
 } from './components/sections';
 
 /**
@@ -46,6 +48,10 @@ export default function App() {
         {/* Phase 6 실제 섹션 */}
         <ScenariosSection />
         <DifferentiationSection />
+
+        {/* Phase 7 실제 섹션 */}
+        <AIModesSection />
+        <SafetySection />
 
         {/*
          * Phase 2/3 데모 콘텐츠 (1개 Section — scenarios/differentiation 제거됨).

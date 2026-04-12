@@ -85,10 +85,10 @@ describe('HeroSection (TEST-P4.1 + P4.2 + P4.3 + P4.6)', () => {
     });
 
     it('신뢰 라벨 (지원 AI 모드) 이 렌더된다', () => {
-      // 01_landing_page_plan.md §5.1 의 "OpenAI · Gemini · LM Studio · Didim 지원" 대응.
-      // 구현 자유: 단순 텍스트 또는 로고 배치 — 어느 쪽이든 4개 모드 중 하나는 DOM 에 있어야 함.
+      // Hero 신뢰 문구: "OpenAI · Gemini · Claude · LM Studio 지원"
+      // Phase 7 사후 수정: Didim 제거 → Claude 추가로 AIModesSection 과 정합성 확보.
       render(<HeroSection />);
-      expect(screen.getByText(/OpenAI|Gemini|LM Studio|Didim/)).toBeInTheDocument();
+      expect(screen.getByText(/OpenAI|Gemini|Claude|LM Studio/)).toBeInTheDocument();
     });
   });
 
