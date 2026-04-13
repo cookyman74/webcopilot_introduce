@@ -56,7 +56,9 @@ export function Header() {
         {/* 우: LanguageSwitcher + Primary CTA + 모바일 메뉴 버튼 */}
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
-          <Button href={CHROME_WEB_STORE_URL}>{t('header.cta')}</Button>
+          <span className="hidden md:inline">
+            <Button href={CHROME_WEB_STORE_URL}>{t('header.cta')}</Button>
+          </span>
           <button
             type="button"
             className="md:hidden p-2 text-ink-700 hover:text-ink-900 transition"
