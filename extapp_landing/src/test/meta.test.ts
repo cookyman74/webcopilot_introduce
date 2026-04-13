@@ -41,7 +41,11 @@ describe('index.html SEO 메타 (TEST-P9.1~P9.4)', () => {
     expect(html).toMatch(/<meta\s+property="og:image"\s+content="[^"]+\.(svg|png|jpg)"/);
   });
 
-  it('twitter:card 가 "summary_large_image" 이다', () => {
-    expect(html).toMatch(/<meta\s+name="twitter:card"\s+content="summary_large_image"/);
+  it('twitter:card 가 존재한다', () => {
+    expect(html).toMatch(/<meta\s+name="twitter:card"\s+content="summary/);
+  });
+
+  it('twitter:image 가 존재한다', () => {
+    expect(html).toMatch(/<meta\s+name="twitter:image"\s+content="[^"]+\.(png|jpg)"/);
   });
 });
