@@ -27,20 +27,20 @@
     "title": "Sound familiar?",
     "items": {
       "p1": {
-        "title": "Rewriting what the page already says",
-        "desc": "You read a long article and still have to summarize it yourself."
+        "title": "Extensions you can't trust or customize",
+        "desc": "You installed an extension for a simple feature, but it feels sketchy or doesn't work the way you want."
       },
       "p2": {
-        "title": "The same clicks, every day",
-        "desc": "Repetitive forms and workflows eat up your focus time."
+        "title": "You need a feature only on this site",
+        "desc": "Just one shortcut or button would help, but there's no way to add it without coding."
       },
       "p3": {
-        "title": "AI answers, you still execute",
-        "desc": "The chatbot replies — then you carry out the actual task."
+        "title": "Dozens of tabs, hundreds of bookmarks",
+        "desc": "You've lost track of which tab is where, and cleaning up old bookmarks feels impossible."
       },
       "p4": {
-        "title": "Per-site automation is a coding project",
-        "desc": "Writing scripts for each site is too heavy for daily work."
+        "title": "AI answers, you still execute",
+        "desc": "AI gives the answer — then you copy, paste, and click through it yourself."
       }
     }
   },
@@ -49,18 +49,18 @@
     "axes": {
       "context": {
         "title": "Page-context AI",
-        "desc": "Reads the current page, selected text, input fields, screenshots and page structure together.",
+        "desc": "Understands the current page, selected text, input fields, screenshots and page structure together.",
         "example": "Article summary, auto-fill after field analysis"
       },
       "action": {
         "title": "Browser action automation",
-        "desc": "Turns natural-language requests into real browser actions.",
-        "example": "Tab grouping, form filling, comment extraction"
+        "desc": "Turns natural-language requests into real browser actions — tab cleanup, bookmark sorting, form filling and more.",
+        "example": "Auto-group dozens of tabs, organize old bookmarks"
       },
       "script": {
-        "title": "Script-based extensibility",
-        "desc": "Tracks what you ran and evolves it into permanent scripts.",
-        "example": "Site dark mode, ad area hiding"
+        "title": "Build your own extensions",
+        "desc": "Create per-site shortcuts, floating tools, and UI tweaks by chatting with AI — no coding required.",
+        "example": "Site-specific hotkeys, custom floating helper"
       }
     }
   },
