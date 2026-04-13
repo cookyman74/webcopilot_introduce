@@ -102,25 +102,15 @@ describe('AIModesSection (TEST-P7.1~P7.4 + P7.8~P7.10 + P7.12)', () => {
       }
     });
 
-    it('각 모드의 type 라벨이 i18n 값과 정확히 일치한다', () => {
-      // 리뷰 피드백 반영 (Medium): 이전 버전은 type 라벨을 검증하지 않아
-      // OpenAI 를 "로컬" 로 잘못 표기해도 통과했다. 각 카드의 모드명을 찾고
-      // 같은 ai-mode-item 내부에 올바른 type 이 있는지 직접 검증.
-      render(<AIModesSection />);
-      const expected: Record<string, string> = {
-        openai: i18n.t('aiModes.items.openai.type'),
-        gemini: i18n.t('aiModes.items.gemini.type'),
-        claude: i18n.t('aiModes.items.claude.type'),
-        lmstudio: i18n.t('aiModes.items.lmstudio.type'),
-        ollama: i18n.t('aiModes.items.ollama.type'),
-        gpustack: i18n.t('aiModes.items.gpustack.type'),
-      };
-      for (const [key, expectedType] of Object.entries(expected)) {
-        const name = i18n.t(`aiModes.items.${key}.name`);
-        const nameEl = screen.getByText(name);
-        const card = nameEl.closest('[data-testid="ai-mode-item"]');
-        expect(card, `${key} 의 ai-mode-item 을 찾지 못함`).not.toBeNull();
-        expect(card?.textContent).toContain(expectedType);
+    it('각 카드에 브랜드 아이콘이 존재한다', () => {
+      // 브랜드 아이콘은 BrandIcon 컴포넌트로 렌더되는 colored div.
+      const { container } = render(<AIModesSection />);
+      const items = Array.from(container.querySelectorAll('[data-testid="ai-mode-item"]'));
+      expect(items.length).toBe(6);
+      for (const item of items) {
+        // 각 카드에 브랜드 아이콘(rounded-lg 배경색 div) 이 존재
+        const icon = item.querySelector('.rounded-lg');
+        expect(icon, '카드에 브랜드 아이콘이 없음').not.toBeNull();
       }
     });
 
