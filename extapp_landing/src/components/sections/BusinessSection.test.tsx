@@ -5,13 +5,13 @@
  * BusinessSection 핵심 제약:
  *   - Badge(status-badge) 가 단 하나도 렌더되면 안 됨 (기술 재사용 제안)
  *   - "구현됨"/"보강 중"/"계획" 텍스트 부재 (기능 카피 혼동 방지)
- *   - Primary CTA = mailto:PARTNERSHIP_CONTACT
+ *   - Primary CTA = Google Forms (PARTNERSHIP_FORM_URL)
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { BusinessSection } from './BusinessSection';
 import i18n from '../../i18n';
-import { PARTNERSHIP_CONTACT } from '../../lib/constants';
+import { PARTNERSHIP_FORM_URL } from '../../lib/constants';
 
 describe('BusinessSection (TEST-P8.7~P8.12 + P8.14)', () => {
   beforeEach(async () => {
@@ -66,12 +66,12 @@ describe('BusinessSection (TEST-P8.7~P8.12 + P8.14)', () => {
   });
 
   describe('TEST-P8.10 — CTA', () => {
-    it('Primary CTA 가 mailto:PARTNERSHIP_CONTACT 를 href 로 갖는다', () => {
+    it('Primary CTA 가 Google Forms URL 을 href 로 갖는다', () => {
       const { container } = render(<BusinessSection />);
-      const mailto = Array.from(container.querySelectorAll('a'))
+      const formLink = Array.from(container.querySelectorAll('a'))
         .map((a) => a.getAttribute('href') ?? '')
-        .find((href) => href.startsWith('mailto:'));
-      expect(mailto).toBe(`mailto:${PARTNERSHIP_CONTACT}`);
+        .find((href) => href.includes('forms.google.com') || href === PARTNERSHIP_FORM_URL);
+      expect(formLink).toBe(PARTNERSHIP_FORM_URL);
     });
 
     it('Eyebrow 라벨이 존재한다', () => {

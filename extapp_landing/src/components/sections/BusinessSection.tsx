@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Section } from '../common/Section';
 import { FeatureCard } from '../common/FeatureCard';
 import { Button } from '../common/Button';
-import { PARTNERSHIP_CONTACT, DOCS_URL } from '../../lib/constants';
+import { PARTNERSHIP_FORM_URL, DOCS_URL } from '../../lib/constants';
 
 /**
  * BusinessSection — B2B 기술 파트너십 제안 (Phase 8 v2 신규).
@@ -47,7 +47,7 @@ export function BusinessSection() {
       </div>
 
       <div className="mt-10 flex flex-wrap justify-center gap-4">
-        <Button href={`mailto:${PARTNERSHIP_CONTACT}`} variant="primary">
+        <Button href={PARTNERSHIP_FORM_URL} variant="primary">
           {t('business.cta_primary')}
         </Button>
         <Button href={DOCS_URL} variant="secondary">

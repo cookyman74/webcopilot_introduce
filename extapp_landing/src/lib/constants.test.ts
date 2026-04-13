@@ -27,7 +27,7 @@ import {
   CHROME_WEB_STORE_URL,
   SUPPORTED_LANGUAGES,
   NAV_ANCHORS,
-  PARTNERSHIP_CONTACT,
+  PARTNERSHIP_FORM_URL,
   DOCS_URL,
 } from './constants';
 
@@ -131,9 +131,9 @@ describe('constants.ts 외부 주소 단일 출처 (TEST-P3.9)', () => {
   // ───────────────────────────────────────────────────────────
   // Phase 8: PARTNERSHIP_CONTACT (TEST-P8.11)
   // ───────────────────────────────────────────────────────────
-  describe('PARTNERSHIP_CONTACT (TEST-P8.11)', () => {
-    it('유효한 이메일 형식이다', () => {
-      expect(PARTNERSHIP_CONTACT).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  describe('PARTNERSHIP_FORM_URL (TEST-P8.11)', () => {
+    it('Google Forms URL 형식이다', () => {
+      expect(PARTNERSHIP_FORM_URL).toMatch(/^https:\/\/docs\.google\.com\/forms\//);
     });
   });
 

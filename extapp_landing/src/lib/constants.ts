@@ -47,12 +47,13 @@ export const NAV_ANCHORS = [
 export type NavAnchorId = (typeof NAV_ANCHORS)[number]['id'];
 
 /**
- * B2B 파트너십 문의 이메일 — BusinessSection Primary CTA 대상.
+ * B2B 기술 파트너십 문의 — BusinessSection Primary CTA 대상.
  *
- * Phase 8 에서 도입. `constants.test.ts` 의 TEST-P8.11 이 이메일 형식을 강제.
- * FIXME: 전용 파트너십 이메일 확정 시 교체 (현재 개인 이메일 임시 사용).
+ * Phase 8 도입 → mailto 에서 Google Forms 로 전환.
+ * 구조화된 문의 수집 + 이메일 미노출 + Google Sheets 자동 연동.
  */
-export const PARTNERSHIP_CONTACT = 'cookyman@gmail.com';
+export const PARTNERSHIP_FORM_URL =
+  'https://docs.google.com/forms/d/e/1FAIpQLScqdkGTQdbjKLUQju3EPzyugnhlaYi1jvUrsepiW_eKPXlkIw/viewform';
 
 /**
  * 문서/가이드 링크 — BusinessSection Secondary CTA · FinalCTA Secondary CTA 대상.
