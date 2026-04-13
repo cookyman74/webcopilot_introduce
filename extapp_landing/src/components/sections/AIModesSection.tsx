@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Section } from '../common/Section';
 import { Badge } from '../common/Badge';
@@ -11,56 +10,20 @@ import type { FeatureStatus } from '../../lib/types';
  *   - 클라우드 서비스: OpenAI · Gemini · Claude (done)
  *   - 로컬 SLM: LM Studio (done) · Ollama (planned) · GpuStack (planned)
  *
- * 각 카드에 서비스 프로바이더의 브랜드 컬러 기반 로고 아이콘 표시.
+ * 각 카드에 서비스 프로바이더의 공식 로고 이미지 표시.
  */
-
-/** 브랜드 컬러 기반 로고 아이콘 — 서비스별 이니셜 + 고유 배경색 */
-function BrandIcon({ label, bg, text }: { label: string; bg: string; text: string }) {
-  return (
-    <div
-      className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold ${bg} ${text}`}
-    >
-      {label}
-    </div>
-  );
-}
-
-type AIMode = { key: string; status: FeatureStatus; icon: ReactNode };
+type AIMode = { key: string; status: FeatureStatus; logo: string };
 
 const CLOUD_MODES: readonly AIMode[] = [
-  {
-    key: 'openai',
-    status: 'done',
-    icon: <BrandIcon label="AI" bg="bg-emerald-600" text="text-white" />,
-  },
-  {
-    key: 'gemini',
-    status: 'done',
-    icon: <BrandIcon label="G" bg="bg-blue-500" text="text-white" />,
-  },
-  {
-    key: 'claude',
-    status: 'done',
-    icon: <BrandIcon label="C" bg="bg-amber-600" text="text-white" />,
-  },
+  { key: 'openai', status: 'done', logo: '/images/providers/openai.png' },
+  { key: 'gemini', status: 'done', logo: '/images/providers/gemini.png' },
+  { key: 'claude', status: 'done', logo: '/images/providers/claude.png' },
 ];
 
 const LOCAL_MODES: readonly AIMode[] = [
-  {
-    key: 'lmstudio',
-    status: 'done',
-    icon: <BrandIcon label="LM" bg="bg-indigo-500" text="text-white" />,
-  },
-  {
-    key: 'ollama',
-    status: 'planned',
-    icon: <BrandIcon label="🦙" bg="bg-ink-900" text="text-white" />,
-  },
-  {
-    key: 'gpustack',
-    status: 'planned',
-    icon: <BrandIcon label="GP" bg="bg-green-600" text="text-white" />,
-  },
+  { key: 'lmstudio', status: 'done', logo: '/images/providers/lmstudio.png' },
+  { key: 'ollama', status: 'planned', logo: '/images/providers/ollama.png' },
+  { key: 'gpustack', status: 'planned', logo: '/images/providers/gpustack.png' },
 ];
 
 const HEADING_ID = 'aimodes-heading';
@@ -71,13 +34,19 @@ export function AIModesSection() {
   const statusLabel = (status: FeatureStatus) =>
     status === 'done' ? t('aiModes.status.supported') : t('aiModes.status.reviewing');
 
-  const renderCard = ({ key, status, icon }: AIMode) => (
+  const renderCard = ({ key, status, logo }: AIMode) => (
     <div
       key={key}
       data-testid="ai-mode-item"
-      className="flex h-[150px] flex-col items-center justify-center gap-2 rounded-xl border border-border bg-surface p-5 text-center"
+      className="flex h-[160px] flex-col items-center justify-center gap-3 rounded-xl border border-border bg-surface p-5 text-center"
     >
-      {icon}
+      <img
+        src={logo}
+        alt={t(`aiModes.items.${key}.name`)}
+        width={40}
+        height={40}
+        className="h-10 w-10 rounded-lg object-contain"
+      />
       <span className="text-lg font-semibold text-ink-900">{t(`aiModes.items.${key}.name`)}</span>
       <Badge status={status}>{statusLabel(status)}</Badge>
     </div>
