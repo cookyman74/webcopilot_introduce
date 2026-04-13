@@ -38,17 +38,26 @@ export function AIModesSection() {
     <div
       key={key}
       data-testid="ai-mode-item"
-      className="flex h-[160px] flex-col items-center justify-center gap-3 rounded-xl border border-border bg-surface p-5 text-center"
+      className="flex h-[160px] flex-col items-center rounded-xl border border-border bg-surface p-5 text-center"
     >
-      <img
-        src={logo}
-        alt={t(`aiModes.items.${key}.name`)}
-        width={40}
-        height={40}
-        className="h-10 w-10 rounded-lg object-contain"
-      />
-      <span className="text-lg font-semibold text-ink-900">{t(`aiModes.items.${key}.name`)}</span>
-      <Badge status={status}>{statusLabel(status)}</Badge>
+      {/* 아이콘 — 고정 위치 (상단) */}
+      <div className="flex h-12 items-center justify-center">
+        <img
+          src={logo}
+          alt={t(`aiModes.items.${key}.name`)}
+          width={40}
+          height={40}
+          className="h-10 w-10 rounded-lg object-contain"
+        />
+      </div>
+      {/* 이름 — 고정 위치 (중단), 한 줄 강제 */}
+      <span className="mt-2 whitespace-nowrap text-base font-semibold text-ink-900">
+        {t(`aiModes.items.${key}.name`)}
+      </span>
+      {/* 배지 — 고정 위치 (하단) */}
+      <div className="mt-auto pt-2">
+        <Badge status={status}>{statusLabel(status)}</Badge>
+      </div>
     </div>
   );
 
