@@ -17,7 +17,7 @@
   "hero": {
     "eyebrow": "Chrome Extension · AI Copilot",
     "title": "An AI copilot that reads, answers and automates any web page",
-    "subtitle": "More than a chatbot — it understands the page you're on and drives the browser for you when you need it.",
+    "subtitle": "Not just a chatbot. It understands your requests and the page context, and can directly control the browser when you need it — an AI productivity tool.",
     "cta_primary": "Add to Chrome",
     "cta_secondary": "Explore features",
     "trust": "Works with OpenAI · Gemini · Claude · LM Studio",

@@ -17,7 +17,7 @@
   "hero": {
     "eyebrow": "Chrome Extension · AI Copilot",
     "title": "웹페이지를 이해하고, 질문하고, 자동화하는 AI 코파일럿",
-    "subtitle": "단순한 채팅이 아니라, 페이지 문맥을 읽고 필요할 때 직접 브라우저를 조작하는 브라우저 생산성 도구입니다.",
+    "subtitle": "단순한 챗봇이 아닙니다. 당신의 요청과 웹페이지 문맥을 이해하고, 필요할 때 브라우저를 직접 조작할 수 있는 AI 생산성 도구입니다.",
     "cta_primary": "Chrome에 추가하기",
     "cta_secondary": "기능 살펴보기",
     "trust": "OpenAI · Gemini · Claude · LM Studio 지원",
