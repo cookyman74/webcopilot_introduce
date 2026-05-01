@@ -26,7 +26,7 @@ import { VideoModal } from '../common/VideoModal';
  * 테스트: src/components/sections/ScenariosSection.test.tsx (TEST-P6.1~P6.3 + P6.8/P6.9/P6.11)
  */
 const SCENARIO_ITEMS: readonly { key: string; icon: ReactNode; videoId?: string }[] = [
-  { key: 's1', icon: <Blocks size={24} />, videoId: 'S7q0y9hN2lk' },
+  { key: 's1', icon: <Blocks size={24} />, videoId: 'E4r5CSlAjQA' },
   { key: 's2', icon: <Languages size={24} />, videoId: 'ZQkDGoBaCbo' },
   { key: 's3', icon: <FileEdit size={24} /> },
   { key: 's4', icon: <LayoutGrid size={24} /> },
