@@ -27,7 +27,7 @@ import { VideoModal } from '../common/VideoModal';
  */
 const SCENARIO_ITEMS: readonly { key: string; icon: ReactNode; videoId?: string }[] = [
   { key: 's1', icon: <Blocks size={24} />, videoId: 'S7q0y9hN2lk' },
-  { key: 's2', icon: <Languages size={24} /> },
+  { key: 's2', icon: <Languages size={24} />, videoId: 'ZQkDGoBaCbo' },
   { key: 's3', icon: <FileEdit size={24} /> },
   { key: 's4', icon: <LayoutGrid size={24} /> },
 ];

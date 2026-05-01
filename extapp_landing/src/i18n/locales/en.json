@@ -130,8 +130,8 @@
       },
       "s2": {
         "step": "Step 2",
-        "title": "Select a sentence → translate & ask",
-        "desc": "One drag to instantly translate and follow up with questions."
+        "title": "Summarize · Drag to search · Instant translate",
+        "desc": "One click to summarize an article and its comments. Drag any sentence to search instantly or translate to English/Japanese."
       },
       "s3": {
         "step": "Step 3",
