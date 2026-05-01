@@ -56,14 +56,14 @@ export function HeroSection() {
           <p className="text-sm text-ink-500">{t('hero.trust')}</p>
         </div>
 
-        {/* 우측 이미지 placeholder — 모바일: 카피 아래, 데스크톱: 우측 컬럼 */}
+        {/* 우측 시연 스크린샷 — 모바일: 카피 아래, 데스크톱: 우측 컬럼 */}
         <div>
           <img
-            src="/images/placeholder.svg"
+            src="/images/hero-demo.png"
             alt={t('hero.imageAlt')}
-            width={600}
-            height={400}
-            className="w-full rounded-lg border border-border bg-surface"
+            width={1992}
+            height={1283}
+            className="w-full rounded-lg border border-border shadow-lg"
           />
         </div>
       </div>

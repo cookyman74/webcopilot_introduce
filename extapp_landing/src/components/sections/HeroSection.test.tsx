@@ -180,7 +180,7 @@ describe('HeroSection (TEST-P4.1 + P4.2 + P4.3 + P4.6)', () => {
       const { container } = render(<HeroSection />);
       const img = container.querySelector('img');
       expect(img).not.toBeNull();
-      expect(img?.getAttribute('src')).toMatch(/placeholder|hero-mock/);
+      expect(img?.getAttribute('src')).toMatch(/placeholder|hero-mock|hero-demo/);
       expect(img?.getAttribute('alt')).toBe(expectedAlt);
       // 추가 보조 가드: alt 가 literal 키 문자열("hero.imageAlt") 이면 안 된다.
       // i18n.test.ts required-key 가드가 먼저 막겠지만, 이 레벨에서도 한 번 더
