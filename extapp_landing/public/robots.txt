@@ -1,0 +1,7 @@
+# Web AI Assistant — Landing Page
+# https://webcopilot.hell0world.net/
+
+User-agent: *
+Allow: /
+
+Sitemap: https://webcopilot.hell0world.net/sitemap.xml
