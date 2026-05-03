@@ -4,9 +4,9 @@
  *
  * AIModesSection 책임:
  *   1. 두 카테고리 (클라우드 서비스 / 로컬 SLM) 로 6개 AI 모드 표시
- *   2. 각 항목에 모드명 + type 라벨 + 상태 배지 (done=지원됨 / planned=검토 중)
- *   3. 클라우드: OpenAI(done) · Gemini(done) · Claude(done)
- *      로컬: LM Studio(done) · Ollama(planned) · GpuStack(planned)
+ *   2. 각 항목에 모드명 + type 라벨 + 상태 배지 (done=지원됨 / planned=준비중)
+ *   3. 클라우드: OpenAI(done) · Gemini(done) · Claude(planned)
+ *      로컬: LM Studio(done) · Ollama(done) · GpuStack(planned)
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -56,29 +56,39 @@ describe('AIModesSection (TEST-P7.1~P7.4 + P7.8~P7.10 + P7.12)', () => {
   // TEST-P7.2~P7.4 — 상태 배지 매핑
   // ─────────────────────────────────────────────────────────
   describe('TEST-P7.2~P7.4 — 상태 배지', () => {
-    it('done(지원됨) 배지가 정확히 4개 존재한다 (OpenAI+Gemini+Claude+LMStudio)', () => {
+    it('done(지원됨) 배지가 정확히 4개 존재한다 (OpenAI+Gemini+LMStudio+Ollama)', () => {
       render(<AIModesSection />);
       const supportedText = i18n.t('aiModes.status.supported');
       expect(screen.getAllByText(supportedText).length).toBe(4);
     });
 
-    it('planned(검토 중) 배지가 정확히 2개 존재한다 (Ollama+GpuStack)', () => {
+    it('planned(준비중) 배지가 정확히 2개 존재한다 (Claude+GpuStack)', () => {
       render(<AIModesSection />);
       const reviewingText = i18n.t('aiModes.status.reviewing');
       expect(screen.getAllByText(reviewingText).length).toBe(2);
     });
 
-    it('Ollama 항목이 구체적으로 planned(검토 중) 배지를 가진다', () => {
+    it('Claude 항목이 구체적으로 planned(준비중) 배지를 가진다', () => {
+      render(<AIModesSection />);
+      const claudeName = i18n.t('aiModes.items.claude.name');
+      const claudeElement = screen.getByText(claudeName);
+      const container = claudeElement.closest('[data-testid="ai-mode-item"]');
+      expect(container).not.toBeNull();
+      const badge = container?.querySelector('[data-testid="status-badge"]');
+      expect(badge?.textContent?.trim()).toBe(i18n.t('aiModes.status.reviewing'));
+    });
+
+    it('Ollama 항목이 구체적으로 done(지원됨) 배지를 가진다', () => {
       render(<AIModesSection />);
       const ollamaName = i18n.t('aiModes.items.ollama.name');
       const ollamaElement = screen.getByText(ollamaName);
       const container = ollamaElement.closest('[data-testid="ai-mode-item"]');
       expect(container).not.toBeNull();
       const badge = container?.querySelector('[data-testid="status-badge"]');
-      expect(badge?.textContent?.trim()).toBe(i18n.t('aiModes.status.reviewing'));
+      expect(badge?.textContent?.trim()).toBe(i18n.t('aiModes.status.supported'));
     });
 
-    it('GpuStack 항목이 구체적으로 planned(검토 중) 배지를 가진다', () => {
+    it('GpuStack 항목이 구체적으로 planned(준비중) 배지를 가진다', () => {
       render(<AIModesSection />);
       const gpuName = i18n.t('aiModes.items.gpustack.name');
       const gpuElement = screen.getByText(gpuName);

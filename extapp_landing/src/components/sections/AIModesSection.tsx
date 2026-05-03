@@ -7,8 +7,8 @@ import type { FeatureStatus } from '../../lib/types';
  * AIModesSection — 지원 AI 모드 (Phase 7).
  *
  * 두 카테고리로 구분:
- *   - 클라우드 서비스: OpenAI · Gemini · Claude (done)
- *   - 로컬 SLM: LM Studio (done) · Ollama (planned) · GpuStack (planned)
+ *   - 클라우드 서비스: OpenAI · Gemini (done) · Claude (planned)
+ *   - 로컬 SLM: LM Studio · Ollama (done) · GpuStack (planned)
  *
  * 각 카드에 서비스 프로바이더의 공식 로고 이미지 표시.
  */
@@ -17,12 +17,12 @@ type AIMode = { key: string; status: FeatureStatus; logo: string };
 const CLOUD_MODES: readonly AIMode[] = [
   { key: 'openai', status: 'done', logo: '/images/providers/openai.png' },
   { key: 'gemini', status: 'done', logo: '/images/providers/gemini.png' },
-  { key: 'claude', status: 'done', logo: '/images/providers/claude.png' },
+  { key: 'claude', status: 'planned', logo: '/images/providers/claude.png' },
 ];
 
 const LOCAL_MODES: readonly AIMode[] = [
   { key: 'lmstudio', status: 'done', logo: '/images/providers/lmstudio.png' },
-  { key: 'ollama', status: 'planned', logo: '/images/providers/ollama.png' },
+  { key: 'ollama', status: 'done', logo: '/images/providers/ollama.png' },
   { key: 'gpustack', status: 'planned', logo: '/images/providers/gpustack.png' },
 ];
 

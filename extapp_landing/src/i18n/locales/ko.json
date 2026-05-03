@@ -170,7 +170,7 @@
     "subtitle": "클라우드 서비스와 로컬 SLM을 상황에 맞게 선택할 수 있습니다.",
     "status": {
       "supported": "지원됨",
-      "reviewing": "검토 중"
+      "reviewing": "준비중"
     },
     "cloudLabel": "클라우드 서비스",
     "localLabel": "로컬 SLM",

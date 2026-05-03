@@ -170,7 +170,7 @@
     "subtitle": "Choose between cloud services and local SLMs depending on the situation.",
     "status": {
       "supported": "Supported",
-      "reviewing": "Under Review"
+      "reviewing": "Coming Soon"
     },
     "cloudLabel": "Cloud Services",
     "localLabel": "Local SLM",
