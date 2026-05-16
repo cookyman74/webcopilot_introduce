@@ -208,8 +208,7 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
       'features.categories.absorb',
       'features.categories.write',
       'features.categories.automate',
-      'features.categories.memory',
-      'features.categories.interface',
+      'features.categories.convenience',
     ];
     const itemKeys = [
       'chat',

@@ -23,14 +23,13 @@ import { FeatureCard } from '../common/FeatureCard';
 import type { FeatureStatus } from '../../lib/types';
 
 /**
- * FeaturesSection — Phase 11 v2: 5 카테고리 × 16 카드 (카테고리 그루핑 도입).
+ * FeaturesSection — Phase 11 v2: 4 카테고리 × 16 카드 (카테고리 그루핑 도입).
  *
  * 카테고리:
- *   absorb (5) — 정보 흡수·분석
- *   write  (4) — 작성·편집
- *   automate (5) — 사이트 자동화
- *   memory (1) — 작업 맥락 메모리
- *   interface (1) — 인터페이스
+ *   absorb (5)      — 정보 흡수·분석
+ *   write  (4)      — 작성·편집
+ *   automate (5)    — 사이트 자동화
+ *   convenience (2) — 편의 기능 (Work Memory + Floating Helper)
  *
  * 구조:
  *   <Section id="features" data-testid="features-section">
@@ -87,12 +86,11 @@ const CATEGORIES: readonly Category[] = [
     ],
   },
   {
-    key: 'memory',
-    items: [{ key: 'workMemory', status: 'done', icon: <Database size={24} /> }],
-  },
-  {
-    key: 'interface',
-    items: [{ key: 'floating', status: 'done', icon: <Sparkles size={24} /> }],
+    key: 'convenience',
+    items: [
+      { key: 'workMemory', status: 'done', icon: <Database size={24} /> },
+      { key: 'floating', status: 'done', icon: <Sparkles size={24} /> },
+    ],
   },
 ];
 

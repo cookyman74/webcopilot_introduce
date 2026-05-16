@@ -2,9 +2,10 @@
  * Phase 11 v2 — FeaturesSection 카테고리 그루핑 + 16 카드.
  *
  * 변경:
- *   - 9 카드 → 16 카드 (5 카테고리: absorb 5 / write 4 / automate 5 / memory 1 / interface 1)
+ *   - 9 카드 → 16 카드 (4 카테고리: absorb 5 / write 4 / automate 5 / convenience 2)
+ *   - convenience = workMemory + floating (이전 1-카드 카테고리 memory + interface 통합)
  *   - 모든 status='done' (Phase 11 시점 모든 항목 구현 완료)
- *   - 카테고리 헤더 5개 (h3, data-testid="features-category-{key}")
+ *   - 카테고리 헤더 4개 (h3, data-testid="features-category-{key}")
  *
  * 보존:
  *   - id="features" (NAV_ANCHORS 첫 번째 앵커, Hero Secondary CTA 대상)
@@ -40,7 +41,7 @@ const ALL_FEATURE_KEYS = [
   'floating',
 ] as const;
 
-const CATEGORY_KEYS = ['absorb', 'write', 'automate', 'memory', 'interface'] as const;
+const CATEGORY_KEYS = ['absorb', 'write', 'automate', 'convenience'] as const;
 
 describe('FeaturesSection (Phase 11 v2)', () => {
   beforeEach(async () => {
@@ -97,7 +98,7 @@ describe('FeaturesSection (Phase 11 v2)', () => {
   });
 
   describe('카테고리 그루핑', () => {
-    it('5개 카테고리 헤더가 렌더된다 (data-testid="features-category-{key}")', () => {
+    it('4개 카테고리 헤더가 렌더된다 (data-testid="features-category-{key}")', () => {
       const { container } = render(<FeaturesSection />);
       for (const cat of CATEGORY_KEYS) {
         const node = container.querySelector(`[data-testid="features-category-${cat}"]`);
@@ -114,13 +115,12 @@ describe('FeaturesSection (Phase 11 v2)', () => {
       }
     });
 
-    it('카테고리 컨테이너 내부의 카드 수가 설계와 일치한다 (5/4/5/1/1)', () => {
+    it('카테고리 컨테이너 내부의 카드 수가 설계와 일치한다 (5/4/5/2)', () => {
       const expected: Record<string, number> = {
         absorb: 5,
         write: 4,
         automate: 5,
-        memory: 1,
-        interface: 1,
+        convenience: 2,
       };
       const { container } = render(<FeaturesSection />);
       for (const cat of CATEGORY_KEYS) {
