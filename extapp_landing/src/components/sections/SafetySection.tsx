@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck, FileCheck2, History, Lock } from 'lucide-react';
+import { ShieldCheck, FileCheck2, History, Lock, Repeat } from 'lucide-react';
 import { Section } from '../common/Section';
 
 /**
@@ -15,6 +15,7 @@ const SAFETY_ITEMS: readonly { key: string; icon: ReactNode }[] = [
   { key: 'register', icon: <FileCheck2 size={28} /> },
   { key: 'session', icon: <History size={28} /> },
   { key: 'sensitive', icon: <Lock size={28} /> },
+  { key: 'loop', icon: <Repeat size={28} /> },
 ];
 
 const HEADING_ID = 'safety-heading';

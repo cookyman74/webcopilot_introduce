@@ -16,8 +16,8 @@
   },
   "hero": {
     "eyebrow": "Chrome Extension · AI Copilot",
-    "title": "An AI copilot that reads, answers and automates any web page",
-    "subtitle": "Not just a chatbot. It understands your requests and the page context, and can directly control the browser when you need it — an AI productivity tool.",
+    "title": "An AI copilot that reads, writes, and remembers across the web",
+    "subtitle": "Not just a chatbot — a personal work partner that treats every web page as a workspace. Page content, multiple tabs, input forms, even site UI: automate it all in one natural-language line, and per-site work memory restores itself on your next visit.",
     "cta_primary": "Add to Chrome",
     "cta_secondary": "Explore features",
     "trust": "Works with OpenAI · Gemini · Claude · LM Studio",
@@ -61,6 +61,11 @@
         "title": "Build your own extensions",
         "desc": "Create per-site shortcuts, floating tools, and UI tweaks by chatting with AI — no coding required.",
         "example": "Site-specific hotkeys, custom floating helper"
+      },
+      "memory": {
+        "title": "Per-site work memory",
+        "desc": "Per-site isolated memory persists your work progress and comparison results. On your next visit, it restores automatically — no need to start from scratch.",
+        "example": "Auto-restore shopping comparison tables and research notes"
       }
     }
   },
@@ -71,6 +76,13 @@
       "wip": "In Progress",
       "planned": "Planned"
     },
+    "categories": {
+      "absorb": "Absorb & Analyze",
+      "write": "Write & Edit",
+      "automate": "Site Automation",
+      "memory": "Work Memory",
+      "interface": "Interface"
+    },
     "items": {
       "chat": {
         "title": "AI Chat",
@@ -80,68 +92,126 @@
       "helper": {
         "title": "Page Helper",
         "desc": "Summarize pages, analyze input fields",
-        "example": "Assisted writing"
+        "example": "Auto-summarize up to 8000 chars"
       },
-      "select": {
-        "title": "Text Selection",
-        "desc": "Right-click to process selected text",
-        "example": "Translate, explain, transform"
+      "multiTab": {
+        "title": "Multi-tab Synthesis",
+        "desc": "Read multiple tabs at once and consolidate into a markdown comparison table",
+        "example": "Compare 4-5 shopping tabs"
       },
-      "autofill": {
-        "title": "Doc & Form Auto-fill",
-        "desc": "Assist with groupware docs and request forms",
-        "example": "Inwork drafting"
-      },
-      "action": {
-        "title": "Action Tools",
-        "desc": "GOTO · CLICK · FILL · EXTRACT and more",
-        "example": "Tab cleanup · history search"
+      "webSearch": {
+        "title": "Web Search Integration",
+        "desc": "AI calls supplementary web search automatically",
+        "example": "Auto-lookup terms and citations"
       },
       "image": {
         "title": "Image & Screenshot",
         "desc": "Drag-and-drop + capture then ask",
-        "example": "Vision analysis"
+        "example": "Vision analysis of charts and infographics"
+      },
+      "autofill": {
+        "title": "Doc & Form Auto-fill",
+        "desc": "Assist with groupware docs and request forms (Lexical / Slate / Draft / ProseMirror compatible)",
+        "example": "Inwork drafting"
+      },
+      "tone": {
+        "title": "Tone Conversion",
+        "desc": "Shorter, more polite, more formal — convert the whole tone in one line",
+        "example": "Adjust comment tone instantly"
       },
       "improve": {
         "title": "Text Improvement",
         "desc": "Polish text directly in input fields",
         "example": "Draft refinement"
       },
+      "select": {
+        "title": "Text Selection",
+        "desc": "Right-click and Floating Helper — both routes process the selected text instantly",
+        "example": "Translate, explain, transform"
+      },
+      "doCommand": {
+        "title": "/do Agentic Command",
+        "desc": "Auto-classify task intent + LLM-tool-LLM auto-loop",
+        "example": "Tab grouping · multi-tab synthesis"
+      },
+      "action": {
+        "title": "Action Tools",
+        "desc": "GOTO · CLICK · FILL · EXTRACT — single-shot browser action primitives",
+        "example": "Tab cleanup · history search"
+      },
       "script": {
         "title": "Script Run & Register",
-        "desc": "EXECUTE / REGISTER + session tracking",
-        "example": "Dark mode toggle"
+        "desc": "EXECUTE_SCRIPT / REGISTER_SCRIPT + session tracking",
+        "example": "Dark mode · floating button creation"
+      },
+      "scriptCRUD": {
+        "title": "Automation Asset Management",
+        "desc": "/act_list to browse registered scripts, /act_edit to update or delete",
+        "example": "Operate automations as assets"
+      },
+      "tabGroup": {
+        "title": "Tab Grouping",
+        "desc": "/do + chrome.tabGroups auto-bundles your open tabs",
+        "example": "Color-grouped by shopping site"
+      },
+      "workMemory": {
+        "title": "Work Memory",
+        "desc": "Per-site isolated memory persists work context + auto-restores on revisit",
+        "example": "Yesterday's comparison table restored automatically"
       },
       "floating": {
         "title": "Floating Helper",
-        "desc": "Quick access right next to your selection",
-        "example": "Translate · Summarize"
+        "desc": "Quick action menu next to your selection — translate, search, multilingual conversion, summarize in one click",
+        "example": "FH translate · multilingual"
       }
     }
   },
   "scenarios": {
     "title": "How people use it",
     "videoPlaceholder": "Video coming soon",
+    "targetLabel": "Target sites",
     "items": {
       "s1": {
-        "step": "Step 1",
-        "title": "Extend with per-site custom scripts",
-        "desc": "Dark mode, ad hiding, UI tweaks — register one-time scripts as permanent assets that auto-apply on every visit."
+        "step": "Scenario 1",
+        "title": "Absorb the room → write a natural-fit comment",
+        "desc": "Auto-summarize the post and read the comment mood, then the AI fills your reply box with an empathetic comment. You stay in control of the submit.",
+        "targetSites": "Reddit · dcinside · Clien · fmkorea"
       },
       "s2": {
-        "step": "Step 2",
-        "title": "Summarize · Drag to search · Instant translate",
-        "desc": "One click to summarize an article and its comments. Drag any sentence to search instantly or translate to English/Japanese."
+        "step": "Scenario 2",
+        "title": "Absorb foreign-language sources like your native one",
+        "desc": "Floating Helper inline translation, instant term lookup, full-page Korean summary, vision analysis on charts, and a markdown study note — one flow.",
+        "targetSites": "arxiv · theverge · techcrunch · medium"
       },
       "s3": {
-        "step": "Step 3",
-        "title": "Assisted document drafting",
-        "desc": "Analyzes forms, auto-fills fields, and lets you review."
+        "step": "Scenario 3",
+        "title": "Shopping price comparison + next-day auto-restore",
+        "desc": "Read multiple shopping tabs at once and produce a comparison table. Revisit the same site tomorrow and your prior comparison is restored from Work Memory.",
+        "targetSites": "Coupang · 11st · Gmarket · Naver Shopping · Musinsa · Danawa"
       },
       "s4": {
-        "step": "Step 4",
-        "title": "Tab cleanup & page navigation",
-        "desc": "Groups open tabs by topic and searches your browsing history."
+        "step": "Scenario 4",
+        "title": "Customize site UI/UX yourself",
+        "desc": "One natural-language line lets you add or change the look, behavior, and features of any site. Zero code.",
+        "targetSites": "Any site",
+        "examplesIntro": "Things you can do",
+        "exampleTheme": "🎨 Theme tweak — \"dark mode this site\"",
+        "exampleAdblock": "🚫 Ad block — \"hide the ads in this area\"",
+        "exampleMail": "📧 Translate-and-email floating button — see the prompt below",
+        "promptLabel": "Example prompt (paste as-is)",
+        "promptBody": "The selected area is the article body. Add a floating button on this site that translates the article body into Korean and emails it to cookyman@gmail.com."
+      },
+      "s5": {
+        "step": "Scenario 5",
+        "title": "AI writing partner — research to multilingual conversion",
+        "desc": "Source research, full-text auto-fill, tone conversion, partial proofing, and FH multilingual conversion — all in one flow.",
+        "targetSites": "Notion · Google Docs · Medium · Tistory · WordPress"
+      },
+      "s6": {
+        "step": "Scenario 6",
+        "title": "Research workflow — synthesize many sources, persist your study notes",
+        "desc": "Group tabs by topic, synthesize them in one shot, and persist your study progress per site via Work Memory.",
+        "targetSites": "Academic papers · Wikipedia · multiple news sources"
       }
     }
   },
@@ -162,6 +232,16 @@
         "before": "Text-only AI",
         "after": "Page · fields · scripts",
         "desc": "Works with page structure, input fields, tabs and scripts together."
+      },
+      "d4": {
+        "before": "Single-page analysis",
+        "after": "Multi-tab synthesis",
+        "desc": "Read multiple tabs at once and consolidate them into a markdown comparison table."
+      },
+      "d5": {
+        "before": "Start from scratch every time",
+        "after": "Per-site Work Memory",
+        "desc": "Per-site work memory restores itself on your next visit."
       }
     }
   },
@@ -202,24 +282,28 @@
       "sensitive": {
         "title": "Conservative handling of sensitive sites",
         "desc": "Government, finance, and submission steps use assisted input with user confirmation."
+      },
+      "loop": {
+        "title": "Agentic loop hard-stop",
+        "desc": "Repeated calls of the same tool are hard-stopped. Legitimate cases like multi-tab read are allowed via args-aware gating."
       }
     }
   },
   "roadmap": {
     "title": "What's Next",
-    "subtitle": "Directions we're working on beyond the current feature set.",
+    "subtitle": "Where we're extending each of today's strengths.",
     "items": {
-      "floating": {
-        "title": "Floating Helper",
-        "desc": "Quick-access UX that pops up right next to your selection for instant translate, ask, summarize"
+      "floatingExpansion": {
+        "title": "Floating Helper context expansion",
+        "desc": "Extend from text-selection-only to images, links, tables, and code blocks as selection contexts."
       },
-      "continuity": {
-        "title": "Session Script Continuity",
-        "desc": "Review, rollback, and promote EXECUTE_SCRIPT history per session"
+      "scriptPromotion": {
+        "title": "Session script → permanent asset promotion",
+        "desc": "An integrated flow to review session EXECUTE_SCRIPT history and promote it to REGISTER_SCRIPT in one step."
       },
       "studio": {
         "title": "Extension App Studio",
-        "desc": "Browse, edit, and version-manage per-site scripts in a library-style interface"
+        "desc": "A library-style environment to browse, edit, and version-manage per-site scripts."
       }
     }
   },

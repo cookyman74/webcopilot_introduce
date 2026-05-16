@@ -32,16 +32,21 @@ describe('Heading 구조 (TEST-P9.7)', () => {
     expect(h2Count).toBe(10);
   });
 
-  it('H3 가 카드 내부에만 존재한다 (섹션 제목으로 사용되지 않음)', () => {
+  it('H3 가 카드 내부 또는 카테고리 헤더로만 존재한다 (Phase 11: features 카테고리 헤더 허용)', () => {
     const { container } = render(<App />);
     const h3s = Array.from(container.querySelectorAll('h3'));
-    // 모든 H3 는 article 또는 ai-mode-item 내부에 있어야 함
+    // 허용:
+    //   - article 내부 (카드 제목)
+    //   - ai-mode-item 내부 (AI 모드 카드)
+    //   - grid 클래스 ancestor 내부
+    //   - features-category-* wrapper 내부 (Phase 11 v2 카테고리 그루핑 헤더)
     for (const h3 of h3s) {
-      const isInsideCard =
+      const isAllowed =
         h3.closest('article') !== null ||
         h3.closest('[data-testid="ai-mode-item"]') !== null ||
-        h3.closest('[class*="grid"]') !== null;
-      expect(isInsideCard, `H3 "${h3.textContent}" 가 카드 외부에 위치`).toBe(true);
+        h3.closest('[class*="grid"]') !== null ||
+        h3.closest('[data-testid^="features-category-"]') !== null;
+      expect(isAllowed, `H3 "${h3.textContent}" 가 허용 위치 외에 존재`).toBe(true);
     }
   });
 });

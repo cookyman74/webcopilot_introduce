@@ -28,17 +28,17 @@ describe('DifferentiationSection (TEST-P6.4/P6.5/P6.6 + P6.8/P6.9 + P6.12)', () 
   // ─────────────────────────────────────────────────────────
   // TEST-P6.4 — 3개 비교 카드 렌더
   // ─────────────────────────────────────────────────────────
-  describe('TEST-P6.4 — 3개 비교 카드', () => {
-    it('정확히 3개의 <article> 을 렌더한다', () => {
+  describe('TEST-P6.4 — 5개 비교 카드 (Phase 11: d4/d5 추가, 3 → 5)', () => {
+    it('정확히 5개의 <article> 을 렌더한다', () => {
       const { container } = render(<DifferentiationSection />);
       const articles = container.querySelectorAll('article');
-      expect(articles.length).toBe(3);
+      expect(articles.length).toBe(5);
     });
 
-    it('getAllByRole("article") 로도 정확히 3개 접근 가능하다', () => {
+    it('getAllByRole("article") 로도 정확히 5개 접근 가능하다', () => {
       render(<DifferentiationSection />);
       const articles = screen.getAllByRole('article');
-      expect(articles.length).toBe(3);
+      expect(articles.length).toBe(5);
     });
   });
 
@@ -46,14 +46,13 @@ describe('DifferentiationSection (TEST-P6.4/P6.5/P6.6 + P6.8/P6.9 + P6.12)', () 
   // TEST-P6.5 — 카드 내부 구조 (before + after)
   // ─────────────────────────────────────────────────────────
   describe('TEST-P6.5 — 카드 내부 구조 (Before/After 대비)', () => {
-    it('3개 카드 각각에 i18n before/after 텍스트가 실제로 렌더된다', () => {
-      // 리뷰 피드백 반영 (Low): 이전 버전은 textContent.length > 10 만 봤다.
-      // 수정: d1~d3 각각의 i18n before/after 값이 카드 내부에 존재하는지 직접 검증.
-      const expectedKeys = ['d1', 'd2', 'd3'];
+    it('5개 카드 각각에 i18n before/after 텍스트가 실제로 렌더된다', () => {
+      // Phase 11 v2: d1~d5 각각의 i18n before/after 값이 카드 내부에 존재하는지 검증.
+      const expectedKeys = ['d1', 'd2', 'd3', 'd4', 'd5'];
       const { container } = render(<DifferentiationSection />);
       const articles = Array.from(container.querySelectorAll('article'));
-      expect(articles.length).toBe(3);
-      for (let i = 0; i < 3; i++) {
+      expect(articles.length).toBe(5);
+      for (let i = 0; i < 5; i++) {
         const beforeText = i18n.t(`differentiation.items.${expectedKeys[i]}.before`);
         const afterText = i18n.t(`differentiation.items.${expectedKeys[i]}.after`);
         const content = articles[i].textContent ?? '';
@@ -68,7 +67,7 @@ describe('DifferentiationSection (TEST-P6.4/P6.5/P6.6 + P6.8/P6.9 + P6.12)', () 
       }
     });
 
-    it('3개 카드 각각에 방향을 나타내는 아이콘(svg) 이 존재한다', () => {
+    it('5개 카드 각각에 방향을 나타내는 아이콘(svg) 이 존재한다', () => {
       // before → after 를 연결하는 ArrowRight 등 아이콘.
       const { container } = render(<DifferentiationSection />);
       const articles = Array.from(container.querySelectorAll('article'));
@@ -83,9 +82,9 @@ describe('DifferentiationSection (TEST-P6.4/P6.5/P6.6 + P6.8/P6.9 + P6.12)', () 
   // TEST-P6.12 — 카드 정체성 (i18n 키 매핑 일관성)
   // ─────────────────────────────────────────────────────────
   describe('TEST-P6.12 — 카드 정체성 고정', () => {
-    it('d1~d3 까지의 3개 비교 쌍(after 텍스트 기준) 이 각각 정확히 1회씩 렌더된다', () => {
+    it('d1~d5 까지의 5개 비교 쌍(after 텍스트 기준) 이 각각 정확히 1회씩 렌더된다', () => {
       render(<DifferentiationSection />);
-      const expectedKeys = ['d1', 'd2', 'd3'];
+      const expectedKeys = ['d1', 'd2', 'd3', 'd4', 'd5'];
       for (const key of expectedKeys) {
         const afterText = i18n.t(`differentiation.items.${key}.after`);
         expect(screen.getAllByText(afterText).length).toBe(1);
@@ -139,11 +138,13 @@ describe('DifferentiationSection (TEST-P6.4/P6.5/P6.6 + P6.8/P6.9 + P6.12)', () 
       }
     });
 
-    it('반응형 grid 클래스 (md:grid-cols-3) 가 DOM 에 존재한다', () => {
+    it('반응형 grid 클래스 (md:grid-cols-2 + lg:grid-cols-3) 가 DOM 에 존재한다 (5개 = 3+2 split)', () => {
+      // Phase 11 v2: 3 → 5 카드, 모바일 1 → 태블릿 2 → 데스크톱 3 (마지막 row 2개).
       const { container } = render(<DifferentiationSection />);
-      const hasGrid = Array.from(container.querySelectorAll('*')).some(
-        (el) => typeof el.className === 'string' && /\bmd:grid-cols-3\b/.test(el.className)
-      );
+      const hasGrid = Array.from(container.querySelectorAll('*')).some((el) => {
+        if (typeof el.className !== 'string') return false;
+        return /\bmd:grid-cols-2\b/.test(el.className) && /\blg:grid-cols-3\b/.test(el.className);
+      });
       expect(hasGrid).toBe(true);
     });
   });
@@ -162,7 +163,7 @@ describe('DifferentiationSection (TEST-P6.4/P6.5/P6.6 + P6.8/P6.9 + P6.12)', () 
       expect(enH2).not.toBe(koH2);
     });
 
-    it('ko → en 전환 시 3개 비교 카드의 after 텍스트가 모두 달라진다', async () => {
+    it('ko → en 전환 시 5개 비교 카드의 after 텍스트가 모두 달라진다', async () => {
       const { container, rerender } = render(<DifferentiationSection />);
       const koAfters = Array.from(container.querySelectorAll('article')).map(
         (el) => el.textContent ?? ''
@@ -174,7 +175,7 @@ describe('DifferentiationSection (TEST-P6.4/P6.5/P6.6 + P6.8/P6.9 + P6.12)', () 
         (el) => el.textContent ?? ''
       );
 
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 5; i++) {
         expect(enAfters[i]).not.toBe(koAfters[i]);
       }
     });

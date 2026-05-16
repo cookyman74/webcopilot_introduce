@@ -21,15 +21,15 @@ describe('SafetySection (TEST-P7.5~P7.7 + P7.8~P7.10 + P7.13)', () => {
   // ─────────────────────────────────────────────────────────
   // TEST-P7.5 — 4개 원칙 카드
   // ─────────────────────────────────────────────────────────
-  describe('TEST-P7.5 — 4개 원칙 카드', () => {
-    it('정확히 4개의 <article> 을 렌더한다', () => {
+  describe('TEST-P7.5 — 5개 원칙 카드 (Phase 11: loop hard-stop 추가)', () => {
+    it('정확히 5개의 <article> 을 렌더한다', () => {
       const { container } = render(<SafetySection />);
-      expect(container.querySelectorAll('article').length).toBe(4);
+      expect(container.querySelectorAll('article').length).toBe(5);
     });
 
-    it('getAllByRole("article") 로도 정확히 4개 접근 가능하다', () => {
+    it('getAllByRole("article") 로도 정확히 5개 접근 가능하다', () => {
       render(<SafetySection />);
-      expect(screen.getAllByRole('article').length).toBe(4);
+      expect(screen.getAllByRole('article').length).toBe(5);
     });
   });
 
@@ -37,7 +37,7 @@ describe('SafetySection (TEST-P7.5~P7.7 + P7.8~P7.10 + P7.13)', () => {
   // TEST-P7.6 — 카드 내부 구조
   // ─────────────────────────────────────────────────────────
   describe('TEST-P7.6 — 카드 내부 구조', () => {
-    it('4개 카드 각각에 h3 heading 이 존재하고 비어있지 않다', () => {
+    it('5개 카드 각각에 h3 heading 이 존재하고 비어있지 않다', () => {
       const { container } = render(<SafetySection />);
       const articles = Array.from(container.querySelectorAll('article'));
       for (const article of articles) {
@@ -47,7 +47,7 @@ describe('SafetySection (TEST-P7.5~P7.7 + P7.8~P7.10 + P7.13)', () => {
       }
     });
 
-    it('4개 카드 각각에 설명 <p> 가 존재한다', () => {
+    it('5개 카드 각각에 설명 <p> 가 존재한다', () => {
       const { container } = render(<SafetySection />);
       const articles = Array.from(container.querySelectorAll('article'));
       for (const article of articles) {
@@ -57,7 +57,7 @@ describe('SafetySection (TEST-P7.5~P7.7 + P7.8~P7.10 + P7.13)', () => {
       }
     });
 
-    it('4개 카드 각각에 아이콘(svg) 이 존재한다', () => {
+    it('5개 카드 각각에 아이콘(svg) 이 존재한다', () => {
       const { container } = render(<SafetySection />);
       const articles = Array.from(container.querySelectorAll('article'));
       for (const article of articles) {
@@ -95,13 +95,13 @@ describe('SafetySection (TEST-P7.5~P7.7 + P7.8~P7.10 + P7.13)', () => {
   // TEST-P7.13 — 카드 정체성
   // ─────────────────────────────────────────────────────────
   describe('TEST-P7.13 — 원칙 정체성 고정', () => {
-    it('4개 원칙 제목이 각각 정확히 1회씩 렌더된다', () => {
+    it('5개 원칙 제목이 각각 정확히 1회씩 렌더된다 (Phase 11: loop 추가)', () => {
       const { container } = render(<SafetySection />);
-      const keys = ['approval', 'register', 'session', 'sensitive'];
+      const keys = ['approval', 'register', 'session', 'sensitive', 'loop'];
       const renderedTitles = Array.from(container.querySelectorAll('article h3')).map(
         (el) => el.textContent?.trim() ?? ''
       );
-      expect(renderedTitles.length).toBe(4);
+      expect(renderedTitles.length).toBe(5);
       for (const key of keys) {
         const title = i18n.t(`safety.items.${key}.title`);
         expect(renderedTitles.filter((t) => t === title).length).toBe(1);
@@ -170,7 +170,7 @@ describe('SafetySection (TEST-P7.5~P7.7 + P7.8~P7.10 + P7.13)', () => {
       expect(screen.getByRole('heading', { level: 2 }).textContent).not.toBe(koH2);
     });
 
-    it('ko → en 전환 시 4개 카드 제목이 모두 달라진다', async () => {
+    it('ko → en 전환 시 5개 카드 제목이 모두 달라진다', async () => {
       const { container, rerender } = render(<SafetySection />);
       const koTitles = Array.from(container.querySelectorAll('article h3')).map(
         (el) => el.textContent?.trim() ?? ''
@@ -180,8 +180,8 @@ describe('SafetySection (TEST-P7.5~P7.7 + P7.8~P7.10 + P7.13)', () => {
       const enTitles = Array.from(container.querySelectorAll('article h3')).map(
         (el) => el.textContent?.trim() ?? ''
       );
-      expect(koTitles.length).toBe(4);
-      for (let i = 0; i < 4; i++) {
+      expect(koTitles.length).toBe(5);
+      for (let i = 0; i < 5; i++) {
         expect(enTitles[i]).not.toBe(koTitles[i]);
       }
     });

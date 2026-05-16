@@ -90,6 +90,16 @@ describe('HeroSection (TEST-P4.1 + P4.2 + P4.3 + P4.6)', () => {
       render(<HeroSection />);
       expect(screen.getByText(/OpenAI|Gemini|Claude|LM Studio/)).toBeInTheDocument();
     });
+
+    it('Hero 카피 (title 또는 subtitle) 에 Work Memory 가치 키워드가 포함된다', () => {
+      // Phase 11 v2 콘텐츠 리프레시: "다음에도 기억한다" 가치를 hero 카피에서 잃지 않도록 가드.
+      // 구체 문구는 자유지만 ko 의 "기억" / "메모리" 또는 en 의 "memory" / "remember" 중
+      // 최소 하나는 title 또는 subtitle 에 살아있어야 한다 — Phase 11 신규 핵심 메시지의 회귀 차단.
+      const title = i18n.t('hero.title');
+      const subtitle = i18n.t('hero.subtitle');
+      const combined = `${title} ${subtitle}`;
+      expect(combined).toMatch(/기억|메모리|memory|remember/i);
+    });
   });
 
   // ─────────────────────────────────────────────────────────

@@ -10,8 +10,8 @@ import type { FeatureStatus } from '../../lib/types';
  * id="roadmap": NAV_ANCHORS 네 번째 앵커.
  */
 const ROADMAP_ITEMS: readonly { key: string; status: FeatureStatus }[] = [
-  { key: 'floating', status: 'planned' },
-  { key: 'continuity', status: 'wip' },
+  { key: 'floatingExpansion', status: 'planned' },
+  { key: 'scriptPromotion', status: 'wip' },
   { key: 'studio', status: 'planned' },
 ];
 

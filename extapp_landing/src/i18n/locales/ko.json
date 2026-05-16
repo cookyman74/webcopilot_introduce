@@ -16,8 +16,8 @@
   },
   "hero": {
     "eyebrow": "Chrome Extension · AI Copilot",
-    "title": "웹페이지를 이해하고, 질문하고, 자동화하는 AI 코파일럿",
-    "subtitle": "단순한 챗봇이 아닙니다. 당신의 요청과 웹페이지 문맥을 이해하고, 필요할 때 브라우저를 직접 조작할 수 있는 AI 생산성 도구입니다.",
+    "title": "웹페이지를 이해하고, 작성하고, 기억하는 AI 코파일럿",
+    "subtitle": "단순 채팅 AI가 아닌, 웹페이지를 작업 맥락 공간으로 인식하는 개인형 작업 파트너입니다. 페이지 본문, 다중 탭, 입력폼, 사이트 UI까지 자연어 한 줄로 자동화하고, 사이트별 작업 메모리는 다음 방문에 자동 복원됩니다.",
     "cta_primary": "Chrome에 추가하기",
     "cta_secondary": "기능 살펴보기",
     "trust": "OpenAI · Gemini · Claude · LM Studio 지원",
@@ -61,6 +61,11 @@
         "title": "나만의 확장앱을 직접 만들기",
         "desc": "단축키, 플로팅 도구, UI 변경 등 사이트별 맞춤 기능을 코드 없이 AI와 대화하며 구현합니다.",
         "example": "특정 사이트 전용 단축키, 나만의 플로팅 헬퍼"
+      },
+      "memory": {
+        "title": "사이트별 작업 메모리",
+        "desc": "사이트별 독립 메모리에 작업 진행 상황과 비교 결과를 영속 저장합니다. 다음 방문 시 자동 복원되어 처음부터 다시 시작할 필요가 없습니다.",
+        "example": "쇼핑 비교 표·리서치 노트 자동 복원"
       }
     }
   },
@@ -71,6 +76,13 @@
       "wip": "보강 중",
       "planned": "계획·검토 중"
     },
+    "categories": {
+      "absorb": "정보 흡수·분석",
+      "write": "작성·편집",
+      "automate": "사이트 자동화",
+      "memory": "작업 맥락 메모리",
+      "interface": "인터페이스"
+    },
     "items": {
       "chat": {
         "title": "AI 채팅",
@@ -80,68 +92,126 @@
       "helper": {
         "title": "페이지 도우미",
         "desc": "현재 페이지 요약, 입력 필드 분석",
-        "example": "보조 작성"
+        "example": "본문 8000자 자동 요약"
       },
-      "select": {
-        "title": "텍스트 선택 기반",
-        "desc": "우클릭으로 선택 문장 처리",
-        "example": "번역, 설명, 가공"
+      "multiTab": {
+        "title": "다중 탭 종합 분석",
+        "desc": "여러 탭을 한 번에 read 하여 markdown 종합 표로 정리",
+        "example": "쇼핑 4-5개 탭 비교"
       },
-      "autofill": {
-        "title": "문서·폼 자동입력",
-        "desc": "그룹웨어 문서/요청서 작성 보조",
-        "example": "Inwork 작성"
-      },
-      "action": {
-        "title": "Action Tools",
-        "desc": "GOTO·CLICK·FILL·EXTRACT 등",
-        "example": "탭 정리·기록 검색"
+      "webSearch": {
+        "title": "웹 검색 통합",
+        "desc": "AI가 자동으로 자료 보강 검색을 호출",
+        "example": "용어·인용 자동 검색"
       },
       "image": {
         "title": "이미지·스크린샷",
         "desc": "드래그앤드롭 + 캡처 후 질문",
-        "example": "Vision 분석"
+        "example": "차트·인포그래픽 vision 분석"
+      },
+      "autofill": {
+        "title": "문서·폼 자동입력",
+        "desc": "그룹웨어 문서·요청서 작성 보조 (Lexical/Slate/Draft/ProseMirror 호환)",
+        "example": "Inwork 작성"
+      },
+      "tone": {
+        "title": "톤 변환",
+        "desc": "더 짧게·존댓말로·격식 있게 — 한 줄로 본문 톤을 변환합니다",
+        "example": "댓글 톤 즉시 조정"
       },
       "improve": {
         "title": "텍스트 개선",
         "desc": "입력 필드에서 직접 다듬기",
         "example": "초안 보정"
       },
+      "select": {
+        "title": "텍스트 선택 기반",
+        "desc": "우클릭 + Floating Helper 양방향 진입으로 선택 문장 즉시 처리",
+        "example": "번역, 설명, 가공"
+      },
+      "doCommand": {
+        "title": "/do 에이전틱 명령",
+        "desc": "작업 의도 자동 분류 + LLM-tool-LLM 자동 반복",
+        "example": "탭 그룹화·종합 분석"
+      },
+      "action": {
+        "title": "Action Tools",
+        "desc": "GOTO · CLICK · FILL · EXTRACT 등 단발 브라우저 액션 도구",
+        "example": "탭 정리·기록 검색"
+      },
       "script": {
         "title": "스크립트 실행·등록",
-        "desc": "EXECUTE/REGISTER + 세션 추적",
-        "example": "다크모드 적용"
+        "desc": "EXECUTE_SCRIPT / REGISTER_SCRIPT + 세션 추적",
+        "example": "다크 모드·플로팅 버튼 추가"
+      },
+      "scriptCRUD": {
+        "title": "자동화 자산 관리",
+        "desc": "/act_list 로 등록 스크립트 조회, /act_edit 로 개별 수정·삭제",
+        "example": "자동화를 자산으로 운영"
+      },
+      "tabGroup": {
+        "title": "탭 그룹화",
+        "desc": "/do + chrome.tabGroups 로 탭을 자동 묶음",
+        "example": "쇼핑몰별 색 분류"
+      },
+      "workMemory": {
+        "title": "Work Memory",
+        "desc": "사이트별 독립 메모리에 작업 컨텍스트 영속 저장 + 다음 방문 자동 복원",
+        "example": "어제까지 정리한 비교 표 자동 복원"
       },
       "floating": {
         "title": "Floating Helper",
-        "desc": "선택 직후 옆에 뜨는 빠른 진입",
-        "example": "번역·요약"
+        "desc": "선택 직후 옆에 뜨는 작업 메뉴 — 번역·검색·다국어 변환·요약을 한 클릭으로",
+        "example": "FH 번역·다국어"
       }
     }
   },
   "scenarios": {
     "title": "이렇게 사용합니다",
     "videoPlaceholder": "영상 준비 중",
+    "targetLabel": "주요 사이트",
     "items": {
       "s1": {
-        "step": "Step 1",
-        "title": "사이트별 맞춤 스크립트로 확장",
-        "desc": "다크모드, 광고 숨김, UI 변경 등 한 번 만든 스크립트를 영구 자산으로 등록해 매번 자동 적용합니다."
+        "step": "Scenario 1",
+        "title": "긴 글·댓글 분위기 흡수 → 자연스러운 댓글 자동 작성",
+        "desc": "본문 자동 요약과 댓글 분위기 분석을 거쳐, 공감 댓글을 입력칸에 직접 채워줍니다. 등록은 사용자가 직접 합니다.",
+        "targetSites": "Reddit · dcinside · 클리앙 · fmkorea"
       },
       "s2": {
-        "step": "Step 2",
-        "title": "기사 요약·드래그 검색·즉시 번역",
-        "desc": "요약 버튼 한 번으로 본문과 댓글을 정리하고, 드래그한 문장은 바로 검색하거나 영문/일문으로 번역합니다."
+        "step": "Scenario 2",
+        "title": "영문 자료를 모국어처럼 깊이 흡수",
+        "desc": "Floating Helper 부분 번역, 모르는 용어 즉시 검색, 한국어 종합 요약, 차트 vision 분석, markdown 학습 노트까지 한 흐름.",
+        "targetSites": "arxiv · theverge · techcrunch · medium"
       },
       "s3": {
-        "step": "Step 3",
-        "title": "그룹웨어 문서 작성 보조",
-        "desc": "양식을 분석해 보조 입력하고 사용자가 최종 검토합니다."
+        "step": "Scenario 3",
+        "title": "쇼핑 가격 비교 + 다음 날 자동 복원",
+        "desc": "여러 쇼핑몰 탭을 한 번에 read 하여 비교 표를 만들고, 같은 사이트 재방문 시 어제의 비교 결과가 Work Memory 로 자동 복원됩니다.",
+        "targetSites": "쿠팡 · 11번가 · G마켓 · 네이버쇼핑 · 무신사 · 다나와"
       },
       "s4": {
-        "step": "Step 4",
-        "title": "탭 정리·페이지 탐색 자동화",
-        "desc": "열린 탭을 주제별로 정리하고 방문 기록을 검색합니다."
+        "step": "Scenario 4",
+        "title": "사이트의 UI/UX를 내가 직접 만든다",
+        "desc": "자연어 한 줄로 사이트의 모양·동작·기능을 사용자가 직접 추가하고 변경할 수 있습니다. 코드 0줄.",
+        "targetSites": "어떤 사이트든",
+        "examplesIntro": "이런 것들이 가능합니다",
+        "exampleTheme": "🎨 테마 수정 — “이 사이트 다크 모드로”",
+        "exampleAdblock": "🚫 광고 차단 — “이 영역 광고 숨겨줘”",
+        "exampleMail": "📧 본문 번역 메일 발송 플로팅 버튼 — 아래 prompt 참고",
+        "promptLabel": "예시 prompt (그대로 입력 가능)",
+        "promptBody": "지정된 부분은 페이지의 본문 글이다. 해당 사이트에 본문 글을 한국어로 번역하여 cookyman@gmail.com 으로 메일로 전송할 수 있도록 플로팅 버튼을 추가해줘."
+      },
+      "s5": {
+        "step": "Scenario 5",
+        "title": "AI 글쓰기 동반자 — 자료 검색부터 다국어 변환까지",
+        "desc": "주제 자료 검색, 본문 자동 입력, 톤 변환, 부분 교정, FH 다국어 변환을 한 흐름으로 처리합니다.",
+        "targetSites": "Notion · Google Docs · Medium · 티스토리 · 워드프레스"
+      },
+      "s6": {
+        "step": "Scenario 6",
+        "title": "리서치 워크플로우 — 다중 자료 종합 + 학습 메모 영속",
+        "desc": "여러 자료를 주제별로 묶고 한 번에 종합 요약합니다. 학습 진행 상황은 Work Memory 로 사이트별 영속 저장됩니다.",
+        "targetSites": "학술 자료 · 위키피디아 · 다중 뉴스 출처"
       }
     }
   },
@@ -162,6 +232,16 @@
         "before": "텍스트 중심 AI",
         "after": "페이지·필드·스크립트까지",
         "desc": "페이지 구조와 입력 필드, 탭, 스크립트를 함께 다룹니다."
+      },
+      "d4": {
+        "before": "단일 페이지 분석",
+        "after": "다중 탭 종합",
+        "desc": "여러 탭을 한 번에 read 하고 markdown 비교 표로 정리합니다."
+      },
+      "d5": {
+        "before": "매번 처음부터",
+        "after": "사이트별 Work Memory",
+        "desc": "사이트별 작업 메모리가 다음 방문에 자동 복원됩니다."
       }
     }
   },
@@ -202,24 +282,28 @@
       "sensitive": {
         "title": "민감 사이트 보수적 처리",
         "desc": "정부·금융·제출 단계는 보조 입력 + 사용자 확인 중심입니다."
+      },
+      "loop": {
+        "title": "에이전틱 무한 루프 자동 차단",
+        "desc": "동일 도구의 반복 호출을 hard-stop 으로 차단합니다. 다중 탭 read 등 정상 케이스는 args-aware 로 허용됩니다."
       }
     }
   },
   "roadmap": {
     "title": "앞으로의 방향",
-    "subtitle": "현재 구현된 기능을 넘어서 준비 중인 방향들입니다.",
+    "subtitle": "현재 강점 위에 같은 영역을 어디로 더 확장하는지 안내합니다.",
     "items": {
-      "floating": {
-        "title": "Floating Helper",
-        "desc": "선택한 문장 옆에서 번역·질문·요약으로 즉시 이어지는 빠른 진입 UX"
+      "floatingExpansion": {
+        "title": "Floating Helper 컨텍스트 확장",
+        "desc": "현재 텍스트 선택 중심에서 이미지·링크·표·코드 블록 등 다양한 selection 타입으로 컨텍스트 액션을 확장합니다."
       },
-      "continuity": {
-        "title": "Session Script Continuity",
-        "desc": "EXECUTE_SCRIPT 이력을 세션 단위로 조회·되돌리기·승격"
+      "scriptPromotion": {
+        "title": "세션 스크립트 → 영구 자산 승격",
+        "desc": "세션 단위 EXECUTE_SCRIPT 이력을 한 번에 조회·되돌리기·REGISTER_SCRIPT 로 승격하는 통합 흐름을 준비 중입니다."
       },
       "studio": {
         "title": "Extension App Studio",
-        "desc": "사이트별 스크립트를 조회·편집·버전 관리하는 라이브러리 형태로 확장"
+        "desc": "사이트별 스크립트를 라이브러리 형태로 조회·편집·버전 관리하는 환경을 검토 중입니다."
       }
     }
   },

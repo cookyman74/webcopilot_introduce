@@ -25,7 +25,7 @@ import { Section } from '../common/Section';
  *
  * 테스트: src/components/sections/DifferentiationSection.test.tsx (TEST-P6.4~P6.6 + P6.8/P6.9/P6.12)
  */
-const DIFF_ITEMS = ['d1', 'd2', 'd3'] as const;
+const DIFF_ITEMS = ['d1', 'd2', 'd3', 'd4', 'd5'] as const;
 const HEADING_ID = 'diff-heading';
 
 export function DifferentiationSection() {
@@ -42,7 +42,7 @@ export function DifferentiationSection() {
         {t('differentiation.title')}
       </h2>
 
-      <div className="mt-12 grid gap-8 md:grid-cols-3">
+      <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {DIFF_ITEMS.map((key) => (
           <article
             key={key}

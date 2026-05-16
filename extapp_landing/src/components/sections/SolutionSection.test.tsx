@@ -31,30 +31,30 @@ describe('SolutionSection (TEST-P5.1 + P5.2 + P5.9 + P5.10)', () => {
   });
 
   // ─────────────────────────────────────────────────────────
-  // TEST-P5.1 — 3개 축 카드
+  // TEST-P5.1 — 4개 축 카드 (Phase 11: memory 추가, 3 → 4)
   // ─────────────────────────────────────────────────────────
-  describe('TEST-P5.1 — 3개 축 카드', () => {
-    it('정확히 3개의 <article> 을 렌더한다', () => {
+  describe('TEST-P5.1 — 4개 축 카드', () => {
+    it('정확히 4개의 <article> 을 렌더한다', () => {
       const { container } = render(<SolutionSection />);
       const articles = container.querySelectorAll('article');
-      expect(articles.length).toBe(3);
+      expect(articles.length).toBe(4);
     });
 
-    it('getAllByRole("article") 로도 정확히 3개 접근 가능하다', () => {
+    it('getAllByRole("article") 로도 정확히 4개 접근 가능하다', () => {
       render(<SolutionSection />);
       const articles = screen.getAllByRole('article');
-      expect(articles.length).toBe(3);
+      expect(articles.length).toBe(4);
     });
   });
 
   // ─────────────────────────────────────────────────────────
-  // TEST-P5.2 — 각 카드 내부 구조 (아이콘 + h3 + 설명 + 예시)
+  // TEST-P5.2 — 각 카드 내부 구조 (아이콘 + h3 + 설명 + 예시) — 4개 카드 적용
   // ─────────────────────────────────────────────────────────
   describe('TEST-P5.2 — 카드 내부 구조', () => {
-    it('3개 카드 각각에 <h3> heading 이 존재하고 비어있지 않다', () => {
+    it('4개 카드 각각에 <h3> heading 이 존재하고 비어있지 않다', () => {
       const { container } = render(<SolutionSection />);
       const articles = Array.from(container.querySelectorAll('article'));
-      expect(articles.length).toBe(3);
+      expect(articles.length).toBe(4);
       for (const article of articles) {
         const heading = article.querySelector('h3, h4, h5');
         expect(heading).not.toBeNull();
@@ -62,7 +62,7 @@ describe('SolutionSection (TEST-P5.1 + P5.2 + P5.9 + P5.10)', () => {
       }
     });
 
-    it('3개 카드 각각에 설명 <p> 단락이 1개 이상 존재한다', () => {
+    it('4개 카드 각각에 설명 <p> 단락이 1개 이상 존재한다', () => {
       const { container } = render(<SolutionSection />);
       const articles = Array.from(container.querySelectorAll('article'));
       for (const article of articles) {
@@ -72,7 +72,7 @@ describe('SolutionSection (TEST-P5.1 + P5.2 + P5.9 + P5.10)', () => {
       }
     });
 
-    it('3개 카드 각각에 예시 텍스트가 존재한다', () => {
+    it('4개 카드 각각에 예시 텍스트가 존재한다', () => {
       // phase05 §5.3 TASK-003: 각 카드는 예시(example) 텍스트를 포함.
       // 예시는 "예:" 접두어 또는 별도 <p> 로 렌더될 수 있음 — 구현 자유.
       // 최소 보장: 카드 내부에 <p> 가 2개 이상 (설명 + 예시).
@@ -84,7 +84,7 @@ describe('SolutionSection (TEST-P5.1 + P5.2 + P5.9 + P5.10)', () => {
       }
     });
 
-    it('3개 카드 각각에 아이콘 요소가 존재한다 (lucide-react SVG)', () => {
+    it('4개 카드 각각에 아이콘 요소가 존재한다 (lucide-react SVG)', () => {
       // lucide-react 아이콘은 <svg> 태그를 렌더. 카드 내부에 svg 가 1개 이상
       // 있어야 아이콘이 렌더된 것으로 판정.
       const { container } = render(<SolutionSection />);
@@ -153,13 +153,20 @@ describe('SolutionSection (TEST-P5.1 + P5.2 + P5.9 + P5.10)', () => {
       expect(section?.getAttribute('data-testid')).toBe('solution-section');
     });
 
-    it('반응형 3컬럼 grid 클래스 (md:grid-cols-3) 가 DOM 에 존재한다', () => {
-      // phase05 §5.3 TASK-003: 모바일 1컬럼 → 데스크톱 3컬럼.
+    it('반응형 4컬럼 grid 클래스 (lg:grid-cols-4) 가 DOM 에 존재한다', () => {
+      // Phase 11 v2: 3축 → 4축 (memory 추가). md:grid-cols-2 lg:grid-cols-4 (모바일 1 → 태블릿 2 → 데스크톱 4).
       const { container } = render(<SolutionSection />);
       const hasGrid = Array.from(container.querySelectorAll('*')).some(
-        (el) => typeof el.className === 'string' && /\bmd:grid-cols-3\b/.test(el.className)
+        (el) => typeof el.className === 'string' && /\blg:grid-cols-4\b/.test(el.className)
       );
       expect(hasGrid).toBe(true);
+    });
+
+    it('memory 축 카드가 i18n t("solution.axes.memory.title") 텍스트로 렌더된다', () => {
+      // Phase 11 v2: Work Memory 가치 회귀 가드. memory 축 카드가 누락되면 FAIL.
+      render(<SolutionSection />);
+      const expectedTitle = i18n.t('solution.axes.memory.title');
+      expect(screen.getByText(expectedTitle)).toBeInTheDocument();
     });
   });
 
@@ -179,7 +186,7 @@ describe('SolutionSection (TEST-P5.1 + P5.2 + P5.9 + P5.10)', () => {
       expect(enH2).not.toBe(koH2);
     });
 
-    it('ko → en 전환 시 3개 카드 제목이 모두 달라진다', async () => {
+    it('ko → en 전환 시 4개 카드 제목이 모두 달라진다', async () => {
       const { container, rerender } = render(<SolutionSection />);
       const koTitles = Array.from(
         container.querySelectorAll('article h3, article h4, article h5')
@@ -191,9 +198,9 @@ describe('SolutionSection (TEST-P5.1 + P5.2 + P5.9 + P5.10)', () => {
         container.querySelectorAll('article h3, article h4, article h5')
       ).map((el) => el.textContent?.trim() ?? '');
 
-      expect(koTitles.length).toBe(3);
-      expect(enTitles.length).toBe(3);
-      for (let i = 0; i < 3; i++) {
+      expect(koTitles.length).toBe(4);
+      expect(enTitles.length).toBe(4);
+      for (let i = 0; i < 4; i++) {
         expect(enTitles[i]).not.toBe(koTitles[i]);
       }
     });

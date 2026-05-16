@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, MousePointerClick, Code2 } from 'lucide-react';
+import { BookOpen, MousePointerClick, Code2, Database } from 'lucide-react';
 import { Section } from '../common/Section';
 
 /**
@@ -31,6 +31,7 @@ const SOLUTION_AXES: readonly { key: string; icon: ReactNode }[] = [
   { key: 'context', icon: <BookOpen size={28} /> },
   { key: 'action', icon: <MousePointerClick size={28} /> },
   { key: 'script', icon: <Code2 size={28} /> },
+  { key: 'memory', icon: <Database size={28} /> },
 ];
 
 const HEADING_ID = 'solution-heading';
@@ -44,7 +45,7 @@ export function SolutionSection() {
         {t('solution.title')}
       </h2>
 
-      <div className="mt-12 grid gap-8 md:grid-cols-3">
+      <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
         {SOLUTION_AXES.map(({ key, icon }) => (
           <article
             key={key}

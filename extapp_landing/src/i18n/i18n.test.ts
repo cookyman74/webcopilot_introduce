@@ -198,26 +198,42 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
     }
   });
 
-  it('Phase 5 필수 features.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P5.8)', () => {
-    // phase05 §5.3 TASK-002 스펙:
+  it('Phase 11 v2 필수 features.* 키가 ko/en 양쪽에 모두 존재한다 (16 카드 + 5 카테고리)', () => {
+    // Phase 11 v2: 9 → 16 카드 + 5 카테고리 그루핑.
     //   features.title + features.status.{done,wip,planned}
-    //   + 9 카드 × {title,desc,example} = 31키
+    //   + features.categories.{absorb,write,automate,memory,interface}
+    //   + 16 카드 × {title,desc,example}
     const statusKeys = ['features.status.done', 'features.status.wip', 'features.status.planned'];
+    const categoryKeys = [
+      'features.categories.absorb',
+      'features.categories.write',
+      'features.categories.automate',
+      'features.categories.memory',
+      'features.categories.interface',
+    ];
     const itemKeys = [
       'chat',
       'helper',
-      'select',
-      'autofill',
-      'action',
+      'multiTab',
+      'webSearch',
       'image',
+      'autofill',
+      'tone',
       'improve',
+      'select',
+      'doCommand',
+      'action',
       'script',
+      'scriptCRUD',
+      'tabGroup',
+      'workMemory',
       'floating',
     ];
     const fields = ['title', 'desc', 'example'];
     const required = [
       'features.title',
       ...statusKeys,
+      ...categoryKeys,
       ...itemKeys.flatMap((k) => fields.map((f) => `features.items.${k}.${f}`)),
     ];
     const koKeys = collectKeys(ko);
@@ -231,14 +247,24 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
   // ───────────────────────────────────────────────────────────
   // Phase 6 필수 키 — scenarios.* / differentiation.* (TEST-P6.7)
   // ───────────────────────────────────────────────────────────
-  it('Phase 6 필수 scenarios.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P6.7)', () => {
-    // phase06 §6.3 TASK-001 스펙: scenarios.title + 4 시나리오 × 3 필드 = 13키
-    const itemKeys = ['s1', 's2', 's3', 's4'];
-    const fields = ['step', 'title', 'desc'];
+  it('Phase 11 v2 필수 scenarios.* 키가 ko/en 양쪽에 모두 존재한다 (6 시나리오 + s4 prompt)', () => {
+    // Phase 11 v2: 4 → 6 시나리오 + targetSites + s4 customization 필드.
+    const itemKeys = ['s1', 's2', 's3', 's4', 's5', 's6'];
+    const fields = ['step', 'title', 'desc', 'targetSites'];
+    const s4ExtraKeys = [
+      'scenarios.items.s4.examplesIntro',
+      'scenarios.items.s4.exampleTheme',
+      'scenarios.items.s4.exampleAdblock',
+      'scenarios.items.s4.exampleMail',
+      'scenarios.items.s4.promptLabel',
+      'scenarios.items.s4.promptBody',
+    ];
     const required = [
       'scenarios.title',
       'scenarios.videoPlaceholder',
+      'scenarios.targetLabel',
       ...itemKeys.flatMap((k) => fields.map((f) => `scenarios.items.${k}.${f}`)),
+      ...s4ExtraKeys,
     ];
     const koKeys = collectKeys(ko);
     const enKeys = collectKeys(en);
@@ -248,9 +274,27 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
     }
   });
 
-  it('Phase 6 필수 differentiation.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P6.7)', () => {
-    // phase06 §6.3 TASK-001 스펙: differentiation.title + 3 비교 × 3 필드 = 10키
-    const itemKeys = ['d1', 'd2', 'd3'];
+  it('s4 promptBody 에 데모 prompt 핵심 토큰이 살아있다 (cookyman@gmail.com / 플로팅 버튼 / floating button)', () => {
+    // Phase 11 v2: 사용자 제시 데모 prompt 의 핵심 토큰이 카피 변경 중 누락되지 않도록 가드.
+    const koPrompt = (ko as Record<string, unknown>).scenarios as Record<string, unknown>;
+    const enPrompt = (en as Record<string, unknown>).scenarios as Record<string, unknown>;
+    const koBody = String(
+      ((koPrompt.items as Record<string, Record<string, unknown>>).s4 as Record<string, unknown>)
+        .promptBody
+    );
+    const enBody = String(
+      ((enPrompt.items as Record<string, Record<string, unknown>>).s4 as Record<string, unknown>)
+        .promptBody
+    );
+    expect(koBody).toContain('cookyman@gmail.com');
+    expect(enBody).toContain('cookyman@gmail.com');
+    expect(koBody).toMatch(/플로팅 버튼/);
+    expect(enBody).toMatch(/floating button/i);
+  });
+
+  it('Phase 11 v2 필수 differentiation.* 키가 ko/en 양쪽에 모두 존재한다 (3 → 5 비교축)', () => {
+    // Phase 11 v2: differentiation.title + 5 비교 × 3 필드 = 16키
+    const itemKeys = ['d1', 'd2', 'd3', 'd4', 'd5'];
     const fields = ['before', 'after', 'desc'];
     const required = [
       'differentiation.title',
@@ -286,8 +330,8 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
     }
   });
 
-  it('Phase 7 필수 safety.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P7.8)', () => {
-    const itemKeys = ['approval', 'register', 'session', 'sensitive'];
+  it('Phase 11 v2 필수 safety.* 키가 ko/en 양쪽에 모두 존재한다 (4 → 5 + loop)', () => {
+    const itemKeys = ['approval', 'register', 'session', 'sensitive', 'loop'];
     const required = [
       'safety.title',
       'safety.subtitle',
@@ -304,8 +348,13 @@ describe('TEST-P3.1 — 4개 locale 파일 존재 (ko/en/ja/zh)', () => {
   // ───────────────────────────────────────────────────────────
   // Phase 8 필수 키 — roadmap.* / business.* / finalCta.* (TEST-P8.6)
   // ───────────────────────────────────────────────────────────
-  it('Phase 8 필수 roadmap.* 키가 ko/en 양쪽에 모두 존재한다 (TEST-P8.6)', () => {
-    const itemKeys = ['floating', 'continuity', 'studio'];
+  it('Phase 11 v2 필수 roadmap.* 키가 ko/en 양쪽에 모두 존재한다 (옵션 C: 키 재명명)', () => {
+    // Phase 11 v2 옵션 C: floating/continuity 는 Features 섹션으로 이전,
+    // Roadmap 은 같은 영역의 다음 진화 단계로 재정의:
+    //   floating → floatingExpansion (FH 컨텍스트 확장)
+    //   continuity → scriptPromotion (세션 → 영구 자산 승격)
+    //   studio → studio (그대로 유지)
+    const itemKeys = ['floatingExpansion', 'scriptPromotion', 'studio'];
     const required = [
       'roadmap.title',
       'roadmap.subtitle',

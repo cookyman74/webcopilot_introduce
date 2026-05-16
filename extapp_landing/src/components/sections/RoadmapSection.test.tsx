@@ -50,9 +50,9 @@ describe('RoadmapSection (TEST-P8.1~P8.3 + P8.14)', () => {
   });
 
   describe('TEST-P8.1 카드 정체성', () => {
-    it('3개 로드맵 제목이 각각 정확히 1회씩 렌더된다', () => {
+    it('3개 로드맵 제목이 각각 정확히 1회씩 렌더된다 (Phase 11 옵션 C: floatingExpansion / scriptPromotion / studio)', () => {
       const { container } = render(<RoadmapSection />);
-      const keys = ['floating', 'continuity', 'studio'];
+      const keys = ['floatingExpansion', 'scriptPromotion', 'studio'];
       const titles = Array.from(container.querySelectorAll('article h3')).map(
         (el) => el.textContent?.trim() ?? ''
       );
