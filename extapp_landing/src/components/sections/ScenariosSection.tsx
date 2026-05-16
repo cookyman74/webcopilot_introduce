@@ -1,15 +1,7 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  MessagesSquare,
-  Languages,
-  ShoppingCart,
-  Wand2,
-  PenLine,
-  BookMarked,
-  Play,
-} from 'lucide-react';
+import { MessagesSquare, Languages, Layers, Wand2, PenLine, BookMarked, Play } from 'lucide-react';
 import { Section } from '../common/Section';
 import { VideoModal } from '../common/VideoModal';
 
@@ -17,25 +9,42 @@ import { VideoModal } from '../common/VideoModal';
  * ScenariosSection — Phase 11 v2: 6 시나리오 (4 → 6).
  *
  * 시나리오:
- *   s1 커뮤니티 글쓰기  (videoId: E4r5CSlAjQA, 기존 영상 재활용)
- *   s2 영문 자료 분석   (videoId: ZQkDGoBaCbo, 기존 영상 재활용)
- *   s3 쇼핑 가격 비교 ★ Work Memory
+ *   s1 커뮤니티 글쓰기  (videoId: E4r5CSlAjQA)
+ *   s2 영문 자료 분석   (videoId: ZQkDGoBaCbo)
+ *   s3 다중 탭 조작 + 탭별 비교/분석  (videoId: JeinIbHpPXU) — examples 칩 3개
  *   s4 사이트 UI/UX 직접 커스터마이즈 — examples 칩 3개 + prompt 박스 verbatim 노출
  *   s5 AI 글쓰기 동반자
- *   s6 리서치 워크플로우 ★ Work Memory
+ *   s6 리서치 워크플로우
  *
- * s4 카드 특수 렌더:
- *   - 일반 카드와 동일 step/title/desc + targetSites
- *   - 추가: 예시 칩 3개 (테마/광고/메일발송) + 코드 블록 prompt 박스
- *   - 영상 버튼은 다른 카드와 일관성 유지를 위해 placeholder 노출
+ * 카드 특수 렌더 매트릭스:
+ *   - exampleKeys: 카드에 예시 칩 ul 노출 (s3, s4)
+ *   - hasPromptBox: 추가로 코드 블록 prompt 박스 노출 (s4 전용)
  *
  * 그리드: md:grid-cols-2 (6 = 3 row × 2 col)
  */
-const SCENARIO_ITEMS: readonly { key: string; icon: ReactNode; videoId?: string }[] = [
+type ScenarioItem = {
+  key: string;
+  icon: ReactNode;
+  videoId?: string;
+  exampleKeys?: readonly string[];
+  hasPromptBox?: boolean;
+};
+
+const SCENARIO_ITEMS: readonly ScenarioItem[] = [
   { key: 's1', icon: <MessagesSquare size={24} />, videoId: 'E4r5CSlAjQA' },
   { key: 's2', icon: <Languages size={24} />, videoId: 'ZQkDGoBaCbo' },
-  { key: 's3', icon: <ShoppingCart size={24} /> },
-  { key: 's4', icon: <Wand2 size={24} /> },
+  {
+    key: 's3',
+    icon: <Layers size={24} />,
+    videoId: 'JeinIbHpPXU',
+    exampleKeys: ['exampleGroup', 'exampleCompare', 'exampleNews'],
+  },
+  {
+    key: 's4',
+    icon: <Wand2 size={24} />,
+    exampleKeys: ['exampleTheme', 'exampleAdblock', 'exampleMail'],
+    hasPromptBox: true,
+  },
   { key: 's5', icon: <PenLine size={24} /> },
   { key: 's6', icon: <BookMarked size={24} /> },
 ];
@@ -61,8 +70,7 @@ export function ScenariosSection() {
       </h2>
 
       <div className="mt-12 grid gap-8 md:grid-cols-2">
-        {SCENARIO_ITEMS.map(({ key, icon, videoId }) => {
-          const isCustomCard = key === 's4';
+        {SCENARIO_ITEMS.map(({ key, icon, videoId, exampleKeys, hasPromptBox }) => {
           return (
             <article
               key={key}
@@ -86,28 +94,35 @@ export function ScenariosSection() {
                 {t(`scenarios.items.${key}.targetSites`)}
               </p>
 
-              {/* s4 특수 영역 — examples 칩 3개 + prompt 박스 */}
-              {isCustomCard && (
-                <div className="mt-2 flex flex-col gap-3" data-testid="scenario-s4-customization">
+              {/* 예시 칩 영역 — exampleKeys 가 있는 카드만 (s3, s4) */}
+              {exampleKeys && exampleKeys.length > 0 && (
+                <div
+                  className="mt-2 flex flex-col gap-3"
+                  data-testid={`scenario-${key}-customization`}
+                >
                   <p className="text-xs font-semibold uppercase tracking-wider text-accent">
-                    {t('scenarios.items.s4.examplesIntro')}
+                    {t(`scenarios.items.${key}.examplesIntro`)}
                   </p>
                   <ul className="flex flex-col gap-1 text-sm text-ink-700">
-                    <li>{t('scenarios.items.s4.exampleTheme')}</li>
-                    <li>{t('scenarios.items.s4.exampleAdblock')}</li>
-                    <li>{t('scenarios.items.s4.exampleMail')}</li>
+                    {exampleKeys.map((ek) => (
+                      <li key={ek}>{t(`scenarios.items.${key}.${ek}`)}</li>
+                    ))}
                   </ul>
-                  <div
-                    className="rounded-lg border border-accent/40 bg-accent-soft/50 p-3"
-                    data-testid="scenario-s4-prompt-box"
-                  >
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-accent">
-                      {t('scenarios.items.s4.promptLabel')}
-                    </p>
-                    <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-relaxed text-ink-900">
-                      <code>{t('scenarios.items.s4.promptBody')}</code>
-                    </pre>
-                  </div>
+
+                  {/* prompt 박스 — s4 전용 (사용자 verbatim prompt 노출) */}
+                  {hasPromptBox && (
+                    <div
+                      className="rounded-lg border border-accent/40 bg-accent-soft/50 p-3"
+                      data-testid={`scenario-${key}-prompt-box`}
+                    >
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-accent">
+                        {t(`scenarios.items.${key}.promptLabel`)}
+                      </p>
+                      <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-relaxed text-ink-900">
+                        <code>{t(`scenarios.items.${key}.promptBody`)}</code>
+                      </pre>
+                    </div>
+                  )}
                 </div>
               )}
 

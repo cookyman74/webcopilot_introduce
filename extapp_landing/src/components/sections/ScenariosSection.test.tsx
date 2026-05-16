@@ -132,6 +132,27 @@ describe('ScenariosSection (Phase 11 v2)', () => {
     });
   });
 
+  describe('★ s3 다중 탭 조작 + 비교/분석 — 예시 칩', () => {
+    it('s3 카드 안에 customization 영역이 존재한다 (data-testid="scenario-s3-customization")', () => {
+      const { container } = render(<ScenariosSection />);
+      expect(container.querySelector('[data-testid="scenario-s3-customization"]')).not.toBeNull();
+    });
+
+    it('s3 customization 영역에 예시 칩 3개 (그룹화 / 비교표 / 뉴스 모음) 가 모두 노출된다', () => {
+      const { container } = render(<ScenariosSection />);
+      const node = container.querySelector('[data-testid="scenario-s3-customization"]');
+      const text = node?.textContent ?? '';
+      expect(text).toContain(i18n.t('scenarios.items.s3.exampleGroup'));
+      expect(text).toContain(i18n.t('scenarios.items.s3.exampleCompare'));
+      expect(text).toContain(i18n.t('scenarios.items.s3.exampleNews'));
+    });
+
+    it('s3 카드에는 prompt 박스 (코드 블록) 가 노출되지 않는다 (s4 전용 차별 요소)', () => {
+      const { container } = render(<ScenariosSection />);
+      expect(container.querySelector('[data-testid="scenario-s3-prompt-box"]')).toBeNull();
+    });
+  });
+
   describe('영상 모달 상호작용', () => {
     it('6개 카드 각각에 영상 버튼이 존재한다', () => {
       const { container } = render(<ScenariosSection />);
@@ -141,10 +162,24 @@ describe('ScenariosSection (Phase 11 v2)', () => {
       }
     });
 
-    it('videoId 가 없는 카드 4개 (s3, s4, s5, s6) 에 placeholder 텍스트가 노출된다', () => {
+    it('videoId 가 없는 카드 3개 (s4, s5, s6) 에 placeholder 텍스트가 노출된다 (s3 영상 추가)', () => {
       render(<ScenariosSection />);
       const placeholders = screen.getAllByText('영상 준비 중');
-      expect(placeholders.length).toBe(4);
+      expect(placeholders.length).toBe(3);
+    });
+
+    it('s1, s2, s3 카드에 videoId 기반 YouTube 썸네일 <img> 가 렌더된다', () => {
+      const { container } = render(<ScenariosSection />);
+      const expected: Record<string, string> = {
+        s1: 'E4r5CSlAjQA',
+        s2: 'ZQkDGoBaCbo',
+        s3: 'JeinIbHpPXU',
+      };
+      for (const [key, videoId] of Object.entries(expected)) {
+        const card = container.querySelector(`[data-testid="scenario-${key}"]`);
+        const img = card?.querySelector(`img[src*="${videoId}"]`);
+        expect(img, `${key} 카드에 videoId="${videoId}" 썸네일 <img> 누락`).not.toBeNull();
+      }
     });
 
     it('영상 placeholder 버튼 클릭 시 모달(dialog) 이 DOM 에 나타난다', async () => {

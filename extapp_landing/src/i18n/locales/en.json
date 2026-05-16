@@ -185,9 +185,13 @@
       },
       "s3": {
         "step": "Scenario 3",
-        "title": "Shopping price comparison + next-day auto-restore",
-        "desc": "Read multiple shopping tabs at once and produce a comparison table. Revisit the same site tomorrow and your prior comparison is restored from Work Memory.",
-        "targetSites": "Coupang · 11st · Gmarket · Naver Shopping · Musinsa · Danawa"
+        "title": "Tab orchestration + per-tab comparison & analysis",
+        "desc": "Group many tabs at once, then synthesize per-tab data into a comparison table or roll up per-tab content into a single report. One natural-language line completes a full multi-tab workflow.",
+        "targetSites": "Shopping · news · research — any multi-tab workflow",
+        "examplesIntro": "Prompts you can use",
+        "exampleGroup": "🗂️ \"Group the shopping tabs\"",
+        "exampleCompare": "📊 \"Build a comparison table of laptop price / shipping / rating across each tab\"",
+        "exampleNews": "📰 \"Roll up the news from each tab into one report\""
       },
       "s4": {
         "step": "Scenario 4",
